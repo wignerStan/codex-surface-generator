@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.codex-wire-audit.invalid/v19/config-surface-semantics-v1.schema.json",
+  "title": "Codex generated config schema and config-to-surface semantics",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "source_revision",
+    "config_schema",
+    "feature_registry",
+    "feature_crosswalk",
+    "effect_links",
+    "surface_graph",
+    "coverage",
+    "semantic_complete",
+    "semantic_digest"
+  ],
+  "properties": {
+    "$schema": {"const": "https://schemas.codex-wire-audit.invalid/v19/config-surface-semantics-v1.schema.json"},
+    "source_revision": {"type": "object"},
+    "config_schema": {
+      "type": "object",
+      "required": ["source", "summary", "paths", "root_properties", "definitions", "references", "unresolved_references", "semantic_digest"],
+      "properties": {
+        "source": {"type": "object", "required": ["path", "sha256"]},
+        "summary": {"type": "object", "required": ["root_property_count", "definition_count", "config_path_count", "feature_path_count", "reference_count", "unresolved_reference_count"]},
+        "paths": {"type": "object", "additionalProperties": {"type": "object", "required": ["id", "path", "kind", "required", "declared_types", "schema_locations", "semantic_digest"]}},
+        "root_properties": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "definitions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "references": {"type": "object"},
+        "unresolved_references": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "semantic_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "feature_registry": {
+      "type": "object",
+      "required": ["source_path", "features", "by_id", "by_key", "duplicate_ids", "duplicate_keys", "parse_errors", "counts"]
+    },
+    "feature_crosswalk": {
+      "type": "object",
+      "required": ["features", "registered_without_root_schema", "registered_without_profile_schema", "schema_only_root_keys", "schema_only_profile_keys", "counts"]
+    },
+    "effect_links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "config_paths", "target", "relation", "behavior", "condition", "proof_tier"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^effect\\."},
+          "config_paths": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+          "target": {"type": "string", "pattern": "^surface\\."},
+          "relation": {"type": "string"},
+          "behavior": {"type": "string"},
+          "condition": {"type": ["string", "null"]},
+          "proof_tier": {"type": "string"}
+        }
+      }
+    },
+    "surface_graph": {
+      "type": "object",
+      "required": ["format", "nodes", "edges", "views", "coverage", "semantic_digest"],
+      "properties": {
+        "format": {"const": "codex-wire-audit-surface-graph/v1"},
+        "nodes": {"type": "object", "additionalProperties": {"type": "object", "required": ["id", "kind", "label"]}},
+        "edges": {"type": "array", "items": {"type": "object", "required": ["id", "source", "target", "relation"]}},
+        "views": {"type": "object", "required": ["by_config", "by_surface", "context_management"]},
+        "coverage": {"type": "object", "required": ["node_count", "edge_count", "canonical_effect_count", "legacy_effect_count", "unresolved_node_refs"]},
+        "semantic_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "coverage": {"type": "object"},
+    "semantic_complete": {"type": "boolean"},
+    "semantic_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

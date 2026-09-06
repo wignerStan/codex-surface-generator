@@ -7,15 +7,15 @@
     },
     "evolution-contract.identity-split.json": {
       "bytes": 32221,
-      "sha256": "2c27f363d8b76f7c3449c7182fe44763ad69fd14367ddf64a7cc1c42618e6dac"
+      "sha256": "dec71e0ce074c4ecd2692cb6c1409cc89059ad80c589cd7a90185862e87aaa4a"
     },
     "evolution-contract.legacy-combined-identity.json": {
       "bytes": 32373,
-      "sha256": "bd647b6aeec91231afcb9454cd1d8d2d503ac03a6ba65c76fa8e902260c01b47"
+      "sha256": "01df2503e20792b94613fa29a3db6c53d269180239e449ddb12480a3ebcc09d8"
     },
     "evolution-contract.unclassified-expression.json": {
       "bytes": 7430,
-      "sha256": "51c6d5d223dd200d107013ff0d80e51d746ea39436dcbb4853a93cb345d5c4d5"
+      "sha256": "db7fc0e99dc1ea045a96cd1f4b9fbf01d66a5367840bf21b20e3e634853a93e2"
     },
     "fixture-diagnostics.json": {
       "bytes": 1326,
@@ -26,8 +26,8 @@
       "sha256": "cfa3b2287dffffb805c7b8f5957f505d9026d38463c084809a85d269f585f1c7"
     },
     "source-registry.default.json": {
-      "bytes": 34548,
-      "sha256": "fd05e247b8d0611528cd96828d5ac0896eaaf4eee4b898070797733ed8c02f4d"
+      "bytes": 36205,
+      "sha256": "c302b9f3e952845d76c7d00fa1e89a0130c67b2d354884d55123d8fea001b6ff"
     },
     "source-registry.overlay.example.json": {
       "bytes": 229,

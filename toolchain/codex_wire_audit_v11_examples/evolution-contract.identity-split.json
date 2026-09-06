@@ -649,10 +649,10 @@
       ]
     }
   },
-  "generator_version": "11.0.0",
+  "generator_version": "12.0.0",
   "integrity": {
     "algorithm": "sha256",
-    "canonical_ir_sha256": "65c81f0bfea96f379a8f1caa186cf2beb3fdd0c134b593d7deed1613c352bfa5",
+    "canonical_ir_sha256": "3555de73c6fdd9299389e10163a8137a4cac411fcfb0bf9aee927e91e0e87ebb",
     "canonicalization": "codex-wire-audit-canonical-json-v2"
   },
   "migration": {

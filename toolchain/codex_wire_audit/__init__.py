@@ -1,14 +1,14 @@
-"""Maintainability and CI-proof focused Codex wire-audit package.
+"""Source-derived Codex surface generation and machine-proof package.
 
-Generator 10 keeps the frozen compatibility renderer and independent proof gate,
-while adding first-class experimental context-management semantics: activation,
-model capability, History/Notes transport, routing separation, and no-summary
-context rollover.
+Generator 12 keeps the frozen compatibility renderer while adding a canonical
+generated-config catalog and a graph that connects config paths and Rust feature
+registry entries to existing wire, tool, route, metadata, and context-management
+surfaces.
 """
 
 from __future__ import annotations
 
-GENERATOR_VERSION = "11.0.0"
+GENERATOR_VERSION = "12.0.0"
 REPORT_FORMAT_VERSION = "10.0.0"
 EVOLUTION_CONTRACT_VERSION = "1.0.0"
 SOURCE_REGISTRY_VERSION = "1.0.0"

@@ -48,11 +48,11 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_release_spec_is_single_source_of_release_identity() -> None:
     spec = load_release_spec(ROOT)
     identity = validate_source_alignment(ROOT, spec)
-    assert spec["release"]["package_version"] == "11.0.0"
+    assert spec["release"]["package_version"] == "12.0.0"
     assert spec["release"]["generator_version"] == GENERATOR_VERSION
     assert identity["project_version"] == GENERATOR_VERSION
-    assert spec["artifacts"]["wheel"] == "codex_wire_audit-11.0.0-py3-none-any.whl"
-    assert spec["artifacts"]["sdist"] == "codex_wire_audit-11.0.0.tar.gz"
+    assert spec["artifacts"]["wheel"] == "codex_wire_audit-12.0.0-py3-none-any.whl"
+    assert spec["artifacts"]["sdist"] == "codex_wire_audit-12.0.0.tar.gz"
 
 
 
@@ -301,8 +301,8 @@ def test_output_path_cannot_destroy_or_pollute_source_tree(tmp_path: Path) -> No
         validate_output_destination(ROOT, ROOT, spec)
     with pytest.raises(ReleaseError, match="excluded"):
         validate_output_destination(ROOT, ROOT / "ordinary-output", spec)
-    accepted = validate_output_destination(ROOT, ROOT / "release_v18-test", spec)
-    assert accepted.name == "release_v18-test"
+    accepted = validate_output_destination(ROOT, ROOT / "release_v19-test", spec)
+    assert accepted.name == "release_v19-test"
 
 
 def test_output_lock_rejects_concurrent_writer(tmp_path: Path) -> None:
@@ -431,7 +431,7 @@ def test_failure_evidence_is_persisted_and_secret_redacted(tmp_path: Path) -> No
 
 def test_release_pipeline_is_series_driven_and_tooling_is_budgeted() -> None:
     spec = load_release_spec(ROOT)
-    assert source_archive_prefix(spec) == "codex_wire_audit_v18_source"
+    assert source_archive_prefix(spec) == "codex_wire_audit_v19_source"
     pipeline = (ROOT / "tools/release_pipeline.py").read_text(encoding="utf-8")
     assert "codex_wire_audit_v17_source" not in pipeline
     assert "release_v17" not in pipeline
@@ -443,7 +443,7 @@ def test_release_pipeline_is_series_driven_and_tooling_is_budgeted() -> None:
 
 def test_ci_runs_deep_verification_for_the_release_job() -> None:
     workflow = (ROOT / ".github/workflows/machine-proof.yml").read_text(encoding="utf-8")
-    assert "machine-proof-v18" in workflow
+    assert "machine-proof-v19" in workflow
     verify_section = workflow.split("Independently verify assembled release", 1)[1]
     assert "tools/release_pipeline.py verify" in verify_section
     assert "--fast" not in verify_section

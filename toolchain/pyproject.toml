@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "codex-wire-audit"
-version = "11.0.0"
+version = "12.0.0"
 description = "Source-derived Codex wire protocol audit with package-owned release-closure proof"
 requires-python = ">=3.10"
 dependencies = [
@@ -12,7 +12,7 @@ dependencies = [
   "referencing>=0.35,<1",
   "tomli>=2,<3; python_version < '3.11'",
 ]
-readme = "README_CODEX_WIRE_AUDIT_V18.md"
+readme = "README_CODEX_WIRE_AUDIT_V19.md"
 
 [project.scripts]
 codex-wire-audit-proof-diff = "codex_wire_audit.proof_diff:main"
@@ -49,4 +49,4 @@ codex_wire_audit = [
   "release_spec.schema.json",
 ]
 [project.optional-dependencies]
-test = ["coverage>=7.6,<8", "packaging>=24,<26", "pytest>=8,<10"]
+test = ["coverage>=7.6,<8", "packaging>=24,<26", "pytest>=8,<10", "setuptools>=82,<83"]

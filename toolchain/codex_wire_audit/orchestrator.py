@@ -14,6 +14,7 @@ from .canonical import canonical_json_bytes, canonical_report_payload
 from .diagnostics import Diagnostic, DiagnosticCollector
 from .evolution import (
     apply_turn_metadata_overlay,
+    apply_config_surface_overlay,
     build_evolution_contract,
     finalize_evolution_contract,
 )
@@ -389,10 +390,14 @@ def generate_report(
         registry,
         diagnostics,
         coverage_profile=getattr(args, "coverage_profile", "codex_wire_full"),
+        legacy_report=report,
     )
     turn_result = extractor_results.get("extractor.turn_metadata")
     if turn_result:
         apply_turn_metadata_overlay(report, turn_result)
+    config_result = extractor_results.get("extractor.config_effects")
+    if config_result:
+        apply_config_surface_overlay(report, config_result)
 
     resolver = SchemaIdentityResolver.from_report(report)
     contract_module = legacy.contract
@@ -451,7 +456,15 @@ def generate_report(
             "extractor.turn_metadata": {
                 "backend": "rust_lexical_scanner_plus_expression_classifier",
                 "machine_evaluable": turn_result.semantic_complete if turn_result else False,
-            }
+            },
+            "extractor.context_management": {
+                "backend": "source_linked_context_management_classifier",
+                "machine_evaluable": bool(extractor_results.get("extractor.context_management") and extractor_results["extractor.context_management"].semantic_complete),
+            },
+            "extractor.config_effects": {
+                "backend": "generated_json_schema_plus_feature_registry_surface_graph",
+                "machine_evaluable": config_result.semantic_complete if config_result else False,
+            },
         }
         parser["legacy_fallback_boundary"] = "all non-migrated v10 sections"
 

@@ -22,6 +22,7 @@ from .orchestrator import (
     load_baseline,
 )
 from .schemas import write_schema_documents as write_v11_schema_documents
+from .proof_profiles import PROFILES
 from .validation import validate_evolution_contract
 
 
@@ -151,6 +152,16 @@ def _write_v11_output_directory(
             json.dumps(result.semantic_diff, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
+    config_data = (result.report.get("evolution_contract") or {}).get("extractors", {}).get("extractor.config_effects", {}).get("data")
+    if isinstance(config_data, Mapping):
+        (root / "config-schema.json").write_text(
+            json.dumps(config_data.get("config_schema") or {}, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        (root / "config-surface-graph.json").write_text(
+            json.dumps(config_data.get("surface_graph") or {}, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
     write_v11_schema_documents(root / "schemas" / "maintainability")
     manifest = {
         "generator_version": GENERATOR_VERSION,
@@ -258,6 +269,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--section", action="append", default=[])
     parser.add_argument("--emit-schema", metavar="DIRECTORY")
     parser.add_argument("--emit-ir", metavar="FILE", help="write the canonical evolution contract")
+    parser.add_argument("--emit-config-schema", metavar="FILE", help="write the normalized generated config schema catalog")
+    parser.add_argument("--emit-surface-graph", metavar="FILE", help="write the config-to-protocol surface graph")
     parser.add_argument("--write-source-registry", metavar="FILE")
     parser.add_argument("--include-examples", action="store_true")
     parser.add_argument("--validate-report", metavar="REPORT_JSON")
@@ -270,7 +283,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--parser", choices=("auto", "regex"), default="auto")
     parser.add_argument(
         "--coverage-profile",
-        choices=("codex_wire_full", "responses_only", "mcp_only", "fixture"),
+        choices=tuple(sorted(PROFILES)),
         default="codex_wire_full",
     )
     parser.add_argument("--source-registry", help="JSON overlay for source path candidates and requirements")
@@ -376,6 +389,19 @@ def main(argv: list[str] | None = None) -> int:
             json.dumps(report["evolution_contract"], ensure_ascii=False, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
+    config_data = (report.get("evolution_contract") or {}).get("extractors", {}).get("extractor.config_effects", {}).get("data")
+    if args.emit_config_schema:
+        if not isinstance(config_data, Mapping):
+            raise SourceLoadError("config schema was not extracted for the selected source/profile")
+        output = Path(args.emit_config_schema)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(config_data.get("config_schema") or {}, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    if args.emit_surface_graph:
+        if not isinstance(config_data, Mapping):
+            raise SourceLoadError("config surface graph was not extracted for the selected source/profile")
+        output = Path(args.emit_surface_graph)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(config_data.get("surface_graph") or {}, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if args.write_source_registry:
         Path(args.write_source_registry).write_text(
             json.dumps(result.registry.to_dict(), ensure_ascii=False, indent=2, sort_keys=True) + "\n",

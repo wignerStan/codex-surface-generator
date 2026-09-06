@@ -1,7 +1,7 @@
 PYTHON ?= python
 HISTORY_CONTAINER ?= codex_wire_audit/metadata_history_container_data
 
-.PHONY: compile test test-v10 test-v11 test-v13 test-v16 test-v18 self-test schemas \
+.PHONY: compile test test-v10 test-v11 test-v13 test-v16 test-v18 test-v19 self-test schemas \
 	history-assets check-history-assets legacy-assets check-legacy-assets \
 	assets check-assets metrics check-metrics coverage dist validate release verify-release clean
 
@@ -23,6 +23,13 @@ test-v16:
 
 test-v18:
 	$(PYTHON) -m pytest -q tests/test_release_pipeline_v18.py
+
+test-v19:
+	$(PYTHON) -m pytest -q tests/test_config_surface_v19.py tests/test_release_pipeline_v18.py
+
+config-surface:
+	@test -n "$(CODEX_ROOT)" || (echo "CODEX_ROOT is required" >&2; exit 2)
+	$(PYTHON) tools/check_config_surface.py --codex-root "$(CODEX_ROOT)" --output config-surface-result.json --schema-output config-schema.json --graph-output config-surface-graph.json
 
 test: compile
 	$(PYTHON) -m pytest -q
@@ -70,8 +77,8 @@ check-assets: check-legacy-assets check-history-assets check-metrics schemas
 coverage:
 	coverage erase
 	coverage run --branch -m pytest -q
-	coverage json -o coverage-v18.json
-	$(PYTHON) tools/check_v13_coverage.py coverage-v18.json --output codex_wire_audit_v18_coverage_ratchet.json
+	coverage json -o coverage-v19.json
+	$(PYTHON) tools/check_v13_coverage.py coverage-v19.json --output codex_wire_audit_v19_coverage_ratchet.json
 
 # Convenience-only distribution build. The release command never trusts this directory.
 dist:
@@ -79,15 +86,15 @@ dist:
 
 # Lightweight source/package contract validation. Full validation is inseparable from release assembly.
 validate: test schemas
-	$(PYTHON) -m codex_wire_audit.release_contract --output codex_wire_audit_v18_source_capabilities.json
+	$(PYTHON) -m codex_wire_audit.release_contract --output codex_wire_audit_v19_source_capabilities.json
 
 release:
-	$(PYTHON) tools/release_pipeline.py release --output-dir release_v18
+	$(PYTHON) tools/release_pipeline.py release --output-dir release_v19
 
 verify-release:
-	$(PYTHON) tools/release_pipeline.py verify --release-dir release_v18
+	$(PYTHON) tools/release_pipeline.py verify --release-dir release_v19
 
 clean:
-	rm -rf build dist release_v13 release_v16 release_v18 *.egg-info .pytest_cache .coverage coverage-v13.json coverage-v18.json ci-out
-	rm -f codex_wire_audit_v*_validation.json codex_wire_audit_v*_validation.txt codex_wire_audit_v18_source_capabilities.json dist-manifest.json
+	rm -rf build dist release_v13 release_v16 release_v19 *.egg-info .pytest_cache .coverage coverage-v13.json coverage-v19.json ci-out
+	rm -f codex_wire_audit_v*_validation.json codex_wire_audit_v*_validation.txt codex_wire_audit_v19_source_capabilities.json dist-manifest.json
 	find . -type d -name __pycache__ -prune -exec rm -rf {} +

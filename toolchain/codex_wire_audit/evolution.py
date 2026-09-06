@@ -12,6 +12,7 @@ from .diagnostics import DiagnosticCollector
 from .extractors import ExtractorResult, create_extractors
 from .models import SourceSnapshot
 from .source_registry import SourceRegistry
+from .surface_graph import compose_surface_graph
 
 
 def _description_for_emission(field: Mapping[str, Any]) -> str:
@@ -185,6 +186,37 @@ def apply_turn_metadata_overlay(
     }
 
 
+
+def apply_config_surface_overlay(
+    report: MutableMapping[str, Any],
+    config_result: ExtractorResult,
+) -> None:
+    """Attach canonical config shape and the config-to-surface graph to the report."""
+    data = config_result.data
+    if not data:
+        return
+    report["config_schema"] = {
+        "authoritative": True,
+        "extractor_id": config_result.extractor_id,
+        "schema_version": config_result.schema_version,
+        **copy.deepcopy(data.get("config_schema") or {}),
+    }
+    report["config_surface_graph"] = copy.deepcopy(data.get("surface_graph") or {})
+    protocol = report.setdefault("config_protocol", {})
+    if isinstance(protocol, MutableMapping):
+        protocol["canonical_schema"] = {
+            "extractor_id": config_result.extractor_id,
+            "semantic_digest": (data.get("config_schema") or {}).get("semantic_digest"),
+            "summary": copy.deepcopy((data.get("config_schema") or {}).get("summary") or {}),
+        }
+        protocol["canonical_feature_registry"] = copy.deepcopy(data.get("feature_crosswalk") or {})
+        protocol["canonical_effect_links"] = copy.deepcopy(data.get("effect_links") or [])
+        protocol["surface_graph"] = copy.deepcopy(data.get("surface_graph") or {})
+        protocol["legacy_effect_catalog_role"] = (
+            "compatibility evidence connected into the graph with proof_tier=legacy_compatibility"
+        )
+
+
 def _dimension_state(condition: bool, *, false_state: str = "partial") -> str:
     return "complete" if condition else false_state
 
@@ -195,6 +227,7 @@ def build_evolution_contract(
     diagnostics: DiagnosticCollector,
     *,
     coverage_profile: str = "codex_wire_full",
+    legacy_report: Mapping[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, ExtractorResult]]:
     results: dict[str, ExtractorResult] = {}
     for extractor in create_extractors():
@@ -208,6 +241,36 @@ def build_evolution_contract(
             continue
         result = extractor.extract(snapshot, diagnostics)
         results[result.extractor_id] = result
+
+    config_result = results.get("extractor.config_effects")
+    if config_result is not None and config_result.data:
+        config_data = copy.deepcopy(config_result.data)
+        graph = compose_surface_graph(config_data, results, legacy_report)
+        config_data["surface_graph"] = graph
+        graph_complete = not (graph.get("coverage") or {}).get("unresolved_node_refs")
+        if not graph_complete:
+            diagnostics.emit(
+                code="CONFIG_SURFACE_GRAPH_REFERENCE_UNRESOLVED",
+                severity="error",
+                category="config_surface",
+                message="The config-to-surface graph contains unresolved node references.",
+                extractor_id="extractor.config_effects",
+                entity_id="config_surface_graph",
+                details={"node_refs": (graph.get("coverage") or {}).get("unresolved_node_refs")},
+                recoverable=False,
+                strict_failure=True,
+            )
+        config_data["semantic_complete"] = config_result.semantic_complete and graph_complete
+        config_data["semantic_digest"] = hashlib.sha256(canonical_json_bytes({
+            key: value for key, value in config_data.items() if key != "semantic_digest"
+        })).hexdigest()
+        results[config_result.extractor_id] = ExtractorResult(
+            extractor_id=config_result.extractor_id,
+            schema_version=config_result.schema_version,
+            data=config_data,
+            semantic_complete=config_result.semantic_complete and graph_complete,
+            source_spec_ids=config_result.source_spec_ids,
+        )
 
     required_ids = {spec.id for spec in registry.specs if spec.required}
     required_available = required_ids <= set(snapshot.files)

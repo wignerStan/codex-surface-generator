@@ -195,6 +195,17 @@ def from_legacy_maps(
             elif group == SourceGroup.BASE and key == "provider_info":
                 roles.append("context_management_routing")
                 extractors = tuple(sorted(set((*extractors, "extractor.context_management"))))
+            if (group, key) in {
+                (SourceGroup.BASE, "provider_info"),
+                (SourceGroup.EXTRA, "config_toml"),
+                (SourceGroup.EXTRA, "core_config"),
+                (SourceGroup.EXTRA, "feature_configs"),
+                (SourceGroup.EXTRA, "feature_registry"),
+                (SourceGroup.EXTRA, "provider_runtime"),
+                (SourceGroup.EXTRA, "turn_metadata"),
+            }:
+                roles.append("config_surface_support")
+                extractors = tuple(sorted(set((*extractors, "extractor.config_effects"))))
             specs.append(
                 SourceSpec(
                     id=_spec_id(group, key),
@@ -218,6 +229,26 @@ def from_legacy_maps(
         ("source_spec.extra.context_management_tests", "context_management_tests", "codex-rs/core/tests/suite/token_budget.rs", ("experimental_context_requires", "supports_experimental_context")),
         ("source_spec.extra.history_notes_tests", "history_notes_tests", "codex-rs/ext/history-notes/tests/history_notes_extension.rs", ("Recent notes (up to 5, most-recent first)", "thread_hint")),
     )
+    specs.append(SourceSpec(
+        id="source_spec.extra.generated_config_schema",
+        legacy_key="generated_config_schema",
+        group=SourceGroup.EXTRA,
+        path_candidates=("codex-rs/core/config.schema.json",),
+        required=False,
+        roles=("generated_config_schema", "config_surface"),
+        expected_symbols=("\"title\": \"ConfigToml\"", "\"features\"", "\"model_providers\""),
+        extractor_ids=("extractor.config_effects",),
+    ))
+    specs.append(SourceSpec(
+        id="source_spec.extra.config_schema_generator",
+        legacy_key="config_schema_generator",
+        group=SourceGroup.EXTRA,
+        path_candidates=("codex-rs/config/src/schema.rs",),
+        required=False,
+        roles=("config_schema_generation_policy", "config_surface"),
+        expected_symbols=("features_schema", "Feature::Artifact", "Feature::GuardianThreadContext"),
+        extractor_ids=("extractor.config_effects",),
+    ))
     existing_ids = {spec.id for spec in specs}
     for spec_id, legacy_key, path, symbols in context_specs:
         if spec_id in existing_ids:

@@ -99,6 +99,34 @@
       "version": "1.0.0"
     },
     {
+      "allow_legacy_reconstruction": true,
+      "description": "Transition profile: canonical generated config schema, config-to-surface graph, turn metadata, and context management; remaining protocol families may still use the frozen legacy adapter.",
+      "id": "hybrid_v19",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "metadata_history"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata",
+        "extractor.context_management",
+        "extractor.config_effects"
+      ],
+      "required_history_keys": [
+        "key.turn_metadata.code_mode_tool_names",
+        "key.turn_metadata.tool_namespaces_info",
+        "key.turn_metadata.window_number",
+        "key.turn_metadata.forked_from_ordinal_exclusive",
+        "key.config.tool_registry.include_tool_namespaces_info",
+        "key.config.tool_registry.include_tool_metadata",
+        "key.config.tool_registry.turn_metadata_includes_tool_info"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
       "allow_legacy_reconstruction": false,
       "description": "Canonical turn-metadata proof plus the tracked turn-metadata key history.",
       "id": "turn_metadata_only",
@@ -215,7 +243,8 @@
         "redirect_headers",
         "context_management_activation",
         "context_window_rollover",
-        "history_notes_retrieval"
+        "history_notes_retrieval",
+        "config_schema_surface_graph"
       ],
       "version": "3.0.0"
     },
@@ -256,6 +285,24 @@
       ],
       "required_history_keys": [],
       "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Focused generated config schema, Rust feature registry, and config-to-surface graph proof.",
+      "id": "config_surface_only",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "provenance"
+      ],
+      "required_extractors": [
+        "extractor.config_effects"
+      ],
+      "required_history_keys": [],
+      "required_runtime_scenarios": [
+        "config_schema_surface_graph"
+      ],
       "version": "1.0.0"
     },
     {

@@ -11,21 +11,21 @@
     ]
   },
   "artifacts": {
-    "artifact_inventory": "codex_wire_audit_v18_artifact_inventory.json",
-    "bundle": "codex_wire_audit_v18_release_pipeline_bundle.zip",
-    "bundle_sidecar": "codex_wire_audit_v18_release_pipeline_bundle.zip.sha256",
-    "checksums": "SHA256SUMS_codex_wire_audit_v18.txt",
-    "context_container": "codex_wire_audit_v18_context_management_container.zip",
-    "machine_assets": "codex_wire_audit_v18_machine_assets.zip",
-    "readme": "README_CODEX_WIRE_AUDIT_V18.md",
-    "release_attestation": "codex_wire_audit_v18_release_attestation.json",
-    "release_notes": "CODEX_WIRE_AUDIT_V18_RELEASE_NOTES.md",
-    "release_spec_copy": "codex_wire_audit_v18_release_spec.json",
-    "sdist": "codex_wire_audit-11.0.0.tar.gz",
-    "source_zip": "codex_wire_audit_v18_source.zip",
-    "validation_json": "codex_wire_audit_v18_validation.json",
-    "validation_log": "codex_wire_audit_v18_validation.txt",
-    "wheel": "codex_wire_audit-11.0.0-py3-none-any.whl"
+    "artifact_inventory": "codex_wire_audit_v19_artifact_inventory.json",
+    "bundle": "codex_wire_audit_v19_config_surface_bundle.zip",
+    "bundle_sidecar": "codex_wire_audit_v19_config_surface_bundle.zip.sha256",
+    "checksums": "SHA256SUMS_codex_wire_audit_v19.txt",
+    "context_container": "codex_wire_audit_v19_context_management_container.zip",
+    "machine_assets": "codex_wire_audit_v19_machine_assets.zip",
+    "readme": "README_CODEX_WIRE_AUDIT_V19.md",
+    "release_attestation": "codex_wire_audit_v19_release_attestation.json",
+    "release_notes": "CODEX_WIRE_AUDIT_V19_RELEASE_NOTES.md",
+    "release_spec_copy": "codex_wire_audit_v19_release_spec.json",
+    "sdist": "codex_wire_audit-12.0.0.tar.gz",
+    "source_zip": "codex_wire_audit_v19_source.zip",
+    "validation_json": "codex_wire_audit_v19_validation.json",
+    "validation_log": "codex_wire_audit_v19_validation.txt",
+    "wheel": "codex_wire_audit-12.0.0-py3-none-any.whl"
   },
   "capability_claims": [
     {
@@ -34,7 +34,7 @@
       ],
       "id": "turn_metadata",
       "profile_assertions": {
-        "hybrid_v18": {
+        "hybrid_v19": {
           "required_extractors_contains": [
             "extractor.turn_metadata"
           ]
@@ -63,7 +63,7 @@
             "history_notes_retrieval"
           ]
         },
-        "hybrid_v18": {
+        "hybrid_v19": {
           "required_extractors_contains": [
             "extractor.context_management"
           ]
@@ -85,7 +85,7 @@
       "extractor_ids": [],
       "id": "metadata_history",
       "profile_assertions": {
-        "hybrid_v18": {
+        "hybrid_v19": {
           "required_dimensions_contains": [
             "metadata_history"
           ]
@@ -97,6 +97,45 @@
         "metadata_history_reference.py",
         "metadata_history_data/metadata-key-history.v1.json",
         "metadata_history_container_data/index.json"
+      ],
+      "status": "active_package"
+    },
+    {
+      "extractor_ids": [
+        "extractor.config_effects"
+      ],
+      "id": "config_surface",
+      "profile_assertions": {
+        "codex_wire_full": {
+          "required_extractors_contains": [
+            "extractor.config_effects"
+          ],
+          "required_runtime_scenarios_contains": [
+            "config_schema_surface_graph"
+          ]
+        },
+        "config_surface_only": {
+          "required_extractors_contains": [
+            "extractor.config_effects"
+          ],
+          "required_runtime_scenarios_contains": [
+            "config_schema_surface_graph"
+          ]
+        },
+        "hybrid_v19": {
+          "required_extractors_contains": [
+            "extractor.config_effects"
+          ]
+        }
+      },
+      "required_resources": [
+        "config_schema_catalog.py",
+        "config_feature_registry.py",
+        "config_effect_specs.py",
+        "surface_graph.py",
+        "extractors/config_effects.py",
+        "proof_schema_templates/config-surface-semantics-v1.schema.json",
+        "coverage_profiles.v3.json"
       ],
       "status": "active_package"
     }
@@ -112,18 +151,18 @@
     "role": "legacy_evidence_only"
   },
   "release": {
-    "generator_version": "11.0.0",
-    "id": "codex-wire-audit-v18-release-pipeline",
+    "generator_version": "12.0.0",
+    "id": "codex-wire-audit-v19-config-surface",
     "package_import": "codex_wire_audit",
     "package_name": "codex-wire-audit",
-    "package_version": "11.0.0",
+    "package_version": "12.0.0",
     "reviewed_codex_commit": "6af345407d9c2a568da9d01b6c4b81a9e61495c0",
     "runtime_dependencies": [
       "jsonschema<5,>=4.23",
       "referencing<1,>=0.35",
       "tomli<3,>=2; python_version < \"3.11\""
     ],
-    "series": "v18",
+    "series": "v19",
     "source_date_epoch": 315532800
   },
   "source_snapshot": {

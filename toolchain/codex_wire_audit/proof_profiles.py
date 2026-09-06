@@ -59,7 +59,7 @@ _SKIP_KEYS = {
 
 
 def resolve_profile(profile_id: str | None) -> CoverageProfile:
-    candidate = profile_id or "hybrid_v18"
+    candidate = profile_id or "hybrid_v19"
     try:
         return PROFILES[candidate]
     except KeyError as error:

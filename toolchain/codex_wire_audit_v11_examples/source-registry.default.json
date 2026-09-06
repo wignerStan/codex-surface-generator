@@ -1,11 +1,11 @@
 {
   "counts": {
     "base": 16,
-    "extra": 43,
-    "optional": 69,
+    "extra": 45,
+    "optional": 71,
     "required": 16,
     "surface": 26,
-    "total": 85
+    "total": 87
   },
   "schema_version": "1.0.0",
   "sources": {
@@ -189,6 +189,7 @@
     "source_spec.base.provider_info": {
       "expected_symbols": [],
       "extractor_ids": [
+        "extractor.config_effects",
         "extractor.context_management"
       ],
       "group": "base",
@@ -200,7 +201,8 @@
       "required": true,
       "roles": [
         "legacy_base",
-        "context_management_routing"
+        "context_management_routing",
+        "config_surface_support"
       ]
     },
     "source_spec.base.request": {
@@ -348,9 +350,31 @@
         "context_management"
       ]
     },
+    "source_spec.extra.config_schema_generator": {
+      "expected_symbols": [
+        "features_schema",
+        "Feature::Artifact",
+        "Feature::GuardianThreadContext"
+      ],
+      "extractor_ids": [
+        "extractor.config_effects"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.config_schema_generator",
+      "legacy_key": "config_schema_generator",
+      "path_candidates": [
+        "codex-rs/config/src/schema.rs"
+      ],
+      "required": false,
+      "roles": [
+        "config_schema_generation_policy",
+        "config_surface"
+      ]
+    },
     "source_spec.extra.config_toml": {
       "expected_symbols": [],
       "extractor_ids": [
+        "extractor.config_effects",
         "extractor.context_management"
       ],
       "group": "extra",
@@ -362,7 +386,8 @@
       "required": false,
       "roles": [
         "legacy_extra",
-        "context_management_support"
+        "context_management_support",
+        "config_surface_support"
       ]
     },
     "source_spec.extra.context_management_activation": {
@@ -405,7 +430,9 @@
     },
     "source_spec.extra.core_config": {
       "expected_symbols": [],
-      "extractor_ids": [],
+      "extractor_ids": [
+        "extractor.config_effects"
+      ],
       "group": "extra",
       "id": "source_spec.extra.core_config",
       "legacy_key": "core_config",
@@ -414,12 +441,14 @@
       ],
       "required": false,
       "roles": [
-        "legacy_extra"
+        "legacy_extra",
+        "config_surface_support"
       ]
     },
     "source_spec.extra.feature_configs": {
       "expected_symbols": [],
       "extractor_ids": [
+        "extractor.config_effects",
         "extractor.context_management"
       ],
       "group": "extra",
@@ -431,12 +460,14 @@
       "required": false,
       "roles": [
         "legacy_extra",
-        "context_management_support"
+        "context_management_support",
+        "config_surface_support"
       ]
     },
     "source_spec.extra.feature_registry": {
       "expected_symbols": [],
       "extractor_ids": [
+        "extractor.config_effects",
         "extractor.context_management"
       ],
       "group": "extra",
@@ -448,7 +479,29 @@
       "required": false,
       "roles": [
         "legacy_extra",
-        "context_management_support"
+        "context_management_support",
+        "config_surface_support"
+      ]
+    },
+    "source_spec.extra.generated_config_schema": {
+      "expected_symbols": [
+        "\"title\": \"ConfigToml\"",
+        "\"features\"",
+        "\"model_providers\""
+      ],
+      "extractor_ids": [
+        "extractor.config_effects"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.generated_config_schema",
+      "legacy_key": "generated_config_schema",
+      "path_candidates": [
+        "codex-rs/core/config.schema.json"
+      ],
+      "required": false,
+      "roles": [
+        "generated_config_schema",
+        "config_surface"
       ]
     },
     "source_spec.extra.history_notes_backend": {
@@ -768,6 +821,7 @@
     "source_spec.extra.provider_runtime": {
       "expected_symbols": [],
       "extractor_ids": [
+        "extractor.config_effects",
         "extractor.context_management"
       ],
       "group": "extra",
@@ -779,7 +833,8 @@
       "required": false,
       "roles": [
         "legacy_extra",
-        "context_management_support"
+        "context_management_support",
+        "config_surface_support"
       ]
     },
     "source_spec.extra.response_usage": {
@@ -896,7 +951,9 @@
     },
     "source_spec.extra.turn_metadata": {
       "expected_symbols": [],
-      "extractor_ids": [],
+      "extractor_ids": [
+        "extractor.config_effects"
+      ],
       "group": "extra",
       "id": "source_spec.extra.turn_metadata",
       "legacy_key": "turn_metadata",
@@ -905,7 +962,8 @@
       ],
       "required": false,
       "roles": [
-        "legacy_extra"
+        "legacy_extra",
+        "config_surface_support"
       ]
     },
     "source_spec.surface.api_bridge": {
