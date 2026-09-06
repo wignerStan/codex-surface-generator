@@ -15,6 +15,9 @@ attested release pipeline.
   - [`toolchain/`](toolchain/) — package source (v18 pipeline)
   - [`release/`](release/) — release artifacts: wheel, sdist, attestation,
     release spec, artifact inventory, validation log, checksums
+  - [`ARCHITECTURE.md`](ARCHITECTURE.md) — implementation notes for app-server,
+    TUI durable task tools, Desktop `codex_app`, native-pipe routing, and
+    source/ownership boundaries
   - [`NOTES.md`](NOTES.md) — maintenance notes
 
 ## Install
