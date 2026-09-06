@@ -131,6 +131,22 @@ jobs:
           git commit -m "feat: connect config schema to the canonical surface graph"
           git push origin HEAD:main
 
+      - name: Capture staged implementation on failure
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p toolchain/ci-out/bootstrap-source
+          git diff --cached --binary --full-index \
+            > toolchain/ci-out/bootstrap-source/v19-applied.patch
+          git diff --cached --name-status \
+            > toolchain/ci-out/bootstrap-source/v19-name-status.txt
+          tar --exclude='toolchain/ci-out' \
+              --exclude='toolchain/.pytest_cache' \
+              --exclude='toolchain/*.egg-info' \
+              -czf toolchain/ci-out/bootstrap-source/v19-staged-source.tar.gz \
+              toolchain .github/workflows/config-surface.yml
+
       - name: Upload bootstrap verification evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -139,5 +155,6 @@ jobs:
           path: |
             toolchain/ci-out/bootstrap-package
             toolchain/ci-out/bootstrap-config-surface
+            toolchain/ci-out/bootstrap-source
           if-no-files-found: warn
           retention-days: 30
