@@ -15,6 +15,7 @@ configuration shape, and the relationships between those surfaces.
   - [`DESKTOP_ARCHITECTURE.md`](DESKTOP_ARCHITECTURE.md) — Desktop process topology and bridge ownership
   - [`CODE_MODE_TOOL_ARCHITECTURE.md`](CODE_MODE_TOOL_ARCHITECTURE.md) — tool exposure and Code Mode ownership
   - [`CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md`](CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md) — ChatGPT-hosted service planes and their boundaries
+  - [`PROMPT_ASSEMBLY_AND_CONFIG.md`](PROMPT_ASSEMBLY_AND_CONFIG.md) — prompt assembly/composition call graph, world-state grouping and deltas, Responses/Lite request shape, config-layer merge semantics, and Desktop MCP filtering boundaries
   - [`NOTES.md`](NOTES.md) — maintenance notes
 
 The architecture notes explain design, evidence ownership, and boundaries. They
