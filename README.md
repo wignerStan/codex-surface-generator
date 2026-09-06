@@ -18,6 +18,9 @@ attested release pipeline.
   - [`DESKTOP_ARCHITECTURE.md`](DESKTOP_ARCHITECTURE.md) — ChatGPT Desktop /
     Codex Desktop process topology, `codex_app` MCP bridge, native-pipe wire
     protocol, tool ownership, and public/shipped/private boundaries
+  - [`CODE_MODE_TOOL_ARCHITECTURE.md`](CODE_MODE_TOOL_ARCHITECTURE.md) — model
+    `ToolMode`, per-tool `ToolExposure`, Code Mode `exec`, deferred discovery,
+    `ALL_TOOLS`, and the distinction from `cua_repl` / `node_repl`
   - [`NOTES.md`](NOTES.md) — maintenance notes
 
 ## Install
