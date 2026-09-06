@@ -15,9 +15,9 @@ attested release pipeline.
   - [`toolchain/`](toolchain/) — package source (v18 pipeline)
   - [`release/`](release/) — release artifacts: wheel, sdist, attestation,
     release spec, artifact inventory, validation log, checksums
-  - [`ARCHITECTURE.md`](ARCHITECTURE.md) — implementation notes for app-server,
-    TUI durable task tools, Desktop `codex_app`, native-pipe routing, and
-    source/ownership boundaries
+  - [`DESKTOP_ARCHITECTURE.md`](DESKTOP_ARCHITECTURE.md) — ChatGPT Desktop /
+    Codex Desktop process topology, `codex_app` MCP bridge, native-pipe wire
+    protocol, tool ownership, and public/shipped/private boundaries
   - [`NOTES.md`](NOTES.md) — maintenance notes
 
 ## Install
