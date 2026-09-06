@@ -152,6 +152,12 @@ KNOWN_CONDITIONAL_CLIENT_METADATA = {
     "parent_turn_id",
     "root_turn_id",
     "x-codex-turn-metadata",
+    # Guardian ticket lifecycle: attached at the transport boundary
+    # (core client.rs set_guardian_ticket_request; codex-api
+    # guardian_ticket::attach) — outside the builder block, so listed here
+    # as dynamic known-conditional keys (see DYNAMIC_CLIENT_METADATA).
+    "guardian_ticket_requested",
+    "guardian_ticket",
 }
 
 CLIENT_METADATA_CONDITIONS = {
@@ -4185,6 +4191,53 @@ def build_report(
     ]
 
     base_cm, ws_cm, warnings = client_metadata_keys(metadata, core, common, strict=strict)
+
+    # Guardian ticket lifecycle: dynamic transport-boundary client_metadata
+    # carriers (core client.rs set_guardian_ticket_request; codex-api
+    # guardian_ticket::attach). Enumerate them alongside the parsed keys so
+    # consumers see the complete flat contract; deliberately NOT projected
+    # into the nested turn snapshot.
+    guardian_sources = {
+        "guardian_ticket_requested": (
+            "core",
+            '"guardian_ticket_requested".to_owned()',
+            "set_guardian_ticket_request",
+        ),
+        "guardian_ticket": (
+            "guardian_ticket",
+            'metadata.remove(GUARDIAN_TICKET_METADATA_KEY)',
+            "guardian_ticket::attach",
+        ),
+    }
+    for key, (src_key, needle, symbol) in guardian_sources.items():
+        text = core if src_key == "core" else surface_sources.get(src_key) or ""
+        path = (
+            FILES["core"]
+            if src_key == "core"
+            else SURFACE_FILES[src_key]
+        )
+        if needle not in text:
+            warnings.append(f"guardian client_metadata source anchor missing: {key}")
+            continue
+        base_cm.append(
+            {
+                "name": key,
+                "optional": True,
+                "condition": (
+                    "transport-boundary guardian ticket carrier — attached and "
+                    "removed outside CodexResponsesMetadata::client_metadata"
+                ),
+                "direction": "request",
+                "origin": "client",
+                "continuation": False,
+                "source": {
+                    "path": path,
+                    "line": text[: text.find(needle)].count("\n") + 1,
+                    "symbol": symbol,
+                },
+            }
+        )
+        base_cm.sort(key=lambda item: item["name"])
 
     turn = struct_fields(metadata, FILES["metadata"], "CodexTurnMetadataPayload")
     extra = next((f for f in turn if f["name"] == "extra"), None)
