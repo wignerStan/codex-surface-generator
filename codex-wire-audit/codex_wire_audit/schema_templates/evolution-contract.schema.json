@@ -1,0 +1,325 @@
+{
+  "$id": "https://schemas.codex-wire-audit.invalid/v11/evolution-contract.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "coverage_profile": {
+      "enum": [
+        "codex_wire_full",
+        "responses_only",
+        "mcp_only",
+        "fixture"
+      ]
+    },
+    "diagnostic_refs": {
+      "items": {
+        "pattern": "^diag\\.",
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "diagnostic_summary": {
+      "additionalProperties": false,
+      "properties": {
+        "error": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "info": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "warning": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "error",
+        "warning",
+        "info"
+      ],
+      "type": "object"
+    },
+    "extractors": {
+      "additionalProperties": false,
+      "minProperties": 1,
+      "patternProperties": {
+        "^extractor\\.": {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "type": "object"
+            },
+            "extractor_id": {
+              "pattern": "^extractor\\.",
+              "type": "string"
+            },
+            "schema_version": {
+              "type": "string"
+            },
+            "semantic_complete": {
+              "type": "boolean"
+            },
+            "source_spec_ids": {
+              "items": {
+                "pattern": "^source_spec\\.",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "extractor_id",
+            "schema_version",
+            "source_spec_ids",
+            "semantic_complete",
+            "data"
+          ],
+          "type": "object"
+        }
+      },
+      "properties": {
+        "extractor.turn_metadata": {
+          "allOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "type": "object"
+                },
+                "extractor_id": {
+                  "pattern": "^extractor\\.",
+                  "type": "string"
+                },
+                "schema_version": {
+                  "type": "string"
+                },
+                "semantic_complete": {
+                  "type": "boolean"
+                },
+                "source_spec_ids": {
+                  "items": {
+                    "pattern": "^source_spec\\.",
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "extractor_id",
+                "schema_version",
+                "source_spec_ids",
+                "semantic_complete",
+                "data"
+              ],
+              "type": "object"
+            },
+            {
+              "properties": {
+                "data": {
+                  "$ref": "https://schemas.codex-wire-audit.invalid/v11/turn-metadata-semantics.schema.json"
+                },
+                "extractor_id": {
+                  "const": "extractor.turn_metadata"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "generator_version": {
+      "type": "string"
+    },
+    "integrity": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "canonical_ir_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "canonicalization": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "algorithm",
+        "canonicalization",
+        "canonical_ir_sha256"
+      ],
+      "type": "object"
+    },
+    "migration": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_ir_extractors": {
+          "items": {
+            "pattern": "^extractor\\.",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "extension_contract": {
+          "type": "string"
+        },
+        "legacy_adapter": {
+          "type": "string"
+        },
+        "legacy_machine_reconstruction_remaining": {
+          "type": "boolean"
+        },
+        "stage": {
+          "const": "hybrid_canonical_ir"
+        }
+      },
+      "required": [
+        "stage",
+        "canonical_ir_extractors",
+        "legacy_adapter",
+        "legacy_machine_reconstruction_remaining",
+        "extension_contract"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "source_registry": {
+      "$ref": "https://schemas.codex-wire-audit.invalid/v11/source-registry.schema.json"
+    },
+    "source_revision": {
+      "$ref": "https://schemas.codex-wire-audit.invalid/v11/source-snapshot.schema.json#/$defs/revision"
+    },
+    "source_snapshot": {
+      "$ref": "https://schemas.codex-wire-audit.invalid/v11/source-snapshot.schema.json"
+    },
+    "status": {
+      "additionalProperties": false,
+      "properties": {
+        "current_main_conformance": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed",
+            "not_applicable",
+            "not_run",
+            "not_compared",
+            "pending_report_upgrade",
+            "unknown"
+          ]
+        },
+        "overall": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed",
+            "not_applicable",
+            "not_run",
+            "not_compared",
+            "pending_report_upgrade",
+            "unknown"
+          ]
+        },
+        "runtime_observation": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed",
+            "not_applicable",
+            "not_run",
+            "not_compared",
+            "pending_report_upgrade",
+            "unknown"
+          ]
+        },
+        "schema_resolution": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed",
+            "not_applicable",
+            "not_run",
+            "not_compared",
+            "pending_report_upgrade",
+            "unknown"
+          ]
+        },
+        "semantic_classification": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed",
+            "not_applicable",
+            "not_run",
+            "not_compared",
+            "pending_report_upgrade",
+            "unknown"
+          ]
+        },
+        "source_inventory": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed",
+            "not_applicable",
+            "not_run",
+            "not_compared",
+            "pending_report_upgrade",
+            "unknown"
+          ]
+        },
+        "syntax_extraction": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed",
+            "not_applicable",
+            "not_run",
+            "not_compared",
+            "pending_report_upgrade",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "source_inventory",
+        "syntax_extraction",
+        "semantic_classification",
+        "schema_resolution",
+        "runtime_observation",
+        "current_main_conformance",
+        "overall"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "$schema",
+    "schema_version",
+    "generator_version",
+    "coverage_profile",
+    "source_revision",
+    "source_registry",
+    "source_snapshot",
+    "extractors",
+    "migration",
+    "status",
+    "diagnostic_refs",
+    "diagnostic_summary",
+    "integrity"
+  ],
+  "title": "Codex wire audit evolution contract",
+  "type": "object"
+}

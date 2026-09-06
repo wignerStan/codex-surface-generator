@@ -1,0 +1,107 @@
+{
+  "$id": "https://schemas.codex-wire-audit.invalid/v16/context-management-semantics-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex experimental context-management semantics",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "source_revision",
+    "feature",
+    "activation",
+    "history_notes",
+    "routing",
+    "rollover",
+    "semantic_complete",
+    "semantic_digest"
+  ],
+  "properties": {
+    "$schema": {"const": "https://schemas.codex-wire-audit.invalid/v16/context-management-semantics-v1.schema.json"},
+    "source_revision": {"type": "object"},
+    "feature": {
+      "type": "object",
+      "required": ["toml", "feature_registry", "model_capability", "evidence"],
+      "properties": {
+        "toml": {"type": "object"},
+        "feature_registry": {"type": "object"},
+        "model_capability": {
+          "type": "object",
+          "required": ["field", "serde_default", "default_value", "activation_scope"],
+          "properties": {
+            "field": {"const": "supports_experimental_context"},
+            "serde_default": {"type": "boolean"},
+            "default_value": {"const": false},
+            "activation_scope": {"type": "string"}
+          }
+        },
+        "evidence": {"type": "object"}
+      }
+    },
+    "activation": {
+      "type": "object",
+      "required": ["feature", "config_key", "account", "model", "provider", "effects", "evidence"],
+      "properties": {
+        "feature": {"const": "context_management"},
+        "config_key": {"const": "features.context_management.experimental_mode"},
+        "account": {
+          "type": "object",
+          "required": ["auth_mode", "plan_types"],
+          "properties": {
+            "auth_mode": {"const": "chatgpt"},
+            "plan_types": {
+              "type": "array",
+              "items": {"enum": ["plus", "pro", "prolite"]},
+              "minItems": 3,
+              "maxItems": 3,
+              "uniqueItems": true
+            }
+          }
+        },
+        "model": {"type": "object"},
+        "provider": {"type": "object"},
+        "effects": {"type": "object"},
+        "evidence": {"type": "object"}
+      }
+    },
+    "history_notes": {
+      "type": "object",
+      "required": ["routes", "tool_route_count", "hidden_routes", "request", "history", "notes", "thread_hint", "evidence"],
+      "properties": {
+        "routes": {"type": "array", "items": {"type": "string", "pattern": "^alpha/(history|notes)/v2/"}, "minItems": 10, "uniqueItems": true},
+        "tool_route_count": {"const": 9},
+        "hidden_routes": {"type": "array", "contains": {"const": "alpha/notes/v2/thread_hint"}},
+        "request": {"type": "object"},
+        "history": {"type": "object"},
+        "notes": {"type": "object"},
+        "thread_hint": {"type": "object"},
+        "evidence": {"type": "object"}
+      }
+    },
+    "routing": {
+      "type": "object",
+      "required": ["model_provider_plane", "chatgpt_auxiliary_plane", "separation", "evidence"],
+      "properties": {
+        "model_provider_plane": {"type": "object"},
+        "chatgpt_auxiliary_plane": {"type": "object"},
+        "separation": {"type": "object"},
+        "evidence": {"type": "object"}
+      }
+    },
+    "rollover": {
+      "type": "object",
+      "required": ["tool_name", "model_can_request_rollover", "summarization", "environment_state", "manual_compaction_under_token_budget", "automatic_compaction_under_token_budget", "architectural_interpretation", "evidence"],
+      "properties": {
+        "tool_name": {"const": "new_context"},
+        "model_can_request_rollover": {"const": true},
+        "summarization": {"const": "none"},
+        "environment_state": {"const": "preserved"},
+        "manual_compaction_under_token_budget": {"type": "string"},
+        "automatic_compaction_under_token_budget": {"type": "string"},
+        "architectural_interpretation": {"type": "object"},
+        "evidence": {"type": "object"}
+      }
+    },
+    "semantic_complete": {"type": "boolean"},
+    "semantic_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

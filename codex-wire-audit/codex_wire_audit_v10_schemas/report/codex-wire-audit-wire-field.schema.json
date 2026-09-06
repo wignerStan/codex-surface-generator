@@ -1,0 +1,88 @@
+{
+  "$id": "urn:codex-wire-audit:schema:wire-field:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "authority": {
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^field\\.",
+      "type": "string"
+    },
+    "lifetime": {
+      "type": "string"
+    },
+    "logging_policy": {
+      "type": "string"
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "presence": {
+      "additionalProperties": true,
+      "properties": {
+        "mode": {
+          "enum": [
+            "never",
+            "flattened",
+            "conditional",
+            "present_nullable",
+            "present"
+          ]
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "omitted_when": {
+          "oneOf": [
+            {
+              "$ref": "urn:codex-wire-audit:schema:predicate:1.0.0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "mode",
+        "required",
+        "nullable"
+      ],
+      "type": "object"
+    },
+    "rust_type": {
+      "type": "string"
+    },
+    "schema_id": {
+      "pattern": "^schema\\.",
+      "type": "string"
+    },
+    "sensitivity": {
+      "type": "string"
+    },
+    "wire_name": {
+      "type": "string"
+    },
+    "wire_schema": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "id",
+    "schema_id",
+    "wire_name",
+    "rust_type",
+    "wire_schema",
+    "presence"
+  ],
+  "title": "Normalized wire field",
+  "type": "object"
+}

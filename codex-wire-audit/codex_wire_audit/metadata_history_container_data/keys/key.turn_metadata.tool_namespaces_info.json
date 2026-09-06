@@ -1,0 +1,191 @@
+{
+  "catalog_sha256": "12f3521d0584123e3c9244c9cb0359eff613442db00b0bfeea11c93de1646aed",
+  "catalog_version": "1.0.0",
+  "format": "codex-wire-audit-metadata-history-key/v1",
+  "key": {
+    "current_state_ref": "state.tool_namespaces.active_opt_in",
+    "description": "Opt-in authoritative namespace/function inventory that replaced the removed code-mode-only map.",
+    "id": "key.turn_metadata.tool_namespaces_info",
+    "kind": "turn_metadata_key",
+    "namespace": "codex_turn_metadata",
+    "replacement_key_refs": [],
+    "source_candidates": [
+      "codex-rs/core/src/responses_metadata.rs",
+      "codex-rs/core/src/turn_metadata.rs",
+      "codex-rs/core/src/tools/tool_namespaces_info.rs",
+      "codex-rs/core/src/tools/spec_plan.rs",
+      "codex-rs/core/src/session/mod.rs"
+    ],
+    "state_refs": [
+      "state.tool_namespaces.absent",
+      "state.tool_namespaces.active_opt_in"
+    ],
+    "wire_name": "tool_namespaces_info"
+  },
+  "states": {
+    "state.tool_namespaces.absent": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "absent",
+        "constant_names": [],
+        "mcp_container": "absent",
+        "payload_container": "absent",
+        "reserved_extra_key": false,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "not_applicable",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "The replacement field does not yet exist.",
+      "evidence_refs": [
+        "evidence.commit.63fe5a6b"
+      ],
+      "id": "state.tool_namespaces.absent",
+      "key_ref": "key.turn_metadata.tool_namespaces_info",
+      "status": "absent",
+      "value_schema": null
+    },
+    "state.tool_namespaces.active_opt_in": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "omitted",
+        "constant_names": [
+          "TOOL_NAMESPACES_INFO_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "replacement_code_mode_name_field_present": true,
+        "reserved_extra_key": true,
+        "successor_mapping_present": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          },
+          {
+            "operator": "eq",
+            "path": "config.features.tool_registry.turn_metadata_includes_tool_info",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "omitted",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Responses Lite may emit authoritative namespace/function metadata when explicitly enabled; compatibility and MCP projections omit it.",
+      "evidence_refs": [
+        "evidence.commit.2b1811e5",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.tool_namespaces.active_opt_in",
+      "key_ref": "key.turn_metadata.tool_namespaces_info",
+      "status": "active",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:TurnToolNamespaceInfo"
+        },
+        "type": "object"
+      }
+    }
+  },
+  "timeline": [
+    {
+      "commit_sha": "63fe5a6b71d45dfff24a6a1e5da0699e054f145d",
+      "committed_at": "2026-07-25T00:10:48Z",
+      "ordinal": 0,
+      "state_ref": "state.tool_namespaces.absent",
+      "version_ref": "version.2026-07-25.pre_code_mode_metadata"
+    },
+    {
+      "commit_sha": "25b6fc9bbc49bbec12e8d38ceee550fc07cbc60d",
+      "committed_at": "2026-07-25T01:05:33Z",
+      "ordinal": 1,
+      "state_ref": "state.tool_namespaces.absent",
+      "version_ref": "version.2026-07-25.code_mode_metadata_introduced"
+    },
+    {
+      "commit_sha": "5c36e869c1a7bdc5ec4c1325d02e60dfbadcc9b8",
+      "committed_at": "2026-07-25T16:12:42Z",
+      "ordinal": 2,
+      "state_ref": "state.tool_namespaces.absent",
+      "version_ref": "version.2026-07-25.compatibility_header_bounded"
+    },
+    {
+      "commit_sha": "4ee41929eaf4fc1e5662c9b4befd05230688ca62",
+      "committed_at": "2026-08-07T06:29:09Z",
+      "ordinal": 3,
+      "state_ref": "state.tool_namespaces.absent",
+      "version_ref": "version.2026-08-07.include_tool_namespaces_info_setting"
+    },
+    {
+      "commit_sha": "c87a218bd3e7ee0a0181109b3ff7bbc2156de13e",
+      "committed_at": "2026-08-07T07:35:37Z",
+      "ordinal": 4,
+      "state_ref": "state.tool_namespaces.absent",
+      "version_ref": "version.2026-08-07.include_tool_metadata_setting"
+    },
+    {
+      "commit_sha": "248d8c0e2297ef0851832f593f8340b465044726",
+      "committed_at": "2026-08-07T17:44:05Z",
+      "ordinal": 5,
+      "state_ref": "state.tool_namespaces.absent",
+      "version_ref": "version.2026-08-07.turn_metadata_includes_tool_info_setting"
+    },
+    {
+      "commit_sha": "2b1811e56201ba4c7a0b26fd1cf07a077d42d32f",
+      "committed_at": "2026-08-07T19:32:15Z",
+      "ordinal": 6,
+      "state_ref": "state.tool_namespaces.active_opt_in",
+      "version_ref": "version.2026-08-07.tool_namespaces_info_introduced"
+    },
+    {
+      "commit_sha": "8e4b10446eed7bafb39d8a469f9be25a41f4864f",
+      "committed_at": "2026-08-07T20:26:08Z",
+      "ordinal": 7,
+      "state_ref": "state.tool_namespaces.active_opt_in",
+      "version_ref": "version.2026-08-07.code_mode_metadata_removed"
+    },
+    {
+      "commit_sha": "0d654e653614b0f99b8da3e4a74aa2558ee61752",
+      "committed_at": "2026-08-26T22:37:59Z",
+      "ordinal": 8,
+      "state_ref": "state.tool_namespaces.active_opt_in",
+      "version_ref": "version.2026-08-26.core_window_fork_keys"
+    },
+    {
+      "commit_sha": "ddf04ad26789d040f9ef6a96736f76602e35a6cc",
+      "committed_at": "2026-09-05T05:31:48Z",
+      "ordinal": 9,
+      "state_ref": "state.tool_namespaces.active_opt_in",
+      "version_ref": "version.2026-09-05.current_main"
+    }
+  ],
+  "transitions": [
+    {
+      "at_version_ref": "version.2026-08-07.tool_namespaces_info_introduced",
+      "classification": "replacement_introduced",
+      "description": "Add richer opt-in namespace/function inventory including per-function code_mode_name.",
+      "from_state_ref": "state.tool_namespaces.absent",
+      "id": "transition.tool_namespaces.introduced",
+      "key_ref": "key.turn_metadata.tool_namespaces_info",
+      "to_state_ref": "state.tool_namespaces.active_opt_in"
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "catalog_sha256": "12f3521d0584123e3c9244c9cb0359eff613442db00b0bfeea11c93de1646aed",
+  "catalog_version": "1.0.0",
+  "format": "codex-wire-audit-metadata-history-key/v1",
+  "key": {
+    "current_state_ref": "state.fork_ordinal.core_owned",
+    "description": "Formerly usable as configured extra metadata; now a core-owned typed lineage field while legacy input is accepted then filtered.",
+    "id": "key.turn_metadata.forked_from_ordinal_exclusive",
+    "kind": "turn_metadata_key",
+    "namespace": "codex_turn_metadata",
+    "replacement_key_refs": [],
+    "source_candidates": [
+      "codex-rs/core/src/responses_metadata.rs"
+    ],
+    "state_refs": [
+      "state.fork_ordinal.legacy_extra",
+      "state.fork_ordinal.core_owned"
+    ],
+    "wire_name": "forked_from_ordinal_exclusive"
+  },
+  "states": {
+    "state.fork_ordinal.core_owned": {
+      "assertions": {
+        "backward_compatible_reserved": true,
+        "compatibility_header_container": "emitted_conditionally",
+        "constant_names": [
+          "FORKED_FROM_ORDINAL_EXCLUSIVE_KEY"
+        ],
+        "mcp_container": "emitted_conditionally",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "emitted_conditionally",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Core emits a typed fork cutoff. Existing configured values remain accepted but are filtered before construction.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.fork_ordinal.core_owned",
+      "key_ref": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "status": "core_owned_legacy_input_filtered",
+      "value_schema": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "state.fork_ordinal.legacy_extra": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "constant_names": [],
+        "payload_container": "flattened_extra_string",
+        "reserved_extra_key": false
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "emitted_conditionally",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Before core ownership, this valid extra-metadata name could be flattened as a caller-supplied string.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65"
+      ],
+      "id": "state.fork_ordinal.legacy_extra",
+      "key_ref": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "status": "legacy_input",
+      "value_schema": {
+        "type": "string"
+      }
+    }
+  },
+  "timeline": [
+    {
+      "commit_sha": "63fe5a6b71d45dfff24a6a1e5da0699e054f145d",
+      "committed_at": "2026-07-25T00:10:48Z",
+      "ordinal": 0,
+      "state_ref": "state.fork_ordinal.legacy_extra",
+      "version_ref": "version.2026-07-25.pre_code_mode_metadata"
+    },
+    {
+      "commit_sha": "25b6fc9bbc49bbec12e8d38ceee550fc07cbc60d",
+      "committed_at": "2026-07-25T01:05:33Z",
+      "ordinal": 1,
+      "state_ref": "state.fork_ordinal.legacy_extra",
+      "version_ref": "version.2026-07-25.code_mode_metadata_introduced"
+    },
+    {
+      "commit_sha": "5c36e869c1a7bdc5ec4c1325d02e60dfbadcc9b8",
+      "committed_at": "2026-07-25T16:12:42Z",
+      "ordinal": 2,
+      "state_ref": "state.fork_ordinal.legacy_extra",
+      "version_ref": "version.2026-07-25.compatibility_header_bounded"
+    },
+    {
+      "commit_sha": "4ee41929eaf4fc1e5662c9b4befd05230688ca62",
+      "committed_at": "2026-08-07T06:29:09Z",
+      "ordinal": 3,
+      "state_ref": "state.fork_ordinal.legacy_extra",
+      "version_ref": "version.2026-08-07.include_tool_namespaces_info_setting"
+    },
+    {
+      "commit_sha": "c87a218bd3e7ee0a0181109b3ff7bbc2156de13e",
+      "committed_at": "2026-08-07T07:35:37Z",
+      "ordinal": 4,
+      "state_ref": "state.fork_ordinal.legacy_extra",
+      "version_ref": "version.2026-08-07.include_tool_metadata_setting"
+    },
+    {
+      "commit_sha": "248d8c0e2297ef0851832f593f8340b465044726",
+      "committed_at": "2026-08-07T17:44:05Z",
+      "ordinal": 5,
+      "state_ref": "state.fork_ordinal.legacy_extra",
+      "version_ref": "version.2026-08-07.turn_metadata_includes_tool_info_setting"
+    },
+    {
+      "commit_sha": "2b1811e56201ba4c7a0b26fd1cf07a077d42d32f",
+      "committed_at": "2026-08-07T19:32:15Z",
+      "ordinal": 6,
+      "state_ref": "state.fork_ordinal.legacy_extra",
+      "version_ref": "version.2026-08-07.tool_namespaces_info_introduced"
+    },
+    {
+      "commit_sha": "8e4b10446eed7bafb39d8a469f9be25a41f4864f",
+      "committed_at": "2026-08-07T20:26:08Z",
+      "ordinal": 7,
+      "state_ref": "state.fork_ordinal.legacy_extra",
+      "version_ref": "version.2026-08-07.code_mode_metadata_removed"
+    },
+    {
+      "commit_sha": "0d654e653614b0f99b8da3e4a74aa2558ee61752",
+      "committed_at": "2026-08-26T22:37:59Z",
+      "ordinal": 8,
+      "state_ref": "state.fork_ordinal.core_owned",
+      "version_ref": "version.2026-08-26.core_window_fork_keys"
+    },
+    {
+      "commit_sha": "ddf04ad26789d040f9ef6a96736f76602e35a6cc",
+      "committed_at": "2026-09-05T05:31:48Z",
+      "ordinal": 9,
+      "state_ref": "state.fork_ordinal.core_owned",
+      "version_ref": "version.2026-09-05.current_main"
+    }
+  ],
+  "transitions": [
+    {
+      "at_version_ref": "version.2026-08-26.core_window_fork_keys",
+      "classification": "core_ownership_transition",
+      "description": "Convert the former configurable extra name into a typed core-owned lineage field while accepting then filtering legacy input.",
+      "from_state_ref": "state.fork_ordinal.legacy_extra",
+      "id": "transition.fork_ordinal.core_owned",
+      "key_ref": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "to_state_ref": "state.fork_ordinal.core_owned"
+    }
+  ]
+}

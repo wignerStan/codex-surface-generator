@@ -1,0 +1,44 @@
+{
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:client_metadata:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": {
+    "type": "string"
+  },
+  "description": "Every top-level value is a string; x-codex-turn-metadata contains JSON text.",
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "thread_id": {
+      "type": "string"
+    },
+    "turn_id": {
+      "type": "string"
+    },
+    "x-codex-installation-id": {
+      "type": "string"
+    },
+    "x-codex-turn-metadata": {
+      "contentMediaType": "application/json",
+      "contentSchema": {
+        "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:codex_turn_metadata_full:1.0.0"
+      },
+      "type": "string"
+    },
+    "x-codex-window-id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_id",
+    "thread_id",
+    "x-codex-installation-id",
+    "x-codex-window-id"
+  ],
+  "title": "Responses client_metadata",
+  "type": "object",
+  "x-codex-wire-audit-entity-refs": [],
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-validation-coverage": "structural"
+}

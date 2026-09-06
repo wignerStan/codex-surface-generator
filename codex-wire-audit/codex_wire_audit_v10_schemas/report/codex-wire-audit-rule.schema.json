@@ -1,0 +1,45 @@
+{
+  "$id": "urn:codex-wire-audit:schema:rule:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "from": {},
+    "id": {
+      "pattern": "^rule\\.",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "transformation",
+        "emission_gate",
+        "flatten",
+        "projection",
+        "relationship"
+      ]
+    },
+    "source": {},
+    "source_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "target": {},
+    "to": {},
+    "when": {
+      "$ref": "urn:codex-wire-audit:schema:predicate:1.0.0"
+    }
+  },
+  "required": [
+    "id",
+    "kind"
+  ],
+  "title": "Codex wire audit rule",
+  "type": "object"
+}

@@ -1,0 +1,362 @@
+{
+  "deltas": {
+    "largest_function_line_reduction_percent": 88.2,
+    "largest_module_line_reduction_percent": 89.8,
+    "v10_functions_over_200": 16,
+    "v10_modules_over_600": 3,
+    "v11_functions_over_200": 0,
+    "v11_modules_over_600": 0
+  },
+  "guardrails": {
+    "allow_internal_import_cycles": false,
+    "max_active_function_lines": 200,
+    "max_active_module_lines": 600,
+    "passes": {
+      "function_size": true,
+      "import_cycles": true,
+      "module_size": true
+    }
+  },
+  "maintainability_assets": {
+    "registered_optional_sources": 60,
+    "registered_required_sources": 16,
+    "registered_source_specs": 76,
+    "regression_test_methods": 101,
+    "strict_schema_templates": 7
+  },
+  "metrics_schema_version": "1.0.0",
+  "scope": {
+    "v10": "three frozen generator modules used as the structural baseline",
+    "v11": "active maintainability package and thin v11 entrypoint; frozen v10 compatibility modules excluded"
+  },
+  "v10_structural_baseline": {
+    "function_count": 212,
+    "functions_over_200_lines": [
+      {
+        "file": "_codex_wire_audit_base_v10.py",
+        "line_count": 1254,
+        "qualified_name": "build_endpoint_protocol_catalog",
+        "start_line": 2491
+      },
+      {
+        "file": "_codex_wire_audit_base_v10.py",
+        "line_count": 752,
+        "qualified_name": "build_report",
+        "start_line": 3747
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 687,
+        "qualified_name": "protocol_schema_documents",
+        "start_line": 2726
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 290,
+        "qualified_name": "build_config_protocol",
+        "start_line": 839
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 271,
+        "qualified_name": "enhance",
+        "start_line": 2752
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 256,
+        "qualified_name": "append_app_server_surface",
+        "start_line": 2494
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 243,
+        "qualified_name": "build_metadata_protocol",
+        "start_line": 1856
+      },
+      {
+        "file": "_codex_wire_audit_base_v10.py",
+        "line_count": 242,
+        "qualified_name": "build_model_facing_transport_matrix",
+        "start_line": 2247
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 240,
+        "qualified_name": "schema_documents",
+        "start_line": 2341
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 240,
+        "qualified_name": "validate_report",
+        "start_line": 2099
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 235,
+        "qualified_name": "collect_setting_entities",
+        "start_line": 1316
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 220,
+        "qualified_name": "build_mcp_protocol",
+        "start_line": 1199
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 217,
+        "qualified_name": "build_responses_protocol",
+        "start_line": 1480
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 210,
+        "qualified_name": "main",
+        "start_line": 3478
+      },
+      {
+        "file": "_codex_wire_audit_base_v10.py",
+        "line_count": 203,
+        "qualified_name": "build_response_metadata_inventory",
+        "start_line": 1406
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 201,
+        "qualified_name": "fixture_documents",
+        "start_line": 3445
+      }
+    ],
+    "internal_import_cycles": [],
+    "internal_import_edge_count": 0,
+    "largest_function": {
+      "file": "_codex_wire_audit_base_v10.py",
+      "line_count": 1254,
+      "qualified_name": "build_endpoint_protocol_catalog",
+      "start_line": 2491
+    },
+    "largest_functions": [
+      {
+        "file": "_codex_wire_audit_base_v10.py",
+        "line_count": 1254,
+        "qualified_name": "build_endpoint_protocol_catalog",
+        "start_line": 2491
+      },
+      {
+        "file": "_codex_wire_audit_base_v10.py",
+        "line_count": 752,
+        "qualified_name": "build_report",
+        "start_line": 3747
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 687,
+        "qualified_name": "protocol_schema_documents",
+        "start_line": 2726
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 290,
+        "qualified_name": "build_config_protocol",
+        "start_line": 839
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 271,
+        "qualified_name": "enhance",
+        "start_line": 2752
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 256,
+        "qualified_name": "append_app_server_surface",
+        "start_line": 2494
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 243,
+        "qualified_name": "build_metadata_protocol",
+        "start_line": 1856
+      },
+      {
+        "file": "_codex_wire_audit_base_v10.py",
+        "line_count": 242,
+        "qualified_name": "build_model_facing_transport_matrix",
+        "start_line": 2247
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 240,
+        "qualified_name": "schema_documents",
+        "start_line": 2341
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 240,
+        "qualified_name": "validate_report",
+        "start_line": 2099
+      }
+    ],
+    "largest_module": {
+      "file": "_codex_wire_audit_base_v10.py",
+      "line_count": 5016
+    },
+    "largest_modules": [
+      {
+        "file": "_codex_wire_audit_base_v10.py",
+        "line_count": 5016
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 3960
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 3695
+      }
+    ],
+    "module_count": 3,
+    "modules_over_600_lines": [
+      {
+        "file": "_codex_wire_audit_base_v10.py",
+        "line_count": 5016
+      },
+      {
+        "file": "_codex_wire_contract_v10.py",
+        "line_count": 3960
+      },
+      {
+        "file": "codex_wire_audit_v10.py",
+        "line_count": 3695
+      }
+    ],
+    "physical_line_count": 12671,
+    "source_sha256": "b4bc7c40be2c36305bee7c66f5dc9fdd47706ac74c75aa9b0300e6d1ec158c3a"
+  },
+  "v11_active_layer": {
+    "function_count": 142,
+    "functions_over_200_lines": [],
+    "internal_import_cycles": [],
+    "internal_import_edge_count": 65,
+    "largest_function": {
+      "file": "codex_wire_audit/semantic_diff.py",
+      "line_count": 148,
+      "qualified_name": "compare",
+      "start_line": 67
+    },
+    "largest_functions": [
+      {
+        "file": "codex_wire_audit/semantic_diff.py",
+        "line_count": 148,
+        "qualified_name": "compare",
+        "start_line": 67
+      },
+      {
+        "file": "codex_wire_audit/sources/git.py",
+        "line_count": 145,
+        "qualified_name": "load_repo_snapshot",
+        "start_line": 22
+      },
+      {
+        "file": "codex_wire_audit/orchestrator.py",
+        "line_count": 141,
+        "qualified_name": "generate_report",
+        "start_line": 352
+      },
+      {
+        "file": "codex_wire_audit/evolution.py",
+        "line_count": 126,
+        "qualified_name": "apply_turn_metadata_overlay",
+        "start_line": 60
+      },
+      {
+        "file": "codex_wire_audit/cli.py",
+        "line_count": 92,
+        "qualified_name": "main",
+        "start_line": 303
+      },
+      {
+        "file": "codex_wire_audit/sources/github.py",
+        "line_count": 86,
+        "qualified_name": "load_github_snapshot",
+        "start_line": 14
+      },
+      {
+        "file": "codex_wire_audit/rust_syntax.py",
+        "line_count": 84,
+        "qualified_name": "_top_level_slices",
+        "start_line": 208
+      },
+      {
+        "file": "codex_wire_audit/rust_syntax.py",
+        "line_count": 84,
+        "qualified_name": "find_matching_delimiter",
+        "start_line": 89
+      },
+      {
+        "file": "codex_wire_audit/sources/archive.py",
+        "line_count": 83,
+        "qualified_name": "safe_extract_archive",
+        "start_line": 66
+      },
+      {
+        "file": "codex_wire_audit/orchestrator.py",
+        "line_count": 77,
+        "qualified_name": "_annotate_qualified_schemas",
+        "start_line": 193
+      }
+    ],
+    "largest_module": {
+      "file": "codex_wire_audit/extractors/turn_metadata.py",
+      "line_count": 513
+    },
+    "largest_modules": [
+      {
+        "file": "codex_wire_audit/extractors/turn_metadata.py",
+        "line_count": 513
+      },
+      {
+        "file": "codex_wire_audit/orchestrator.py",
+        "line_count": 504
+      },
+      {
+        "file": "codex_wire_audit/cli.py",
+        "line_count": 402
+      },
+      {
+        "file": "codex_wire_audit/rust_syntax.py",
+        "line_count": 341
+      },
+      {
+        "file": "codex_wire_audit/evolution.py",
+        "line_count": 280
+      },
+      {
+        "file": "codex_wire_audit/models.py",
+        "line_count": 240
+      },
+      {
+        "file": "codex_wire_audit/semantic_diff.py",
+        "line_count": 214
+      },
+      {
+        "file": "codex_wire_audit/schema_identity.py",
+        "line_count": 198
+      },
+      {
+        "file": "codex_wire_audit/sources/archive.py",
+        "line_count": 186
+      },
+      {
+        "file": "codex_wire_audit/source_registry.py",
+        "line_count": 174
+      }
+    ],
+    "module_count": 25,
+    "modules_over_600_lines": [],
+    "physical_line_count": 4109,
+    "source_sha256": "84265a4d14bdff28d20d832ef2424c90b36e851ea1c96a85137ff740cbf3fffd"
+  }
+}

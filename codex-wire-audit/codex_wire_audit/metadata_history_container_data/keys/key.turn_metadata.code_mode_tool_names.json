@@ -1,0 +1,341 @@
+{
+  "catalog_sha256": "12f3521d0584123e3c9244c9cb0359eff613442db00b0bfeea11c93de1646aed",
+  "catalog_version": "1.0.0",
+  "format": "codex-wire-audit-metadata-history-key/v1",
+  "key": {
+    "current_state_ref": "state.code_mode.removed_reserved",
+    "description": "Historical Responses Lite tool-name inventory; now removed from the wire but kept reserved.",
+    "id": "key.turn_metadata.code_mode_tool_names",
+    "kind": "turn_metadata_key",
+    "namespace": "codex_turn_metadata",
+    "replacement_key_refs": [
+      "key.turn_metadata.tool_namespaces_info"
+    ],
+    "source_candidates": [
+      "codex-rs/core/src/responses_metadata.rs",
+      "codex-rs/core/src/turn_metadata.rs",
+      "codex-rs/core/src/tools/tool_namespaces_info.rs",
+      "codex-rs/core/src/tools/spec_plan.rs",
+      "codex-rs/core/src/tools/router.rs"
+    ],
+    "state_refs": [
+      "state.code_mode.absent",
+      "state.code_mode.active_unbounded_header",
+      "state.code_mode.active_bounded_header",
+      "state.code_mode.active_with_successor",
+      "state.code_mode.removed_reserved"
+    ],
+    "wire_name": "code_mode_tool_names"
+  },
+  "states": {
+    "state.code_mode.absent": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "absent",
+        "constant_names": [],
+        "mcp_container": "absent",
+        "payload_container": "absent",
+        "reserved_extra_key": false,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "not_applicable",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "The key is not defined as Responses turn metadata.",
+      "evidence_refs": [
+        "evidence.commit.63fe5a6b"
+      ],
+      "id": "state.code_mode.absent",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "absent",
+      "value_schema": null
+    },
+    "state.code_mode.active_bounded_header": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "omitted",
+        "constant_names": [
+          "CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "omitted",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "The canonical nested client-metadata payload keeps the map, but compatibility-header JSON omits it to remain bounded.",
+      "evidence_refs": [
+        "evidence.commit.5c36e869"
+      ],
+      "id": "state.code_mode.active_bounded_header",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "active_bounded",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:ToolName"
+        },
+        "type": "object"
+      }
+    },
+    "state.code_mode.active_unbounded_header": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "emitted_conditionally",
+        "constant_names": [
+          "CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Responses Lite emits the map inside nested turn metadata; the direct compatibility header still mirrors it.",
+      "evidence_refs": [
+        "evidence.commit.25b6fc9b"
+      ],
+      "id": "state.code_mode.active_unbounded_header",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "active",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:ToolName"
+        },
+        "type": "object"
+      }
+    },
+    "state.code_mode.active_with_successor": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "omitted",
+        "constant_names": [
+          "CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "replacement_code_mode_name_field_present": true,
+        "reserved_extra_key": true,
+        "successor_mapping_present": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "omitted",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "The legacy map coexists briefly with the richer opt-in tool_namespaces_info replacement.",
+      "evidence_refs": [
+        "evidence.commit.2b1811e5"
+      ],
+      "id": "state.code_mode.active_with_successor",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "active_with_successor",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:ToolName"
+        },
+        "type": "object"
+      }
+    },
+    "state.code_mode.removed_reserved": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "absent",
+        "constant_names": [
+          "LEGACY_CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "internal_identifier_present": true,
+        "mcp_container": "absent",
+        "payload_container": "absent",
+        "replacement_code_mode_name_field_present": true,
+        "reserved_extra_key": true,
+        "successor_mapping_present": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "internal_only",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "The wire field is removed. Its literal remains reserved so caller extras cannot reintroduce the unbounded inventory.",
+      "evidence_refs": [
+        "evidence.commit.8e4b1044",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.code_mode.removed_reserved",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "removed_reserved",
+      "value_schema": null
+    }
+  },
+  "timeline": [
+    {
+      "commit_sha": "63fe5a6b71d45dfff24a6a1e5da0699e054f145d",
+      "committed_at": "2026-07-25T00:10:48Z",
+      "ordinal": 0,
+      "state_ref": "state.code_mode.absent",
+      "version_ref": "version.2026-07-25.pre_code_mode_metadata"
+    },
+    {
+      "commit_sha": "25b6fc9bbc49bbec12e8d38ceee550fc07cbc60d",
+      "committed_at": "2026-07-25T01:05:33Z",
+      "ordinal": 1,
+      "state_ref": "state.code_mode.active_unbounded_header",
+      "version_ref": "version.2026-07-25.code_mode_metadata_introduced"
+    },
+    {
+      "commit_sha": "5c36e869c1a7bdc5ec4c1325d02e60dfbadcc9b8",
+      "committed_at": "2026-07-25T16:12:42Z",
+      "ordinal": 2,
+      "state_ref": "state.code_mode.active_bounded_header",
+      "version_ref": "version.2026-07-25.compatibility_header_bounded"
+    },
+    {
+      "commit_sha": "4ee41929eaf4fc1e5662c9b4befd05230688ca62",
+      "committed_at": "2026-08-07T06:29:09Z",
+      "ordinal": 3,
+      "state_ref": "state.code_mode.active_bounded_header",
+      "version_ref": "version.2026-08-07.include_tool_namespaces_info_setting"
+    },
+    {
+      "commit_sha": "c87a218bd3e7ee0a0181109b3ff7bbc2156de13e",
+      "committed_at": "2026-08-07T07:35:37Z",
+      "ordinal": 4,
+      "state_ref": "state.code_mode.active_bounded_header",
+      "version_ref": "version.2026-08-07.include_tool_metadata_setting"
+    },
+    {
+      "commit_sha": "248d8c0e2297ef0851832f593f8340b465044726",
+      "committed_at": "2026-08-07T17:44:05Z",
+      "ordinal": 5,
+      "state_ref": "state.code_mode.active_bounded_header",
+      "version_ref": "version.2026-08-07.turn_metadata_includes_tool_info_setting"
+    },
+    {
+      "commit_sha": "2b1811e56201ba4c7a0b26fd1cf07a077d42d32f",
+      "committed_at": "2026-08-07T19:32:15Z",
+      "ordinal": 6,
+      "state_ref": "state.code_mode.active_with_successor",
+      "version_ref": "version.2026-08-07.tool_namespaces_info_introduced"
+    },
+    {
+      "commit_sha": "8e4b10446eed7bafb39d8a469f9be25a41f4864f",
+      "committed_at": "2026-08-07T20:26:08Z",
+      "ordinal": 7,
+      "state_ref": "state.code_mode.removed_reserved",
+      "version_ref": "version.2026-08-07.code_mode_metadata_removed"
+    },
+    {
+      "commit_sha": "0d654e653614b0f99b8da3e4a74aa2558ee61752",
+      "committed_at": "2026-08-26T22:37:59Z",
+      "ordinal": 8,
+      "state_ref": "state.code_mode.removed_reserved",
+      "version_ref": "version.2026-08-26.core_window_fork_keys"
+    },
+    {
+      "commit_sha": "ddf04ad26789d040f9ef6a96736f76602e35a6cc",
+      "committed_at": "2026-09-05T05:31:48Z",
+      "ordinal": 9,
+      "state_ref": "state.code_mode.removed_reserved",
+      "version_ref": "version.2026-09-05.current_main"
+    }
+  ],
+  "transitions": [
+    {
+      "at_version_ref": "version.2026-07-25.code_mode_metadata_introduced",
+      "classification": "introduced",
+      "description": "Add code_mode_tool_names to Responses Lite nested turn metadata and reserve the key.",
+      "from_state_ref": "state.code_mode.absent",
+      "id": "transition.code_mode.introduced",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.active_unbounded_header"
+    },
+    {
+      "at_version_ref": "version.2026-07-25.compatibility_header_bounded",
+      "classification": "projection_bounded",
+      "description": "Omit the unbounded map from direct compatibility-header JSON.",
+      "from_state_ref": "state.code_mode.active_unbounded_header",
+      "id": "transition.code_mode.compatibility_bounded",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.active_bounded_header"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.tool_namespaces_info_introduced",
+      "classification": "replacement_introduced",
+      "description": "Mark the old map as coexisting with its richer successor.",
+      "from_state_ref": "state.code_mode.active_bounded_header",
+      "id": "transition.code_mode.successor",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.active_with_successor"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.code_mode_metadata_removed",
+      "classification": "removed_reserved",
+      "description": "Remove the wire field while retaining a legacy reservation against caller-provided extras.",
+      "from_state_ref": "state.code_mode.active_with_successor",
+      "id": "transition.code_mode.removed_reserved",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.removed_reserved"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schemas": {
+    "codex-wire-audit-diagnostic.schema.json": "urn:codex-wire-audit:schema:diagnostic:1.0.0",
+    "codex-wire-audit-edge.schema.json": "urn:codex-wire-audit:schema:edge:1.0.0",
+    "codex-wire-audit-predicate.schema.json": "urn:codex-wire-audit:schema:predicate:1.0.0",
+    "codex-wire-audit-report.schema.json": "urn:codex-wire-audit:schema:report:10.0.0",
+    "codex-wire-audit-rule.schema.json": "urn:codex-wire-audit:schema:rule:1.0.0",
+    "codex-wire-audit-source.schema.json": "urn:codex-wire-audit:schema:source:1.0.0",
+    "codex-wire-audit-wire-field.schema.json": "urn:codex-wire-audit:schema:wire-field:1.0.0"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "auth": "oauth",
+  "bearer_token_env_var": "EXAMPLE_MCP_TOKEN",
+  "enabled": true,
+  "environment_id": "local",
+  "url": "https://example.invalid/mcp"
+}

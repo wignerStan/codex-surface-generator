@@ -1,0 +1,65 @@
+{
+  "$id": "https://schemas.codex-wire-audit.invalid/v11/diagnostic.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "category": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "code": {
+      "pattern": "^[A-Z][A-Z0-9_]+$",
+      "type": "string"
+    },
+    "details": {
+      "type": "object"
+    },
+    "entity_id": {
+      "type": "string"
+    },
+    "extractor_id": {
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^diag\\.",
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "recoverable": {
+      "type": "boolean"
+    },
+    "report_pointer": {
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "error",
+        "warning",
+        "info"
+      ]
+    },
+    "source_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "strict_failure": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "code",
+    "severity",
+    "category",
+    "message",
+    "recoverable",
+    "strict_failure",
+    "details"
+  ],
+  "title": "Codex wire audit structured diagnostic",
+  "type": "object"
+}

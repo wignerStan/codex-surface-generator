@@ -1,0 +1,1279 @@
+{
+  "counts": {
+    "base": 16,
+    "extra": 43,
+    "optional": 69,
+    "required": 16,
+    "surface": 26,
+    "total": 85
+  },
+  "schema_version": "1.0.0",
+  "sources": {
+    "source_spec.base.account": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.account",
+      "legacy_key": "account",
+      "path_candidates": [
+        "codex-rs/backend-client/src/client.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.attestation": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.attestation",
+      "legacy_key": "attestation",
+      "path_candidates": [
+        "codex-rs/core/src/attestation.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.auth": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.auth",
+      "legacy_key": "auth",
+      "path_candidates": [
+        "codex-rs/model-provider/src/bearer_auth_provider.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.common": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.common",
+      "legacy_key": "common",
+      "path_candidates": [
+        "codex-rs/codex-api/src/common.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.compact": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.compact",
+      "legacy_key": "compact",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/compact.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.core": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.core",
+      "legacy_key": "core",
+      "path_candidates": [
+        "codex-rs/core/src/client.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.default_client": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.default_client",
+      "legacy_key": "default_client",
+      "path_candidates": [
+        "codex-rs/login/src/auth/default_client.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.headers": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.headers",
+      "legacy_key": "headers",
+      "path_candidates": [
+        "codex-rs/codex-api/src/requests/headers.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.http": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.http",
+      "legacy_key": "http",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/responses.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.inference": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.inference",
+      "legacy_key": "inference",
+      "path_candidates": [
+        "codex-rs/rollout-trace/src/inference.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.metadata": {
+      "expected_symbols": [
+        "CodexResponsesMetadata",
+        "CodexTurnMetadataPayload",
+        "turn_metadata_payload"
+      ],
+      "extractor_ids": [
+        "extractor.turn_metadata"
+      ],
+      "group": "base",
+      "id": "source_spec.base.metadata",
+      "legacy_key": "metadata",
+      "path_candidates": [
+        "codex-rs/core/src/responses_metadata.rs",
+        "codex-rs/core/src/responses/metadata.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base",
+        "responses_metadata",
+        "turn_metadata_semantics"
+      ]
+    },
+    "source_spec.base.provider": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.provider",
+      "legacy_key": "provider",
+      "path_candidates": [
+        "codex-rs/codex-api/src/provider.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.provider_info": {
+      "expected_symbols": [],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "base",
+      "id": "source_spec.base.provider_info",
+      "legacy_key": "provider_info",
+      "path_candidates": [
+        "codex-rs/model-provider-info/src/lib.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base",
+        "context_management_routing"
+      ]
+    },
+    "source_spec.base.request": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.request",
+      "legacy_key": "request",
+      "path_candidates": [
+        "codex-rs/http-client/src/request.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.response_sse": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.response_sse",
+      "legacy_key": "response_sse",
+      "path_candidates": [
+        "codex-rs/codex-api/src/sse/responses.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.base.ws": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "base",
+      "id": "source_spec.base.ws",
+      "legacy_key": "ws",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/responses_websocket.rs"
+      ],
+      "required": true,
+      "roles": [
+        "legacy_base"
+      ]
+    },
+    "source_spec.extra.app_server_account": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.app_server_account",
+      "legacy_key": "app_server_account",
+      "path_candidates": [
+        "codex-rs/app-server-protocol/src/protocol/v2/account.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.app_server_common": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.app_server_common",
+      "legacy_key": "app_server_common",
+      "path_candidates": [
+        "codex-rs/app-server-protocol/src/protocol/common.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.app_server_rate_limit_resets": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.app_server_rate_limit_resets",
+      "legacy_key": "app_server_rate_limit_resets",
+      "path_candidates": [
+        "codex-rs/app-server/src/request_processors/account_processor/rate_limit_resets.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.app_server_readme": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.app_server_readme",
+      "legacy_key": "app_server_readme",
+      "path_candidates": [
+        "codex-rs/app-server/README.md"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.app_server_realtime": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.app_server_realtime",
+      "legacy_key": "app_server_realtime",
+      "path_candidates": [
+        "codex-rs/app-server-protocol/src/protocol/v2/realtime.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.app_server_turn": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.app_server_turn",
+      "legacy_key": "app_server_turn",
+      "path_candidates": [
+        "codex-rs/app-server-protocol/src/protocol/v2/turn.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.compact_token_budget": {
+      "expected_symbols": [
+        "skips model/server summarization",
+        "start_new_context_window"
+      ],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.compact_token_budget",
+      "legacy_key": "compact_token_budget",
+      "path_candidates": [
+        "codex-rs/core/src/compact_token_budget.rs"
+      ],
+      "required": false,
+      "roles": [
+        "context_management"
+      ]
+    },
+    "source_spec.extra.config_toml": {
+      "expected_symbols": [],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.config_toml",
+      "legacy_key": "config_toml",
+      "path_candidates": [
+        "codex-rs/config/src/config_toml.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra",
+        "context_management_support"
+      ]
+    },
+    "source_spec.extra.context_management_activation": {
+      "expected_symbols": [
+        "apply_experimental_context",
+        "supports_experimental_context"
+      ],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.context_management_activation",
+      "legacy_key": "context_management_activation",
+      "path_candidates": [
+        "codex-rs/core/src/session/token_budget.rs"
+      ],
+      "required": false,
+      "roles": [
+        "context_management"
+      ]
+    },
+    "source_spec.extra.context_management_tests": {
+      "expected_symbols": [
+        "experimental_context_requires",
+        "supports_experimental_context"
+      ],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.context_management_tests",
+      "legacy_key": "context_management_tests",
+      "path_candidates": [
+        "codex-rs/core/tests/suite/token_budget.rs"
+      ],
+      "required": false,
+      "roles": [
+        "context_management"
+      ]
+    },
+    "source_spec.extra.core_config": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.core_config",
+      "legacy_key": "core_config",
+      "path_candidates": [
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.feature_configs": {
+      "expected_symbols": [],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.feature_configs",
+      "legacy_key": "feature_configs",
+      "path_candidates": [
+        "codex-rs/features/src/feature_configs.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra",
+        "context_management_support"
+      ]
+    },
+    "source_spec.extra.feature_registry": {
+      "expected_symbols": [],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.feature_registry",
+      "legacy_key": "feature_registry",
+      "path_candidates": [
+        "codex-rs/features/src/lib.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra",
+        "context_management_support"
+      ]
+    },
+    "source_spec.extra.history_notes_backend": {
+      "expected_symbols": [
+        "HistoryNotesBackend",
+        "x-openai-tool-output-truncation-policy"
+      ],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.history_notes_backend",
+      "legacy_key": "history_notes_backend",
+      "path_candidates": [
+        "codex-rs/ext/history-notes/src/backend.rs"
+      ],
+      "required": false,
+      "roles": [
+        "context_management"
+      ]
+    },
+    "source_spec.extra.history_notes_extension": {
+      "expected_symbols": [
+        "alpha/notes/v2/thread_hint",
+        "use_history_notes_extension"
+      ],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.history_notes_extension",
+      "legacy_key": "history_notes_extension",
+      "path_candidates": [
+        "codex-rs/ext/history-notes/src/extension.rs"
+      ],
+      "required": false,
+      "roles": [
+        "context_management"
+      ]
+    },
+    "source_spec.extra.history_notes_tests": {
+      "expected_symbols": [
+        "Recent notes (up to 5, most-recent first)",
+        "thread_hint"
+      ],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.history_notes_tests",
+      "legacy_key": "history_notes_tests",
+      "path_candidates": [
+        "codex-rs/ext/history-notes/tests/history_notes_extension.rs"
+      ],
+      "required": false,
+      "roles": [
+        "context_management"
+      ]
+    },
+    "source_spec.extra.history_notes_tools": {
+      "expected_symbols": [
+        "HistoryNotesAction",
+        "alpha/history/v2/list_windows",
+        "alpha/notes/v2/write_file"
+      ],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.history_notes_tools",
+      "legacy_key": "history_notes_tools",
+      "path_candidates": [
+        "codex-rs/ext/history-notes/src/tools.rs"
+      ],
+      "required": false,
+      "roles": [
+        "context_management"
+      ]
+    },
+    "source_spec.extra.hook_runtime": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.hook_runtime",
+      "legacy_key": "hook_runtime",
+      "path_candidates": [
+        "codex-rs/core/src/hook_runtime.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.mcp_binding": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.mcp_binding",
+      "legacy_key": "mcp_binding",
+      "path_candidates": [
+        "codex-rs/codex-mcp/src/binding.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.mcp_catalog": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.mcp_catalog",
+      "legacy_key": "mcp_catalog",
+      "path_candidates": [
+        "codex-rs/codex-mcp/src/catalog.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.mcp_handler": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.mcp_handler",
+      "legacy_key": "mcp_handler",
+      "path_candidates": [
+        "codex-rs/core/src/tools/handlers/mcp.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.mcp_http_headers": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.mcp_http_headers",
+      "legacy_key": "mcp_http_headers",
+      "path_candidates": [
+        "codex-rs/rmcp-client/src/http_headers.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.mcp_http_redirect": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.mcp_http_redirect",
+      "legacy_key": "mcp_http_redirect",
+      "path_candidates": [
+        "codex-rs/rmcp-client/src/http_client_redirect.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.mcp_runtime": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.mcp_runtime",
+      "legacy_key": "mcp_runtime",
+      "path_candidates": [
+        "codex-rs/codex-mcp/src/mcp/mod.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.mcp_tool_call": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.mcp_tool_call",
+      "legacy_key": "mcp_tool_call",
+      "path_candidates": [
+        "codex-rs/core/src/mcp_tool_call.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.mcp_types": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.mcp_types",
+      "legacy_key": "mcp_types",
+      "path_candidates": [
+        "codex-rs/config/src/mcp_types.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.model_protocol": {
+      "expected_symbols": [],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.model_protocol",
+      "legacy_key": "model_protocol",
+      "path_candidates": [
+        "codex-rs/protocol/src/openai_models.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra",
+        "context_management_support"
+      ]
+    },
+    "source_spec.extra.new_context_window": {
+      "expected_symbols": [
+        "NEW_CONTEXT_WINDOW_MESSAGE",
+        "request_new_context_window"
+      ],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.new_context_window",
+      "legacy_key": "new_context_window",
+      "path_candidates": [
+        "codex-rs/core/src/tools/handlers/new_context_window.rs"
+      ],
+      "required": false,
+      "roles": [
+        "context_management"
+      ]
+    },
+    "source_spec.extra.new_context_window_spec": {
+      "expected_symbols": [
+        "NEW_CONTEXT_WINDOW_TOOL_NAME",
+        "Start a new context window"
+      ],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.new_context_window_spec",
+      "legacy_key": "new_context_window_spec",
+      "path_candidates": [
+        "codex-rs/core/src/tools/handlers/new_context_window_spec.rs"
+      ],
+      "required": false,
+      "roles": [
+        "context_management"
+      ]
+    },
+    "source_spec.extra.protocol": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.protocol",
+      "legacy_key": "protocol",
+      "path_candidates": [
+        "codex-rs/protocol/src/protocol.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.protocol_config_types": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.protocol_config_types",
+      "legacy_key": "protocol_config_types",
+      "path_candidates": [
+        "codex-rs/protocol/src/config_types.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.protocol_models": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.protocol_models",
+      "legacy_key": "protocol_models",
+      "path_candidates": [
+        "codex-rs/protocol/src/models.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.protocol_turn_input": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.protocol_turn_input",
+      "legacy_key": "protocol_turn_input",
+      "path_candidates": [
+        "codex-rs/protocol/src/turn_input.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.provider_runtime": {
+      "expected_symbols": [],
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.provider_runtime",
+      "legacy_key": "provider_runtime",
+      "path_candidates": [
+        "codex-rs/model-provider/src/provider.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra",
+        "context_management_support"
+      ]
+    },
+    "source_spec.extra.response_usage": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.response_usage",
+      "legacy_key": "response_usage",
+      "path_candidates": [
+        "codex-rs/protocol/src/response_usage.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.rmcp_client": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.rmcp_client",
+      "legacy_key": "rmcp_client",
+      "path_candidates": [
+        "codex-rs/rmcp-client/src/rmcp_client.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.rmcp_protocol_mode": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.rmcp_protocol_mode",
+      "legacy_key": "rmcp_protocol_mode",
+      "path_candidates": [
+        "codex-rs/rmcp-client/src/protocol_mode.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.route_aware_redirect": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.route_aware_redirect",
+      "legacy_key": "route_aware_redirect",
+      "path_candidates": [
+        "codex-rs/http-client/src/route_aware_redirect.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.tool_namespaces_info": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.tool_namespaces_info",
+      "legacy_key": "tool_namespaces_info",
+      "path_candidates": [
+        "codex-rs/core/src/tools/tool_namespaces_info.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.tool_responses_api": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.tool_responses_api",
+      "legacy_key": "tool_responses_api",
+      "path_candidates": [
+        "codex-rs/tools/src/responses_api.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.tool_spec": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.tool_spec",
+      "legacy_key": "tool_spec",
+      "path_candidates": [
+        "codex-rs/tools/src/tool_spec.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.tool_spec_plan": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.tool_spec_plan",
+      "legacy_key": "tool_spec_plan",
+      "path_candidates": [
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.extra.turn_metadata": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "extra",
+      "id": "source_spec.extra.turn_metadata",
+      "legacy_key": "turn_metadata",
+      "path_candidates": [
+        "codex-rs/core/src/turn_metadata.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_extra"
+      ]
+    },
+    "source_spec.surface.api_bridge": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.api_bridge",
+      "legacy_key": "api_bridge",
+      "path_candidates": [
+        "codex-rs/codex-api/src/api_bridge.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.api_key_turn_cost": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.api_key_turn_cost",
+      "legacy_key": "api_key_turn_cost",
+      "path_candidates": [
+        "codex-rs/backend-client/src/client/turn_usage.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.backend_types": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.backend_types",
+      "legacy_key": "backend_types",
+      "path_candidates": [
+        "codex-rs/backend-client/src/types.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.chatgpt_turn_cost": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.chatgpt_turn_cost",
+      "legacy_key": "chatgpt_turn_cost",
+      "path_candidates": [
+        "codex-rs/backend-client/src/client/chatgpt_turn_cost.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.endpoint_mod": {
+      "expected_symbols": [
+        "pub mod"
+      ],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.endpoint_mod",
+      "legacy_key": "endpoint_mod",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/mod.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface",
+        "endpoint_discovery"
+      ]
+    },
+    "source_spec.surface.files_api": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.files_api",
+      "legacy_key": "files_api",
+      "path_candidates": [
+        "codex-rs/codex-api/src/files.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.guardian_feature_config": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.guardian_feature_config",
+      "legacy_key": "guardian_feature_config",
+      "path_candidates": [
+        "codex-rs/features/src/feature_configs.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.guardian_sampler": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.guardian_sampler",
+      "legacy_key": "guardian_sampler",
+      "path_candidates": [
+        "codex-rs/ext/guardian-v2/src/async_scorer/sampler.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.guardian_ticket": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.guardian_ticket",
+      "legacy_key": "guardian_ticket",
+      "path_candidates": [
+        "codex-rs/codex-api/src/guardian_ticket.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.images_endpoint": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.images_endpoint",
+      "legacy_key": "images_endpoint",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/images.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.images_types": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.images_types",
+      "legacy_key": "images_types",
+      "path_candidates": [
+        "codex-rs/codex-api/src/images.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.mcp_openai_file": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.mcp_openai_file",
+      "legacy_key": "mcp_openai_file",
+      "path_candidates": [
+        "codex-rs/core/src/mcp_openai_file.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.memories_endpoint": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.memories_endpoint",
+      "legacy_key": "memories_endpoint",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/memories.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.model_provider_models": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.model_provider_models",
+      "legacy_key": "model_provider_models",
+      "path_candidates": [
+        "codex-rs/model-provider/src/models_endpoint.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.models_endpoint": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.models_endpoint",
+      "legacy_key": "models_endpoint",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/models.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.models_protocol": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.models_protocol",
+      "legacy_key": "models_protocol",
+      "path_candidates": [
+        "codex-rs/protocol/src/openai_models.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.rate_limits": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.rate_limits",
+      "legacy_key": "rate_limits",
+      "path_candidates": [
+        "codex-rs/backend-client/src/client/rate_limit_resets.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.realtime_call": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.realtime_call",
+      "legacy_key": "realtime_call",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/realtime_call.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.realtime_protocol": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.realtime_protocol",
+      "legacy_key": "realtime_protocol",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/realtime_websocket/protocol.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.realtime_ws": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.realtime_ws",
+      "legacy_key": "realtime_ws",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/realtime_websocket/methods.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.response_debug_context": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.response_debug_context",
+      "legacy_key": "response_debug_context",
+      "path_candidates": [
+        "codex-rs/response-debug-context/src/lib.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.response_rate_limits": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.response_rate_limits",
+      "legacy_key": "response_rate_limits",
+      "path_candidates": [
+        "codex-rs/codex-api/src/rate_limits.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.safety_buffering": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.safety_buffering",
+      "legacy_key": "safety_buffering",
+      "path_candidates": [
+        "codex-rs/codex-api/src/safety_buffering.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.search_endpoint": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.search_endpoint",
+      "legacy_key": "search_endpoint",
+      "path_candidates": [
+        "codex-rs/codex-api/src/endpoint/search.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.search_types": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.search_types",
+      "legacy_key": "search_types",
+      "path_candidates": [
+        "codex-rs/codex-api/src/search.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    },
+    "source_spec.surface.thread_usage": {
+      "expected_symbols": [],
+      "extractor_ids": [],
+      "group": "surface",
+      "id": "source_spec.surface.thread_usage",
+      "legacy_key": "thread_usage",
+      "path_candidates": [
+        "codex-rs/backend-client/src/client/thread_usage.rs"
+      ],
+      "required": false,
+      "roles": [
+        "legacy_surface"
+      ]
+    }
+  }
+}

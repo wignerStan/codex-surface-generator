@@ -1,0 +1,117 @@
+{
+  "format": "codex-wire-audit-coverage-profiles/v1",
+  "profiles": [
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Transition profile: canonical turn metadata plus explicit legacy remainder.",
+      "id": "hybrid_v12",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": false,
+      "description": "Canonical turn-metadata proof only.",
+      "id": "turn_metadata_only",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": false,
+      "description": "Canonical Responses request, transformation, metadata, and event coverage.",
+      "id": "responses_only",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance"
+      ],
+      "required_extractors": [
+        "extractor.responses_request",
+        "extractor.responses_lite",
+        "extractor.turn_metadata",
+        "extractor.response_events"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": false,
+      "description": "Canonical turn metadata and MCP projection coverage.",
+      "id": "mcp_only",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata",
+        "extractor.mcp_projection"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": false,
+      "description": "Repository-wide canonical wire proof. Legacy reconstruction cannot satisfy it.",
+      "id": "codex_wire_full",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "runtime_conformance"
+      ],
+      "required_extractors": [
+        "extractor.responses_request",
+        "extractor.responses_lite",
+        "extractor.turn_metadata",
+        "extractor.mcp_projection",
+        "extractor.response_events",
+        "extractor.redirect_headers",
+        "extractor.config_effects",
+        "extractor.app_server_rpc"
+      ],
+      "required_runtime_scenarios": [
+        "responses_http_request",
+        "responses_websocket_request",
+        "mcp_projection",
+        "response_error_event",
+        "redirect_headers"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Deterministic unit/integration fixture profile.",
+      "id": "fixture",
+      "required_dimensions": [
+        "schema",
+        "profile"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    }
+  ]
+}

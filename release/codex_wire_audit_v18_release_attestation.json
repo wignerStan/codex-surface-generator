@@ -1,0 +1,496 @@
+{
+  "artifacts": [
+    {
+      "name": "CODEX_WIRE_AUDIT_V18_RELEASE_NOTES.md",
+      "provenance": "validated_source_snapshot",
+      "role": "documentation",
+      "sha256": "2102e9b026e9bd980ce7b021cc98fd5130d4b280fd22f8fb46796614cf513ce7",
+      "size": 5010
+    },
+    {
+      "name": "README_CODEX_WIRE_AUDIT_V18.md",
+      "provenance": "validated_source_snapshot",
+      "role": "documentation",
+      "sha256": "3cb178a3b3aec0ab488a7dc0f61f14b44f8c46a21e1d8d0c88c466193fca25f8",
+      "size": 4868
+    },
+    {
+      "name": "codex_wire_audit-11.0.0-py3-none-any.whl",
+      "provenance": "validated_source_snapshot",
+      "role": "installable_distribution",
+      "sha256": "f2b05b80d85d91a3f7ee5b52a442b0e5932f2a6591666fec2c5d69e1cd88041b",
+      "size": 437005
+    },
+    {
+      "name": "codex_wire_audit-11.0.0.tar.gz",
+      "provenance": "validated_source_snapshot",
+      "role": "source_distribution",
+      "sha256": "d8104e9330186e34f0034485baa6b5468464804523bf62575e9b6f2d94c29529",
+      "size": 457090
+    },
+    {
+      "name": "codex_wire_audit_v17_to_v18_release_pipeline.diff",
+      "provenance": "caller_supplied",
+      "role": "review_diff",
+      "sha256": "06f8eb39d77dbc683f4ce3842ab6b7d0fb89381e7952664ac707131bf3c2f144",
+      "size": 311900
+    },
+    {
+      "name": "codex_wire_audit_v18_context_management_container.zip",
+      "provenance": "extracted_from_validated_wheel",
+      "role": "active_package_container",
+      "sha256": "cceb3b37404cce75ac2bb3f6c968ba4c9d33137a8c00bc8fb5533e0130075147",
+      "size": 3900
+    },
+    {
+      "name": "codex_wire_audit_v18_release_spec.json",
+      "provenance": "validated_source_snapshot",
+      "role": "release_specification",
+      "sha256": "c9c2b686cd7bb5e38e2177d704c11947f0320be92bf938b880e822d7d35f169e",
+      "size": 5061
+    },
+    {
+      "name": "codex_wire_audit_v18_source.zip",
+      "provenance": "validated_source_snapshot",
+      "role": "source_snapshot",
+      "sha256": "2d472dbebe5c29e1e70b29090500fe2e5a71a779f742615a2cbd3b40c7dcc56e",
+      "size": 592142
+    },
+    {
+      "name": "codex_wire_audit_v18_validation.json",
+      "provenance": "release_pipeline",
+      "role": "validation_evidence",
+      "sha256": "e801b7bfa4e5afc8d70f6c04c561a01f78e0c9f195519e8d96928d338c2a5af4",
+      "size": 77217
+    },
+    {
+      "name": "codex_wire_audit_v18_validation.txt",
+      "provenance": "release_pipeline",
+      "role": "validation_log",
+      "sha256": "cec99d87073377cdd3cf3482defc6cc6dc8720406350a1b3d53df697b0f38dec",
+      "size": 502156
+    },
+    {
+      "name": "legacy_codex_wire_audit_v15_alpha_history_notes_container.zip",
+      "provenance": "external_legacy_input",
+      "role": "legacy_evidence_only",
+      "sha256": "789aca81ed70bf6f957722c3691c9ad3588c1f4a921a945d370d565dbb1ab297",
+      "size": 882
+    },
+    {
+      "name": "legacy_codex_wire_audit_v15_guardian_history_container.zip",
+      "provenance": "external_legacy_input",
+      "role": "legacy_evidence_only",
+      "sha256": "f46dee34812e2d33ad7382c6874283db8e44cdbfc78019c3b739045ae79c7728",
+      "size": 786
+    }
+  ],
+  "claim_binding": {
+    "active_capabilities_must_be_package_owned": true,
+    "active_context_container_provenance": "extracted_from_validated_wheel",
+    "legacy_evidence_may_satisfy_active_claims": false
+  },
+  "context_container": {
+    "member_count": 8,
+    "name": "codex_wire_audit_v18_context_management_container.zip",
+    "sha256": "cceb3b37404cce75ac2bb3f6c968ba4c9d33137a8c00bc8fb5533e0130075147",
+    "size": 3900,
+    "uncompressed_bytes": 5494
+  },
+  "distributions": {
+    "codex_wire_audit-11.0.0-py3-none-any.whl": {
+      "name": "codex_wire_audit-11.0.0-py3-none-any.whl",
+      "sha256": "f2b05b80d85d91a3f7ee5b52a442b0e5932f2a6591666fec2c5d69e1cd88041b",
+      "size": 437005
+    },
+    "codex_wire_audit-11.0.0.tar.gz": {
+      "name": "codex_wire_audit-11.0.0.tar.gz",
+      "sha256": "d8104e9330186e34f0034485baa6b5468464804523bf62575e9b6f2d94c29529",
+      "size": 457090
+    }
+  },
+  "format": "codex-wire-audit-release-attestation/v2",
+  "installed_capability_probe": {
+    "active_extractors": [
+      "extractor.context_management",
+      "extractor.turn_metadata"
+    ],
+    "capability_claims": [
+      {
+        "container": null,
+        "container_result_sha256": null,
+        "errors": [],
+        "extractor_ids": [
+          "extractor.turn_metadata"
+        ],
+        "id": "turn_metadata",
+        "missing_extractors": [],
+        "profiles": {
+          "hybrid_v18": {
+            "required_dimensions": [
+              "metadata_history",
+              "profile",
+              "provenance",
+              "rust_semantics",
+              "schema"
+            ],
+            "required_extractors": [
+              "extractor.context_management",
+              "extractor.turn_metadata"
+            ],
+            "required_runtime_scenarios": []
+          }
+        },
+        "resources": [
+          {
+            "path": "extractors/turn_metadata.py",
+            "present": true,
+            "sha256": "e5c26e7dbbbfd25a3927a79ad464d4037e566b4b8f8a7185f34e4ad36887e086",
+            "size": 17955
+          },
+          {
+            "path": "schema_templates/turn-metadata-semantics.schema.json",
+            "present": true,
+            "sha256": "7389adf7fd3e352f4ae6cfa817d018a2c83df13e75c3e1685b7bd00a5755cd1d",
+            "size": 4527
+          }
+        ],
+        "status": "passed"
+      },
+      {
+        "container": {
+          "format": "codex-wire-audit-context-management-container-index/v1",
+          "index_integrity": {
+            "algorithm": "sha256",
+            "canonical_payload_sha256": "01b310fe7ed61276d9eb725f0477b857b5e70b31566b49c053348eb4ea986551"
+          },
+          "member_count": 7,
+          "members": [
+            "activation.json",
+            "catalog.json",
+            "current_main.json",
+            "rollover.json",
+            "routes.json",
+            "routing.json",
+            "state_model.json"
+          ],
+          "reviewed_commit": "6af345407d9c2a568da9d01b6c4b81a9e61495c0"
+        },
+        "container_result_sha256": "38bd4f8b869cb2049cde31092287b102f052d78f18e837d4ef6bba719222f80a",
+        "errors": [],
+        "extractor_ids": [
+          "extractor.context_management"
+        ],
+        "id": "context_management",
+        "missing_extractors": [],
+        "profiles": {
+          "codex_wire_full": {
+            "required_dimensions": [
+              "metadata_history",
+              "profile",
+              "provenance",
+              "runtime_conformance",
+              "rust_semantics",
+              "schema"
+            ],
+            "required_extractors": [
+              "extractor.app_server_rpc",
+              "extractor.config_effects",
+              "extractor.context_management",
+              "extractor.mcp_projection",
+              "extractor.redirect_headers",
+              "extractor.response_events",
+              "extractor.responses_lite",
+              "extractor.responses_request",
+              "extractor.turn_metadata"
+            ],
+            "required_runtime_scenarios": [
+              "context_management_activation",
+              "context_window_rollover",
+              "history_notes_retrieval",
+              "mcp_projection",
+              "redirect_headers",
+              "response_error_event",
+              "responses_http_request",
+              "responses_websocket_request"
+            ]
+          },
+          "hybrid_v18": {
+            "required_dimensions": [
+              "metadata_history",
+              "profile",
+              "provenance",
+              "rust_semantics",
+              "schema"
+            ],
+            "required_extractors": [
+              "extractor.context_management",
+              "extractor.turn_metadata"
+            ],
+            "required_runtime_scenarios": []
+          }
+        },
+        "resources": [
+          {
+            "path": "context_management_container_data/current_main.json",
+            "present": true,
+            "sha256": "5382b4f98c6ab2eab1debb9049ac725747d9e7e8abc72c51d17456f025c934ef",
+            "size": 395
+          },
+          {
+            "path": "context_management_container_data/index.json",
+            "present": true,
+            "sha256": "d7ef8501f368c55feb710ac20bf9feceb361ae3207a2c61246684b840a01cf03",
+            "size": 1059
+          },
+          {
+            "path": "context_management_reference.py",
+            "present": true,
+            "sha256": "cc08078cc9cd1bb466c30699d85a23121d9a6f13025f85a7c8f576ed4a84278e",
+            "size": 3571
+          },
+          {
+            "path": "coverage_profiles.v3.json",
+            "present": true,
+            "sha256": "85ee4c4d0f4efb2d99a2ef524e9b41e735b723cd20f13bcf15ba77eb9a1b4f85",
+            "size": 9711
+          },
+          {
+            "path": "extractors/context_management.py",
+            "present": true,
+            "sha256": "5d13b88af3bb9e6d55b8d4031a5e45cf50918265fc2c352500f3af30adac2e60",
+            "size": 23588
+          },
+          {
+            "path": "extractors/context_management_support.py",
+            "present": true,
+            "sha256": "cae2f72386d80c496caaed4e05d4f09aff77fd928b70f205f0f6030814a08775",
+            "size": 4181
+          },
+          {
+            "path": "proof_schema_templates/context-management-semantics-v1.schema.json",
+            "present": true,
+            "sha256": "1aa093877d382e42796015398b80e738ad46ea72587ca2e7fa2b58865650fdf7",
+            "size": 4148
+          }
+        ],
+        "status": "passed"
+      },
+      {
+        "container": {
+          "catalog_sha256": "12f3521d0584123e3c9244c9cb0359eff613442db00b0bfeea11c93de1646aed",
+          "format": "codex-wire-audit-metadata-history-container/v1",
+          "index_integrity": {
+            "algorithm": "sha256",
+            "canonical_payload_sha256": "78c8abc8ae51e230544f37d1872fdcd893c5afbe3c55aaa6bfbb1c3c11cd9503"
+          },
+          "key_count": 7,
+          "member_count": 19,
+          "version_count": 10
+        },
+        "container_result_sha256": "b4d6b01104637e1696a5e2020a94df8442fbe3a93e17e6f0a43413c4405b5a5b",
+        "errors": [],
+        "extractor_ids": [],
+        "id": "metadata_history",
+        "missing_extractors": [],
+        "profiles": {
+          "hybrid_v18": {
+            "required_dimensions": [
+              "metadata_history",
+              "profile",
+              "provenance",
+              "rust_semantics",
+              "schema"
+            ],
+            "required_extractors": [
+              "extractor.context_management",
+              "extractor.turn_metadata"
+            ],
+            "required_runtime_scenarios": []
+          }
+        },
+        "resources": [
+          {
+            "path": "metadata_history.py",
+            "present": true,
+            "sha256": "2617ac63d6c09c5e3169eebae6f6910b401c09b4118b70eef7b55731b919762c",
+            "size": 22577
+          },
+          {
+            "path": "metadata_history_container.py",
+            "present": true,
+            "sha256": "0e1d648a613401de5f6cfe47fe92cec0d54e26c0e66a2f264e94d5ecb3cb4637",
+            "size": 10782
+          },
+          {
+            "path": "metadata_history_container_data/index.json",
+            "present": true,
+            "sha256": "0ef764118c695eea950432e1c17dfa6215e03c412ef61a3db01165cb50e25d4a",
+            "size": 4250
+          },
+          {
+            "path": "metadata_history_data/metadata-key-history.v1.json",
+            "present": true,
+            "sha256": "a27ea6da59d793dbd3f1f0e8684afc417211acd38c84a66ad4e9c7c2b2efb775",
+            "size": 48863
+          },
+          {
+            "path": "metadata_history_reference.py",
+            "present": true,
+            "sha256": "3ddbed418733a6679d655a6a9b65ecfdc95c9d29f96855540f4c69228dd1591a",
+            "size": 3283
+          }
+        ],
+        "status": "passed"
+      }
+    ],
+    "errors": [],
+    "format": "codex-wire-audit-installed-capability-probe/v2",
+    "generator_version": "11.0.0",
+    "integrity": {
+      "algorithm": "sha256",
+      "canonical_payload_sha256": "effdceb170f1aded4307981716b1d5f39b06caec80cbafacfb2599defec20962"
+    },
+    "package_name": "codex-wire-audit",
+    "package_version": "11.0.0",
+    "release_id": "codex-wire-audit-v18-release-pipeline",
+    "release_spec_sha256": "fc78db9e048b2408b39532f2e33a696ba9fdef567b883851f230d24b47ca7473",
+    "release_spec_validation_backend": "stdlib-closed-shape",
+    "required_resources": [
+      {
+        "path": "context_management_container_data/current_main.json",
+        "present": true,
+        "sha256": "5382b4f98c6ab2eab1debb9049ac725747d9e7e8abc72c51d17456f025c934ef",
+        "size": 395
+      },
+      {
+        "path": "context_management_container_data/index.json",
+        "present": true,
+        "sha256": "d7ef8501f368c55feb710ac20bf9feceb361ae3207a2c61246684b840a01cf03",
+        "size": 1059
+      },
+      {
+        "path": "context_management_reference.py",
+        "present": true,
+        "sha256": "cc08078cc9cd1bb466c30699d85a23121d9a6f13025f85a7c8f576ed4a84278e",
+        "size": 3571
+      },
+      {
+        "path": "coverage_profiles.v3.json",
+        "present": true,
+        "sha256": "85ee4c4d0f4efb2d99a2ef524e9b41e735b723cd20f13bcf15ba77eb9a1b4f85",
+        "size": 9711
+      },
+      {
+        "path": "extractors/context_management.py",
+        "present": true,
+        "sha256": "5d13b88af3bb9e6d55b8d4031a5e45cf50918265fc2c352500f3af30adac2e60",
+        "size": 23588
+      },
+      {
+        "path": "extractors/context_management_support.py",
+        "present": true,
+        "sha256": "cae2f72386d80c496caaed4e05d4f09aff77fd928b70f205f0f6030814a08775",
+        "size": 4181
+      },
+      {
+        "path": "extractors/turn_metadata.py",
+        "present": true,
+        "sha256": "e5c26e7dbbbfd25a3927a79ad464d4037e566b4b8f8a7185f34e4ad36887e086",
+        "size": 17955
+      },
+      {
+        "path": "metadata_history.py",
+        "present": true,
+        "sha256": "2617ac63d6c09c5e3169eebae6f6910b401c09b4118b70eef7b55731b919762c",
+        "size": 22577
+      },
+      {
+        "path": "metadata_history_container.py",
+        "present": true,
+        "sha256": "0e1d648a613401de5f6cfe47fe92cec0d54e26c0e66a2f264e94d5ecb3cb4637",
+        "size": 10782
+      },
+      {
+        "path": "metadata_history_container_data/index.json",
+        "present": true,
+        "sha256": "0ef764118c695eea950432e1c17dfa6215e03c412ef61a3db01165cb50e25d4a",
+        "size": 4250
+      },
+      {
+        "path": "metadata_history_data/metadata-key-history.v1.json",
+        "present": true,
+        "sha256": "a27ea6da59d793dbd3f1f0e8684afc417211acd38c84a66ad4e9c7c2b2efb775",
+        "size": 48863
+      },
+      {
+        "path": "metadata_history_reference.py",
+        "present": true,
+        "sha256": "3ddbed418733a6679d655a6a9b65ecfdc95c9d29f96855540f4c69228dd1591a",
+        "size": 3283
+      },
+      {
+        "path": "proof_schema_templates/context-management-semantics-v1.schema.json",
+        "present": true,
+        "sha256": "1aa093877d382e42796015398b80e738ad46ea72587ca2e7fa2b58865650fdf7",
+        "size": 4148
+      },
+      {
+        "path": "release_spec.schema.json",
+        "present": true,
+        "sha256": "4de7b4d09abb2b914ededb19633ab0ecfa3dd45e4c86c2e709905a6a25bc5d6e",
+        "size": 7468
+      },
+      {
+        "path": "release_spec.v1.json",
+        "present": true,
+        "sha256": "c9c2b686cd7bb5e38e2177d704c11947f0320be92bf938b880e822d7d35f169e",
+        "size": 5061
+      },
+      {
+        "path": "schema_templates/turn-metadata-semantics.schema.json",
+        "present": true,
+        "sha256": "7389adf7fd3e352f4ae6cfa817d018a2c83df13e75c3e1685b7bd00a5755cd1d",
+        "size": 4527
+      }
+    ],
+    "reviewed_codex_commit": "6af345407d9c2a568da9d01b6c4b81a9e61495c0",
+    "status": "passed"
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "canonical_payload_sha256": "86af922ec88993b6c885cadca8600ea0903e0bce028d8a558c1b1d7e008792ce"
+  },
+  "release": {
+    "generator_version": "11.0.0",
+    "id": "codex-wire-audit-v18-release-pipeline",
+    "package_import": "codex_wire_audit",
+    "package_name": "codex-wire-audit",
+    "package_version": "11.0.0",
+    "reviewed_codex_commit": "6af345407d9c2a568da9d01b6c4b81a9e61495c0",
+    "runtime_dependencies": [
+      "jsonschema<5,>=4.23",
+      "referencing<1,>=0.35",
+      "tomli<3,>=2; python_version < \"3.11\""
+    ],
+    "series": "v18",
+    "source_date_epoch": 315532800
+  },
+  "release_spec_sha256": "fc78db9e048b2408b39532f2e33a696ba9fdef567b883851f230d24b47ca7473",
+  "source_snapshot": {
+    "digest": "1244ba5da195fc99afca8cb49357f22672b9040f3e0d2a05993afebb62a6aac2",
+    "file_count": 218
+  },
+  "source_zip": {
+    "member_count": 218,
+    "name": "codex_wire_audit_v18_source.zip",
+    "sha256": "2d472dbebe5c29e1e70b29090500fe2e5a71a779f742615a2cbd3b40c7dcc56e",
+    "size": 592142,
+    "uncompressed_bytes": 3343407
+  },
+  "status": "passed",
+  "validation_integrity": {
+    "algorithm": "sha256",
+    "canonical_payload_sha256": "7d84095c61a64fb89467aae9f7857d46d366aa65b555caf85fadb0af1101c892"
+  }
+}

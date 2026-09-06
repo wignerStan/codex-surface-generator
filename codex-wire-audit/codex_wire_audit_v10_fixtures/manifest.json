@@ -1,0 +1,64 @@
+{
+  "fixtures": [
+    {
+      "expected": "valid",
+      "file": "responses-full-http.valid.json",
+      "schema_file": "responses-request-full.schema.json"
+    },
+    {
+      "expected": "valid",
+      "file": "responses-lite-http.valid.json",
+      "schema_file": "responses-request-lite.schema.json"
+    },
+    {
+      "expected": "valid",
+      "file": "responses-full-websocket.valid.json",
+      "schema_file": "responses-websocket-response-create-full.schema.json"
+    },
+    {
+      "expected": "valid",
+      "file": "responses-lite-websocket.valid.json",
+      "schema_file": "responses-websocket-response-create-lite.schema.json"
+    },
+    {
+      "expected": "valid",
+      "file": "responses-websocket-prewarm.valid.json",
+      "schema_file": "responses-websocket-prewarm.schema.json"
+    },
+    {
+      "expected": "valid",
+      "file": "mcp-request-meta.valid.json",
+      "schema_file": "mcp-request-meta.schema.json"
+    },
+    {
+      "expected": "valid",
+      "file": "mcp-server-stdio.valid.json",
+      "schema_file": "mcp-server-config.schema.json"
+    },
+    {
+      "expected": "valid",
+      "file": "mcp-server-http.valid.json",
+      "schema_file": "mcp-server-config.schema.json"
+    },
+    {
+      "diagnostic_code": "EXTRA_METADATA_RESERVED_KEY",
+      "expected": "invalid",
+      "file": "turn-meta-reserved-key.invalid.json",
+      "schema_file": "codex-turn-metadata-extra-input.schema.json"
+    },
+    {
+      "diagnostic_code": "MCP_TRANSPORT_FIELDS_MIXED",
+      "expected": "invalid",
+      "file": "mcp-mixed-transport.invalid.json",
+      "schema_file": "mcp-server-config.schema.json"
+    },
+    {
+      "diagnostic_code": "MCP_TRANSPORT_FIELDS_MIXED",
+      "expected": "invalid",
+      "file": "mcp-mixed-transport.invalid.toml",
+      "schema_file": "mcp-server-config.schema.json",
+      "toml_path": "mcp_servers.bad"
+    }
+  ],
+  "format_version": "1.0.0"
+}

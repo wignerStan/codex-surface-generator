@@ -1,0 +1,166 @@
+{
+  "$id": "urn:codex-wire-audit:schema:predicate:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "op": {
+            "enum": [
+              "all",
+              "any"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "args"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "op": {
+            "const": "not"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "arg"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "op": {
+            "enum": [
+              "eq",
+              "ne"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "path",
+          "value"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "op": {
+            "enum": [
+              "exists",
+              "is_null",
+              "is_empty"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "path"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "op": {
+            "const": "env_exists"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "name"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "op": {
+            "const": "source_condition"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "expression"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "op": {
+            "const": "custom_predicate"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "function"
+        ]
+      }
+    }
+  ],
+  "properties": {
+    "arg": {
+      "$ref": "urn:codex-wire-audit:schema:predicate:1.0.0"
+    },
+    "args": {
+      "items": {
+        "$ref": "urn:codex-wire-audit:schema:predicate:1.0.0"
+      },
+      "type": "array"
+    },
+    "expression": {
+      "type": "string"
+    },
+    "function": {
+      "type": "string"
+    },
+    "machine_evaluable": {
+      "type": "boolean"
+    },
+    "name": {
+      "type": "string"
+    },
+    "op": {
+      "enum": [
+        "const",
+        "all",
+        "any",
+        "not",
+        "eq",
+        "ne",
+        "exists",
+        "env_exists",
+        "is_null",
+        "is_empty",
+        "custom_predicate",
+        "source_condition",
+        "accepted_by_extra_metadata_filter",
+        "unspecified"
+      ]
+    },
+    "path": {
+      "type": "string"
+    },
+    "value": {}
+  },
+  "required": [
+    "op"
+  ],
+  "title": "Codex wire audit predicate",
+  "type": "object"
+}

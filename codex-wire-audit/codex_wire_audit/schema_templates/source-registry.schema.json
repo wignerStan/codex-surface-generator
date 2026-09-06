@@ -1,0 +1,132 @@
+{
+  "$id": "https://schemas.codex-wire-audit.invalid/v11/source-registry.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "counts": {
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "extra": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "optional": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "required": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "surface": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total",
+        "required",
+        "optional",
+        "base",
+        "surface",
+        "extra"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "sources": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^source_spec\\.": {
+          "additionalProperties": false,
+          "properties": {
+            "exclusion_reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "expected_symbols": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "extractor_ids": {
+              "items": {
+                "pattern": "^extractor\\.",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "group": {
+              "enum": [
+                "base",
+                "surface",
+                "extra"
+              ]
+            },
+            "id": {
+              "pattern": "^source_spec\\.",
+              "type": "string"
+            },
+            "legacy_key": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "path_candidates": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "roles": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "id",
+            "legacy_key",
+            "group",
+            "path_candidates",
+            "required",
+            "roles",
+            "expected_symbols",
+            "extractor_ids"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "sources",
+    "counts"
+  ],
+  "title": "Codex wire audit source registry",
+  "type": "object"
+}

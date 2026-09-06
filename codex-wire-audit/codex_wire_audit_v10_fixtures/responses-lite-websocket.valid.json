@@ -1,0 +1,54 @@
+{
+  "client_metadata": {
+    "session_id": "00000000-0000-0000-0000-000000000001",
+    "thread_id": "00000000-0000-0000-0000-000000000002",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-installation-id": "install-example",
+    "x-codex-turn-metadata": "{\"request_kind\":\"turn\",\"session_id\":\"00000000-0000-0000-0000-000000000001\",\"team\":\"infra\",\"thread_id\":\"00000000-0000-0000-0000-000000000002\"}",
+    "x-codex-window-id": "window-example",
+    "x-codex-ws-stream-request-start-ms": "1725494400000"
+  },
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "input": [
+    {
+      "id": "at_fixture",
+      "role": "developer",
+      "tools": [],
+      "type": "additional_tools"
+    },
+    {
+      "content": [
+        {
+          "text": "Follow the project instructions.",
+          "type": "input_text"
+        }
+      ],
+      "id": "msg_fixture",
+      "role": "developer",
+      "type": "message"
+    },
+    {
+      "content": [
+        {
+          "text": "Hello",
+          "type": "input_text"
+        }
+      ],
+      "role": "user",
+      "type": "message"
+    }
+  ],
+  "model": "gpt-example",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "medium",
+    "summary": "auto"
+  },
+  "store": false,
+  "stream": true,
+  "tool_choice": "auto",
+  "type": "response.create"
+}

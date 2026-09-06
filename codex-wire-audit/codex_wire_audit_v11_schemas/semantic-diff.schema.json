@@ -1,0 +1,103 @@
+{
+  "$id": "https://schemas.codex-wire-audit.invalid/v11/semantic-diff.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "after_source_revision_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "before_source_revision_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "changes": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {},
+          "before": {},
+          "details": {
+            "type": "object"
+          },
+          "entity_id": {
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^semantic_change\\.",
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "breaking",
+              "attention",
+              "info"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "entity_id",
+          "severity",
+          "before",
+          "after",
+          "details"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "summary": {
+      "additionalProperties": false,
+      "properties": {
+        "attention": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "breaking": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "has_breaking_changes": {
+          "type": "boolean"
+        },
+        "info": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total",
+        "breaking",
+        "attention",
+        "info",
+        "has_breaking_changes"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "before_source_revision_id",
+    "after_source_revision_id",
+    "changes",
+    "summary"
+  ],
+  "title": "Codex wire audit semantic diff",
+  "type": "object"
+}

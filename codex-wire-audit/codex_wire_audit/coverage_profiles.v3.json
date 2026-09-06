@@ -1,0 +1,277 @@
+{
+  "format": "codex-wire-audit-coverage-profiles/v3",
+  "profiles": [
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Compatibility profile retained from v12: canonical turn metadata plus explicit legacy remainder.",
+      "id": "hybrid_v12",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata"
+      ],
+      "required_history_keys": [],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Transition profile: canonical turn metadata, exact source proof, and versioned legacy-key history, with the remaining v10 reconstruction explicitly allowed.",
+      "id": "hybrid_v13",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "metadata_history"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata"
+      ],
+      "required_history_keys": [
+        "key.turn_metadata.code_mode_tool_names",
+        "key.turn_metadata.tool_namespaces_info",
+        "key.turn_metadata.window_number",
+        "key.turn_metadata.forked_from_ordinal_exclusive",
+        "key.config.tool_registry.include_tool_namespaces_info",
+        "key.config.tool_registry.include_tool_metadata",
+        "key.config.tool_registry.turn_metadata_includes_tool_info"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Transition profile: canonical turn metadata plus first-class experimental context-management semantics; remaining protocol families may still use the frozen legacy adapter.",
+      "id": "hybrid_v16",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "metadata_history"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata",
+        "extractor.context_management"
+      ],
+      "required_history_keys": [
+        "key.turn_metadata.code_mode_tool_names",
+        "key.turn_metadata.tool_namespaces_info",
+        "key.turn_metadata.window_number",
+        "key.turn_metadata.forked_from_ordinal_exclusive",
+        "key.config.tool_registry.include_tool_namespaces_info",
+        "key.config.tool_registry.include_tool_metadata",
+        "key.config.tool_registry.turn_metadata_includes_tool_info"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Transition profile: canonical turn metadata and context-management semantics with package-owned release-closure proof; remaining protocol families may still use the frozen legacy adapter.",
+      "id": "hybrid_v18",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "metadata_history"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata",
+        "extractor.context_management"
+      ],
+      "required_history_keys": [
+        "key.turn_metadata.code_mode_tool_names",
+        "key.turn_metadata.tool_namespaces_info",
+        "key.turn_metadata.window_number",
+        "key.turn_metadata.forked_from_ordinal_exclusive",
+        "key.config.tool_registry.include_tool_namespaces_info",
+        "key.config.tool_registry.include_tool_metadata",
+        "key.config.tool_registry.turn_metadata_includes_tool_info"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": false,
+      "description": "Canonical turn-metadata proof plus the tracked turn-metadata key history.",
+      "id": "turn_metadata_only",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "metadata_history"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata"
+      ],
+      "required_history_keys": [
+        "key.turn_metadata.code_mode_tool_names",
+        "key.turn_metadata.tool_namespaces_info",
+        "key.turn_metadata.window_number",
+        "key.turn_metadata.forked_from_ordinal_exclusive"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "2.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": false,
+      "description": "Canonical Responses request, transformation, metadata, event, and metadata-key history coverage.",
+      "id": "responses_only",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "metadata_history"
+      ],
+      "required_extractors": [
+        "extractor.responses_request",
+        "extractor.responses_lite",
+        "extractor.turn_metadata",
+        "extractor.response_events"
+      ],
+      "required_history_keys": [
+        "key.turn_metadata.code_mode_tool_names",
+        "key.turn_metadata.tool_namespaces_info",
+        "key.turn_metadata.window_number",
+        "key.turn_metadata.forked_from_ordinal_exclusive",
+        "key.config.tool_registry.include_tool_namespaces_info",
+        "key.config.tool_registry.include_tool_metadata",
+        "key.config.tool_registry.turn_metadata_includes_tool_info"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "2.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": false,
+      "description": "Canonical turn metadata and MCP projection coverage, including the tool-inventory key transition.",
+      "id": "mcp_only",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "metadata_history"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata",
+        "extractor.mcp_projection"
+      ],
+      "required_history_keys": [
+        "key.turn_metadata.code_mode_tool_names",
+        "key.turn_metadata.tool_namespaces_info",
+        "key.config.tool_registry.include_tool_namespaces_info",
+        "key.config.tool_registry.include_tool_metadata",
+        "key.config.tool_registry.turn_metadata_includes_tool_info"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "2.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": false,
+      "description": "Repository-wide canonical wire proof. Legacy reconstruction cannot satisfy it, and historical metadata transitions are part of the proof surface.",
+      "id": "codex_wire_full",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "metadata_history",
+        "runtime_conformance"
+      ],
+      "required_extractors": [
+        "extractor.responses_request",
+        "extractor.responses_lite",
+        "extractor.turn_metadata",
+        "extractor.mcp_projection",
+        "extractor.response_events",
+        "extractor.redirect_headers",
+        "extractor.config_effects",
+        "extractor.app_server_rpc",
+        "extractor.context_management"
+      ],
+      "required_history_keys": [
+        "key.turn_metadata.code_mode_tool_names",
+        "key.turn_metadata.tool_namespaces_info",
+        "key.turn_metadata.window_number",
+        "key.turn_metadata.forked_from_ordinal_exclusive",
+        "key.config.tool_registry.include_tool_namespaces_info",
+        "key.config.tool_registry.include_tool_metadata",
+        "key.config.tool_registry.turn_metadata_includes_tool_info"
+      ],
+      "required_runtime_scenarios": [
+        "responses_http_request",
+        "responses_websocket_request",
+        "mcp_projection",
+        "response_error_event",
+        "redirect_headers",
+        "context_management_activation",
+        "context_window_rollover",
+        "history_notes_retrieval"
+      ],
+      "version": "3.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Versioned metadata/config-key history and source-state verification without making a repository-wide protocol claim.",
+      "id": "legacy_metadata_history",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "provenance",
+        "metadata_history"
+      ],
+      "required_extractors": [],
+      "required_history_keys": [
+        "key.turn_metadata.code_mode_tool_names",
+        "key.turn_metadata.tool_namespaces_info",
+        "key.turn_metadata.window_number",
+        "key.turn_metadata.forked_from_ordinal_exclusive",
+        "key.config.tool_registry.include_tool_namespaces_info",
+        "key.config.tool_registry.include_tool_metadata",
+        "key.config.tool_registry.turn_metadata_includes_tool_info"
+      ],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Static proof of experimental context activation, History/Notes transport, routing separation, and no-summary context rollover.",
+      "id": "context_management_only",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "provenance"
+      ],
+      "required_extractors": [
+        "extractor.context_management"
+      ],
+      "required_history_keys": [],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Deterministic unit/integration fixture profile.",
+      "id": "fixture",
+      "required_dimensions": [
+        "schema",
+        "profile"
+      ],
+      "required_extractors": [
+        "extractor.turn_metadata"
+      ],
+      "required_history_keys": [],
+      "required_runtime_scenarios": [],
+      "version": "1.0.0"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "catalog_format": "codex-wire-audit-metadata-key-history/v1",
+  "catalog_sha256": "12f3521d0584123e3c9244c9cb0359eff613442db00b0bfeea11c93de1646aed",
+  "catalog_version": "1.0.0",
+  "current_version_ref": "version.2026-09-05.current_main",
+  "format": "codex-wire-audit-metadata-history-container/v1",
+  "integrity": {
+    "algorithm": "sha256",
+    "canonical_payload_sha256": "78c8abc8ae51e230544f37d1872fdcd893c5afbe3c55aaa6bfbb1c3c11cd9503"
+  },
+  "key_count": 7,
+  "members": [
+    {
+      "byte_length": 48863,
+      "path": "catalog.json",
+      "sha256": "a27ea6da59d793dbd3f1f0e8684afc417211acd38c84a66ad4e9c7c2b2efb775"
+    },
+    {
+      "byte_length": 6678,
+      "path": "keys/key.config.tool_registry.include_tool_metadata.json",
+      "sha256": "0909d70167a1ba3f56c6cedb9ec27bc5d8a4f9b14dc2fd464c3b4b4be683af77"
+    },
+    {
+      "byte_length": 6702,
+      "path": "keys/key.config.tool_registry.include_tool_namespaces_info.json",
+      "sha256": "bb57cce49a1edf4c2ad5bdb3fe7286ee1e2ac6732091562288c65a2202e217ff"
+    },
+    {
+      "byte_length": 5472,
+      "path": "keys/key.config.tool_registry.turn_metadata_includes_tool_info.json",
+      "sha256": "468ffb0337737c20dd6ad1e066dfcdfcd7cc543ad32098253e449a8c22439325"
+    },
+    {
+      "byte_length": 12605,
+      "path": "keys/key.turn_metadata.code_mode_tool_names.json",
+      "sha256": "33e9de3931a6a15946d26d3ea793d91a75829de950b71725e14bb9cf95b22d12"
+    },
+    {
+      "byte_length": 6343,
+      "path": "keys/key.turn_metadata.forked_from_ordinal_exclusive.json",
+      "sha256": "c1089a3a49e3a93c7280845ab4f848202ff2b86de0cbbd3eea116f2371c8a535"
+    },
+    {
+      "byte_length": 6950,
+      "path": "keys/key.turn_metadata.tool_namespaces_info.json",
+      "sha256": "1013e76569fd1a9d00ca436986217083166a59a287511359c9e6d9a8a69e369a"
+    },
+    {
+      "byte_length": 6234,
+      "path": "keys/key.turn_metadata.window_number.json",
+      "sha256": "a7b5a11ae6d4ccc9822ccdb69ad9cf61ee4b1ed6c851cc08d799a8653ff7f755"
+    },
+    {
+      "byte_length": 4447,
+      "path": "transitions.json",
+      "sha256": "9f98b5ebbb1cc28c19512fe8fa511361412a2a9844c4be4306d12ae1b8beba2c"
+    },
+    {
+      "byte_length": 7990,
+      "path": "versions/000-version.2026-07-25.pre_code_mode_metadata.json",
+      "sha256": "0ce94527b17613c2b68ee31e46a4d340288d8dd47268d173bb12dc2c3bdf6420"
+    },
+    {
+      "byte_length": 8807,
+      "path": "versions/001-version.2026-07-25.code_mode_metadata_introduced.json",
+      "sha256": "7a6f5034a704804fcd8b0b31c8c1fcd103dd258a503ec0f421732148426d6c69"
+    },
+    {
+      "byte_length": 8727,
+      "path": "versions/002-version.2026-07-25.compatibility_header_bounded.json",
+      "sha256": "7c5024a49f127086f106eddacad97ccd2e2ca9d5f5df44a01bb15468567669ce"
+    },
+    {
+      "byte_length": 8680,
+      "path": "versions/003-version.2026-08-07.include_tool_namespaces_info_setting.json",
+      "sha256": "8d1383c7bd8956fb98b7950bbdcdea911ea3ab9d9d6876aa990a4ffceb70db54"
+    },
+    {
+      "byte_length": 8678,
+      "path": "versions/004-version.2026-08-07.include_tool_metadata_setting.json",
+      "sha256": "dad9a47f852094362792e75799efd594d931f73c86d2ca2bc616d3cebfd1aabf"
+    },
+    {
+      "byte_length": 8760,
+      "path": "versions/005-version.2026-08-07.turn_metadata_includes_tool_info_setting.json",
+      "sha256": "b3049a13c0f887612b0eeb013abee86034b0ae7175c39f2c2f60b1a9823edbe5"
+    },
+    {
+      "byte_length": 9808,
+      "path": "versions/006-version.2026-08-07.tool_namespaces_info_introduced.json",
+      "sha256": "73cefb0789b0585e413b02995623df082fc251271275dcc7be4705418afee7de"
+    },
+    {
+      "byte_length": 9526,
+      "path": "versions/007-version.2026-08-07.code_mode_metadata_removed.json",
+      "sha256": "475b34215c586eef6a054d202c9339ee8e23d600afc75c7a30d649dbfad1b86f"
+    },
+    {
+      "byte_length": 10169,
+      "path": "versions/008-version.2026-08-26.core_window_fork_keys.json",
+      "sha256": "eeca0b6ddeebb9b78f814af85e04f4c625614c337ccadd320c4043058a212884"
+    },
+    {
+      "byte_length": 10492,
+      "path": "versions/009-version.2026-09-05.current_main.json",
+      "sha256": "bf6b6d3e6a0bbcb9716ee1aab4d37b3cde02b6a99c88559c36af965211d504ad"
+    }
+  ],
+  "version_count": 10
+}

@@ -1,0 +1,49 @@
+{
+  "$id": "urn:codex-wire-audit:schema:edge:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "from": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^edge\\.",
+      "type": "string"
+    },
+    "optional": {
+      "type": "boolean"
+    },
+    "relation": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "rule": {
+      "type": "object"
+    },
+    "surface": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "to": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "from",
+    "to",
+    "relation"
+  ],
+  "title": "Codex wire audit graph edge",
+  "type": "object"
+}

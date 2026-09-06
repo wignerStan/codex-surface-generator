@@ -1,0 +1,53 @@
+{
+  "$id": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "arg": {
+      "$ref": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json"
+    },
+    "args": {
+      "items": {
+        "$ref": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json"
+      },
+      "type": "array"
+    },
+    "argument": {
+      "type": "string"
+    },
+    "expression": {
+      "type": "string"
+    },
+    "function": {
+      "type": "string"
+    },
+    "machine_evaluable": {
+      "type": "boolean"
+    },
+    "name": {
+      "type": "string"
+    },
+    "op": {
+      "enum": [
+        "all",
+        "any",
+        "not",
+        "exists",
+        "is_empty",
+        "const",
+        "call_predicate",
+        "var",
+        "rust_expression"
+      ]
+    },
+    "path": {
+      "type": "string"
+    },
+    "value": {}
+  },
+  "required": [
+    "op"
+  ],
+  "title": "Source-derived semantic predicate",
+  "type": "object"
+}

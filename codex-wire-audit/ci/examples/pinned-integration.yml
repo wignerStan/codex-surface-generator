@@ -1,0 +1,28 @@
+name: codex-wire-pinned-integration
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  pinned:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install .
+      - run: make test check-assets
+      - name: Audit pinned Codex checkout
+        run: |
+          git clone https://github.com/openai/codex.git codex
+          git -C codex checkout "$PINNED_CODEX_SHA"
+          codex-wire-audit \
+            --repo-root ./codex \
+            --source-commit "$PINNED_CODEX_SHA" \
+            --format canonical-json \
+            --output pinned.json \
+            --fail-on incomplete
+        env:
+          PINNED_CODEX_SHA: replace-with-reviewed-40-character-sha

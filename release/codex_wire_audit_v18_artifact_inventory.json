@@ -1,0 +1,102 @@
+{
+  "artifacts": [
+    {
+      "name": "CODEX_WIRE_AUDIT_V18_RELEASE_NOTES.md",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "2102e9b026e9bd980ce7b021cc98fd5130d4b280fd22f8fb46796614cf513ce7",
+      "size": 5010
+    },
+    {
+      "name": "README_CODEX_WIRE_AUDIT_V18.md",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "3cb178a3b3aec0ab488a7dc0f61f14b44f8c46a21e1d8d0c88c466193fca25f8",
+      "size": 4868
+    },
+    {
+      "name": "codex_wire_audit-11.0.0-py3-none-any.whl",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "f2b05b80d85d91a3f7ee5b52a442b0e5932f2a6591666fec2c5d69e1cd88041b",
+      "size": 437005
+    },
+    {
+      "name": "codex_wire_audit-11.0.0.tar.gz",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "d8104e9330186e34f0034485baa6b5468464804523bf62575e9b6f2d94c29529",
+      "size": 457090
+    },
+    {
+      "name": "codex_wire_audit_v17_to_v18_release_pipeline.diff",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "06f8eb39d77dbc683f4ce3842ab6b7d0fb89381e7952664ac707131bf3c2f144",
+      "size": 311900
+    },
+    {
+      "name": "codex_wire_audit_v18_context_management_container.zip",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "cceb3b37404cce75ac2bb3f6c968ba4c9d33137a8c00bc8fb5533e0130075147",
+      "size": 3900
+    },
+    {
+      "name": "codex_wire_audit_v18_release_attestation.json",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "fdc06f4fe1ee656ba2f9573b5161a7331d066d99ecd7097f675353dc76b4e69b",
+      "size": 17271
+    },
+    {
+      "name": "codex_wire_audit_v18_release_spec.json",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "c9c2b686cd7bb5e38e2177d704c11947f0320be92bf938b880e822d7d35f169e",
+      "size": 5061
+    },
+    {
+      "name": "codex_wire_audit_v18_source.zip",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "2d472dbebe5c29e1e70b29090500fe2e5a71a779f742615a2cbd3b40c7dcc56e",
+      "size": 592142
+    },
+    {
+      "name": "codex_wire_audit_v18_validation.json",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "e801b7bfa4e5afc8d70f6c04c561a01f78e0c9f195519e8d96928d338c2a5af4",
+      "size": 77217
+    },
+    {
+      "name": "codex_wire_audit_v18_validation.txt",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "cec99d87073377cdd3cf3482defc6cc6dc8720406350a1b3d53df697b0f38dec",
+      "size": 502156
+    },
+    {
+      "name": "legacy_codex_wire_audit_v15_alpha_history_notes_container.zip",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "789aca81ed70bf6f957722c3691c9ad3588c1f4a921a945d370d565dbb1ab297",
+      "size": 882
+    },
+    {
+      "name": "legacy_codex_wire_audit_v15_guardian_history_container.zip",
+      "provenance": "release_pipeline",
+      "role": "standalone_release_artifact",
+      "sha256": "f46dee34812e2d33ad7382c6874283db8e44cdbfc78019c3b739045ae79c7728",
+      "size": 786
+    }
+  ],
+  "format": "codex-wire-audit-artifact-inventory/v1",
+  "integrity": {
+    "algorithm": "sha256",
+    "canonical_payload_sha256": "3cabb7b917194794c4662a92934d3336ccdec23cf876ed0e08563ab7491d0d5e"
+  },
+  "release_id": "codex-wire-audit-v18-release-pipeline",
+  "scope": "standalone base artifacts before machine-assets, checksums, and aggregate bundle"
+}

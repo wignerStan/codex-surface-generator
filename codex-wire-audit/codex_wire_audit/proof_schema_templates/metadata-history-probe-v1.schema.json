@@ -1,0 +1,127 @@
+{
+  "$id": "https://openai.example/codex-wire-audit/metadata-history-probe-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "complete": {
+      "type": "boolean"
+    },
+    "diagnostics": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "format": {
+      "const": "codex-wire-audit-metadata-history-probe/v1"
+    },
+    "forward_canary": {
+      "type": "boolean"
+    },
+    "key_results": {
+      "additionalProperties": {
+        "type": "object"
+      },
+      "type": "object"
+    },
+    "missing_source_paths": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "observed_commit_sha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "selected_commit_sha": {
+      "type": "string"
+    },
+    "selected_version_ref": {
+      "type": "string"
+    },
+    "selection_basis": {
+      "type": "string"
+    },
+    "semantic_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "source_mode": {
+      "enum": [
+        "worktree",
+        "commit"
+      ]
+    },
+    "source_root": {
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "basis": {
+            "enum": [
+              "worktree",
+              "git_object_database"
+            ]
+          },
+          "byte_length": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "git_blob_sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "basis",
+          "byte_length",
+          "sha256",
+          "git_blob_sha"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "incomplete"
+      ]
+    }
+  },
+  "required": [
+    "format",
+    "selected_version_ref",
+    "selection_basis",
+    "selected_commit_sha",
+    "observed_commit_sha",
+    "source_mode",
+    "source_root",
+    "forward_canary",
+    "complete",
+    "status",
+    "key_results",
+    "sources",
+    "missing_source_paths",
+    "diagnostics",
+    "semantic_sha256"
+  ],
+  "title": "Codex metadata-history source probe v1",
+  "type": "object"
+}

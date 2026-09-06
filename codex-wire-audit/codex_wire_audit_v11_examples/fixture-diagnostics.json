@@ -1,0 +1,40 @@
+{
+  "identity_split": [],
+  "legacy_combined_identity": [
+    {
+      "category": "source_evolution",
+      "code": "LEGACY_COMBINED_IDENTITY_GATE_OBSERVED",
+      "details": {},
+      "entity_id": "turn_metadata.gate.has_turn_identity",
+      "extractor_id": "extractor.turn_metadata",
+      "id": "diag.legacy_combined_identity_gate_observed.1b4118268b59",
+      "message": "The source still uses the older combined has_turn_identity gate name.",
+      "recoverable": true,
+      "severity": "info",
+      "source_refs": [
+        "codex-rs/core/src/responses_metadata.rs:8"
+      ],
+      "strict_failure": false
+    }
+  ],
+  "unclassified_expression": [
+    {
+      "category": "semantic_classification",
+      "code": "FIELD_EMISSION_EXPRESSION_UNCLASSIFIED",
+      "details": {
+        "expression": "new_helper(self.turn_id.as_deref())",
+        "field": "turn_id"
+      },
+      "entity_id": "turn_metadata.field.turn_id",
+      "extractor_id": "extractor.turn_metadata",
+      "id": "diag.field_emission_expression_unclassified.54d1631693fb",
+      "message": "The emission expression for turn-metadata field turn_id is unclassified.",
+      "recoverable": true,
+      "severity": "warning",
+      "source_refs": [
+        "codex-rs/core/src/responses_metadata.rs:4"
+      ],
+      "strict_failure": true
+    }
+  ]
+}

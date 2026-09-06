@@ -1,0 +1,90 @@
+{
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:responses_request_full:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Full Responses request after Codex request construction and Serde omission rules.",
+  "properties": {
+    "access_programs": {
+      "type": "object"
+    },
+    "client_metadata": {
+      "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:client_metadata:1.0.0"
+    },
+    "include": {
+      "contains": {
+        "const": "reasoning.encrypted_content"
+      },
+      "items": {
+        "type": "string"
+      },
+      "minContains": 1,
+      "type": "array"
+    },
+    "input": {
+      "items": {
+        "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:responses_item:1.0.0"
+      },
+      "type": "array"
+    },
+    "instructions": {
+      "type": "string"
+    },
+    "model": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "parallel_tool_calls": {
+      "type": "boolean"
+    },
+    "prompt_cache_key": {
+      "type": "string"
+    },
+    "reasoning": {
+      "type": "object"
+    },
+    "service_tier": {
+      "type": "string"
+    },
+    "store": {
+      "const": false
+    },
+    "stream": {
+      "const": true
+    },
+    "stream_options": {
+      "type": "object"
+    },
+    "text": {
+      "type": "object"
+    },
+    "tool_choice": {
+      "const": "auto"
+    },
+    "tools": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "client_metadata",
+    "include",
+    "input",
+    "model",
+    "parallel_tool_calls",
+    "reasoning",
+    "store",
+    "stream",
+    "tool_choice",
+    "tools"
+  ],
+  "title": "Codex full Responses HTTP request",
+  "type": "object",
+  "x-codex-wire-audit-certainty": "source_derived",
+  "x-codex-wire-audit-entity": "schema.rust.responsesapirequest",
+  "x-codex-wire-audit-entity-refs": [],
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-validation-coverage": "structural"
+}

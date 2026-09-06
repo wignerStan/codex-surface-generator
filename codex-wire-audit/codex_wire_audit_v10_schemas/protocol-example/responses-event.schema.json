@@ -1,0 +1,434 @@
+{
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:responses_event:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "additionalProperties": true,
+      "properties": {
+        "rate_limits": {
+          "type": [
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "type": {
+          "const": "codex.rate_limits"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "codex.response.metadata"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "response": {
+          "additionalProperties": true,
+          "properties": {
+            "end_turn": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "usage": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "usage_metadata": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "response.completed"
+        }
+      },
+      "required": [
+        "type",
+        "response"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "response.content_part.added"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "response.content_part.done"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "response": {
+          "type": "object"
+        },
+        "type": {
+          "const": "response.created"
+        }
+      },
+      "required": [
+        "type",
+        "response"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "anyOf": [
+        {
+          "required": [
+            "item_id"
+          ]
+        },
+        {
+          "required": [
+            "call_id"
+          ]
+        }
+      ],
+      "properties": {
+        "call_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "delta": {
+          "type": "string"
+        },
+        "item_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "const": "response.custom_tool_call_input.delta"
+        }
+      },
+      "required": [
+        "type",
+        "delta"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "response.custom_tool_call_input.done"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "response": {
+          "type": "object"
+        },
+        "type": {
+          "const": "response.failed"
+        }
+      },
+      "required": [
+        "type",
+        "response"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "response.function_call_arguments.delta"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "response.function_call_arguments.done"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "response.in_progress"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "response": {
+          "type": "object"
+        },
+        "type": {
+          "const": "response.incomplete"
+        }
+      },
+      "required": [
+        "type",
+        "response"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "headers": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "metadata": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "type": {
+          "const": "response.metadata"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "item": {
+          "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:responses_item:1.0.0"
+        },
+        "type": {
+          "const": "response.output_item.added"
+        }
+      },
+      "required": [
+        "type",
+        "item"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "item": {
+          "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:responses_item:1.0.0"
+        },
+        "type": {
+          "const": "response.output_item.done"
+        }
+      },
+      "required": [
+        "type",
+        "item"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "delta": {
+          "type": "string"
+        },
+        "type": {
+          "const": "response.output_text.delta"
+        }
+      },
+      "required": [
+        "type",
+        "delta"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "response.output_text.done"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "summary_index": {
+          "type": "integer"
+        },
+        "type": {
+          "const": "response.reasoning_summary_part.added"
+        }
+      },
+      "required": [
+        "type",
+        "summary_index"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "response.reasoning_summary_part.done"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "delta": {
+          "type": "string"
+        },
+        "summary_index": {
+          "type": "integer"
+        },
+        "type": {
+          "const": "response.reasoning_summary_text.delta"
+        }
+      },
+      "required": [
+        "type",
+        "delta",
+        "summary_index"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "summary_index": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "const": "response.reasoning_summary_text.done"
+        }
+      },
+      "required": [
+        "type",
+        "item_id",
+        "text",
+        "summary_index"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "content_index": {
+          "type": "integer"
+        },
+        "delta": {
+          "type": "string"
+        },
+        "type": {
+          "const": "response.reasoning_text.delta"
+        }
+      },
+      "required": [
+        "type",
+        "delta",
+        "content_index"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "responsesapi.websocket_timing"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "Responses stream event envelope",
+  "x-codex-wire-audit-entity-refs": [],
+  "x-codex-wire-audit-note": "Known consumed fields are constrained per event. Additional server fields remain accepted for forward compatibility.",
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-validation-coverage": "structural"
+}

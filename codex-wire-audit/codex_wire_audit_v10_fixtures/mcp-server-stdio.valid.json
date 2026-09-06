@@ -1,0 +1,9 @@
+{
+  "args": [
+    "--stdio"
+  ],
+  "command": "example-mcp-server",
+  "enabled": true,
+  "environment_id": "local",
+  "required": false
+}

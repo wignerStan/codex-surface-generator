@@ -1,0 +1,63 @@
+{
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:codex_turn_metadata_extra_input:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": {
+    "type": "string"
+  },
+  "description": "Effective caller/config extra metadata after applying the key, count, value, and reserved-name contract. Values are strings and serialize as root siblings of fixed turn metadata fields.",
+  "maxProperties": 16,
+  "not": {
+    "anyOf": [
+      {
+        "required": [
+          "installation_id"
+        ]
+      },
+      {
+        "required": [
+          "request_kind"
+        ]
+      },
+      {
+        "required": [
+          "session_id"
+        ]
+      },
+      {
+        "required": [
+          "thread_id"
+        ]
+      },
+      {
+        "required": [
+          "turn_id"
+        ]
+      },
+      {
+        "required": [
+          "x-codex-turn-metadata"
+        ]
+      }
+    ]
+  },
+  "propertyNames": {
+    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+  },
+  "title": "Accepted flattened turn-metadata extra entries",
+  "type": "object",
+  "x-byte-limit-note": "JSON Schema maxLength counts Unicode code points, so byte limits remain explicit extension keywords.",
+  "x-codex-wire-audit-entity-refs": [],
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-validation-coverage": "structural",
+  "x-max-key-bytes": 64,
+  "x-max-value-bytes": 128,
+  "x-reserved-keys": [
+    "installation_id",
+    "request_kind",
+    "session_id",
+    "thread_id",
+    "turn_id",
+    "x-codex-turn-metadata"
+  ]
+}

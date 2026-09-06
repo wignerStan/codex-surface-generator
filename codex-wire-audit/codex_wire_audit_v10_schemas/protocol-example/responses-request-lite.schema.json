@@ -1,0 +1,119 @@
+{
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:responses_request_lite:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Responses Lite uses the same Rust request type after moving instructions and tools into input items. Top-level instructions/tools are omitted, parallel tool calls are false, and reasoning context is all_turns.",
+  "properties": {
+    "access_programs": {
+      "type": "object"
+    },
+    "client_metadata": {
+      "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:client_metadata:1.0.0"
+    },
+    "include": {
+      "contains": {
+        "const": "reasoning.encrypted_content"
+      },
+      "items": {
+        "type": "string"
+      },
+      "minContains": 1,
+      "type": "array"
+    },
+    "input": {
+      "contains": {
+        "additionalProperties": true,
+        "properties": {
+          "role": {
+            "const": "developer"
+          },
+          "tools": {
+            "type": "array"
+          },
+          "type": {
+            "const": "additional_tools"
+          }
+        },
+        "required": [
+          "type",
+          "role",
+          "tools"
+        ],
+        "type": "object"
+      },
+      "items": {
+        "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:responses_item:1.0.0"
+      },
+      "minContains": 1,
+      "type": "array"
+    },
+    "instructions": false,
+    "model": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "parallel_tool_calls": {
+      "const": false
+    },
+    "prompt_cache_key": {
+      "type": "string"
+    },
+    "reasoning": {
+      "additionalProperties": true,
+      "properties": {
+        "context": {
+          "const": "all_turns"
+        }
+      },
+      "required": [
+        "context"
+      ],
+      "type": "object"
+    },
+    "service_tier": {
+      "type": "string"
+    },
+    "store": {
+      "const": false
+    },
+    "stream": {
+      "const": true
+    },
+    "stream_options": {
+      "type": "object"
+    },
+    "text": {
+      "type": "object"
+    },
+    "tool_choice": {
+      "const": "auto"
+    },
+    "tools": false
+  },
+  "required": [
+    "client_metadata",
+    "include",
+    "input",
+    "model",
+    "parallel_tool_calls",
+    "reasoning",
+    "store",
+    "stream",
+    "tool_choice"
+  ],
+  "title": "Codex Responses Lite HTTP request",
+  "type": "object",
+  "x-codex-wire-audit-certainty": "source_derived",
+  "x-codex-wire-audit-entity": "schema.rust.responsesapirequest",
+  "x-codex-wire-audit-entity-refs": [],
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-transformation-rules": [
+    "rule.responses_lite.parallel_tool_calls",
+    "rule.responses_lite.reasoning.context",
+    "rule.responses_lite.tool_namespace_metadata",
+    "rule.responses_lite.top_level_instructions_297f2bc3f6",
+    "rule.responses_lite.top_level_tools_3552b3ebb6"
+  ],
+  "x-codex-wire-audit-validation-coverage": "structural"
+}

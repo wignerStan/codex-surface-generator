@@ -1,0 +1,11 @@
+{
+  "x-codex-turn-metadata": {
+    "codex_version": "0.0.0-fixture",
+    "model": "gpt-example",
+    "node_repl_disabled": false,
+    "reasoning_effort": "medium",
+    "session_id": "00000000-0000-0000-0000-000000000001",
+    "thread_id": "00000000-0000-0000-0000-000000000002",
+    "turn_id": "turn-example"
+  }
+}

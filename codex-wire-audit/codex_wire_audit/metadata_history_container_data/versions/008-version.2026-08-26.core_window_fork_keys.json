@@ -1,0 +1,273 @@
+{
+  "catalog_sha256": "12f3521d0584123e3c9244c9cb0359eff613442db00b0bfeea11c93de1646aed",
+  "catalog_version": "1.0.0",
+  "format": "codex-wire-audit-metadata-history-version/v1",
+  "states": {
+    "key.config.tool_registry.include_tool_metadata": {
+      "assertions": {
+        "definition_present": false,
+        "runtime_use_present": false,
+        "schema_property_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "renamed",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Renamed to turn_metadata_includes_tool_info.",
+      "evidence_refs": [
+        "evidence.commit.248d8c0e"
+      ],
+      "id": "state.cfg_include_metadata.renamed",
+      "key_ref": "key.config.tool_registry.include_tool_metadata",
+      "status": "renamed",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "key.config.tool_registry.include_tool_namespaces_info": {
+      "assertions": {
+        "definition_present": false,
+        "runtime_use_present": false,
+        "schema_property_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "renamed",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Renamed to include_tool_metadata.",
+      "evidence_refs": [
+        "evidence.commit.c87a218b"
+      ],
+      "id": "state.cfg_include_namespaces.renamed",
+      "key_ref": "key.config.tool_registry.include_tool_namespaces_info",
+      "status": "renamed",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "key.config.tool_registry.turn_metadata_includes_tool_info": {
+      "assertions": {
+        "definition_present": true,
+        "runtime_use_present": true,
+        "schema_property_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Current opt-in configuration name.",
+      "evidence_refs": [
+        "evidence.commit.248d8c0e",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.cfg_turn_metadata_info.active",
+      "key_ref": "key.config.tool_registry.turn_metadata_includes_tool_info",
+      "status": "active",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "key.turn_metadata.code_mode_tool_names": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "absent",
+        "constant_names": [
+          "LEGACY_CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "internal_identifier_present": true,
+        "mcp_container": "absent",
+        "payload_container": "absent",
+        "replacement_code_mode_name_field_present": true,
+        "reserved_extra_key": true,
+        "successor_mapping_present": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "internal_only",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "The wire field is removed. Its literal remains reserved so caller extras cannot reintroduce the unbounded inventory.",
+      "evidence_refs": [
+        "evidence.commit.8e4b1044",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.code_mode.removed_reserved",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "removed_reserved",
+      "value_schema": null
+    },
+    "key.turn_metadata.forked_from_ordinal_exclusive": {
+      "assertions": {
+        "backward_compatible_reserved": true,
+        "compatibility_header_container": "emitted_conditionally",
+        "constant_names": [
+          "FORKED_FROM_ORDINAL_EXCLUSIVE_KEY"
+        ],
+        "mcp_container": "emitted_conditionally",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "emitted_conditionally",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Core emits a typed fork cutoff. Existing configured values remain accepted but are filtered before construction.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.fork_ordinal.core_owned",
+      "key_ref": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "status": "core_owned_legacy_input_filtered",
+      "value_schema": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "key.turn_metadata.tool_namespaces_info": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "omitted",
+        "constant_names": [
+          "TOOL_NAMESPACES_INFO_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "replacement_code_mode_name_field_present": true,
+        "reserved_extra_key": true,
+        "successor_mapping_present": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          },
+          {
+            "operator": "eq",
+            "path": "config.features.tool_registry.turn_metadata_includes_tool_info",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "omitted",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Responses Lite may emit authoritative namespace/function metadata when explicitly enabled; compatibility and MCP projections omit it.",
+      "evidence_refs": [
+        "evidence.commit.2b1811e5",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.tool_namespaces.active_opt_in",
+      "key_ref": "key.turn_metadata.tool_namespaces_info",
+      "status": "active",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:TurnToolNamespaceInfo"
+        },
+        "type": "object"
+      }
+    },
+    "key.turn_metadata.window_number": {
+      "assertions": {
+        "backward_compatible_reserved": true,
+        "compatibility_header_container": "emitted_conditionally",
+        "constant_names": [
+          "WINDOW_NUMBER_KEY"
+        ],
+        "mcp_container": "absent",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Core emits a typed zero-based window number. Existing configured values remain accepted but are filtered before construction.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.window_number.core_owned",
+      "key_ref": "key.turn_metadata.window_number",
+      "status": "core_owned_legacy_input_filtered",
+      "value_schema": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    }
+  },
+  "version": {
+    "commit_sha": "0d654e653614b0f99b8da3e4a74aa2558ee61752",
+    "committed_at": "2026-08-26T22:37:59Z",
+    "event": "core_ownership_transition",
+    "evidence": {
+      "commit_sha": "0d654e653614b0f99b8da3e4a74aa2558ee61752",
+      "committed_at": "2026-08-26T22:37:59Z",
+      "id": "evidence.commit.0d654e65",
+      "repository_blob_shas": {
+        "codex-rs/core/src/responses_metadata.rs": "698e5a0ca24394f29f0d3100d997c7ee21452adf"
+      },
+      "source_paths": [
+        "codex-rs/core/src/responses_metadata.rs",
+        "codex-rs/core/src/turn_metadata.rs"
+      ],
+      "title": "Track window and fork positions in turn metadata (#40987)",
+      "url": "https://github.com/openai/codex/commit/0d654e653614b0f99b8da3e4a74aa2558ee61752"
+    },
+    "exact_snapshot": true,
+    "id": "version.2026-08-26.core_window_fork_keys",
+    "ordinal": 8,
+    "state_refs": {
+      "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.renamed",
+      "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.renamed",
+      "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.active",
+      "key.turn_metadata.code_mode_tool_names": "state.code_mode.removed_reserved",
+      "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.core_owned",
+      "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.active_opt_in",
+      "key.turn_metadata.window_number": "state.window_number.core_owned"
+    },
+    "title": "Track window and fork positions in turn metadata (#40987)"
+  }
+}

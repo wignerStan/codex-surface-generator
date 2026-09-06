@@ -1,0 +1,38 @@
+{
+  "count": 8,
+  "files": {
+    "diagnostic.schema.json": {
+      "bytes": 1197,
+      "sha256": "7e9376ba42687949476b7181d8a37d81605a31387bd349853c33a4bc86caeeed"
+    },
+    "evolution-contract.schema.json": {
+      "bytes": 7998,
+      "sha256": "645ecd19afbb1b16a94dbf72833cbf91b8046a842164702b67508c3205f0d043"
+    },
+    "index.json": {
+      "bytes": 358,
+      "sha256": "f10bdf823b7dfafbe816545fd4fd1657e9a736613e7c944afac4c496c64afd21"
+    },
+    "predicate.schema.json": {
+      "bytes": 1072,
+      "sha256": "9c6ad7921d66d80ba8d5ae4b8f6484288e165c939569819415041e9603893b74"
+    },
+    "semantic-diff.schema.json": {
+      "bytes": 2145,
+      "sha256": "f377f1e385aa35717a7b3aa5c736294dc7837c63b56b213ac12eec9859345f2a"
+    },
+    "source-registry.schema.json": {
+      "bytes": 3074,
+      "sha256": "2a43007ba70479358fa37473de2e86ba3d9b563d77ad2a8a338746f2c42cea3f"
+    },
+    "source-snapshot.schema.json": {
+      "bytes": 3940,
+      "sha256": "ad32a94926aba675fd083f3fc8dda1963762cc1daa5a1bcafef3ca381648a96e"
+    },
+    "turn-metadata-semantics.schema.json": {
+      "bytes": 4527,
+      "sha256": "7389adf7fd3e352f4ae6cfa817d018a2c83df13e75c3e1685b7bd00a5755cd1d"
+    }
+  },
+  "schema_version": "1.0.0"
+}

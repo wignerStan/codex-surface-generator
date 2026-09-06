@@ -1,0 +1,185 @@
+{
+  "$defs": {
+    "file": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_identity": {
+          "const": "exact"
+        },
+        "byte_length": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "encoding": {
+          "const": "utf-8"
+        },
+        "git_blob_sha": {
+          "pattern": "^[0-9a-f]{40}$",
+          "type": "string"
+        },
+        "group": {
+          "enum": [
+            "base",
+            "surface",
+            "extra"
+          ]
+        },
+        "legacy_key": {
+          "type": "string"
+        },
+        "line_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "path_candidate_index": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "repository_blob_sha": {
+          "pattern": "^[0-9a-f]{40}$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "spec_id": {
+          "pattern": "^source_spec\\.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "spec_id",
+        "legacy_key",
+        "group",
+        "path",
+        "byte_length",
+        "line_count",
+        "sha256",
+        "git_blob_sha",
+        "repository_blob_sha",
+        "path_candidate_index",
+        "byte_identity",
+        "encoding"
+      ],
+      "type": "object"
+    },
+    "revision": {
+      "additionalProperties": false,
+      "properties": {
+        "commit_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "commit_message": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dirty": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "repository": {
+          "type": "string"
+        },
+        "requested_ref": {
+          "type": "string"
+        },
+        "resolved_commit_sha": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_mode": {
+          "type": "string"
+        },
+        "source_revision_id": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "source_set_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_mode",
+        "repository",
+        "requested_ref",
+        "resolved_commit_sha",
+        "source_set_sha256",
+        "source_revision_id",
+        "dirty",
+        "commit_date",
+        "commit_message"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.codex-wire-audit.invalid/v11/source-snapshot.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "counts": {
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "unavailable": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "available",
+        "unavailable"
+      ],
+      "type": "object"
+    },
+    "files": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^source_spec\\.": {
+          "$ref": "#/$defs/file"
+        }
+      },
+      "type": "object"
+    },
+    "revision": {
+      "$ref": "#/$defs/revision"
+    },
+    "unavailable_specs": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^source_spec\\.": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "revision",
+    "files",
+    "unavailable_specs",
+    "counts"
+  ],
+  "title": "Exact-byte source snapshot manifest",
+  "type": "object"
+}

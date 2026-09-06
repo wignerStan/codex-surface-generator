@@ -1,0 +1,131 @@
+{
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:responses_websocket_response_create_lite:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "not": {
+    "properties": {
+      "generate": {
+        "const": false
+      }
+    },
+    "required": [
+      "generate"
+    ]
+  },
+  "properties": {
+    "access_programs": {
+      "type": "object"
+    },
+    "client_metadata": {
+      "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:client_metadata_websocket_lite:1.0.0"
+    },
+    "generate": {
+      "type": "boolean"
+    },
+    "include": {
+      "contains": {
+        "const": "reasoning.encrypted_content"
+      },
+      "items": {
+        "type": "string"
+      },
+      "minContains": 1,
+      "type": "array"
+    },
+    "input": {
+      "contains": {
+        "additionalProperties": true,
+        "properties": {
+          "role": {
+            "const": "developer"
+          },
+          "tools": {
+            "type": "array"
+          },
+          "type": {
+            "const": "additional_tools"
+          }
+        },
+        "required": [
+          "type",
+          "role",
+          "tools"
+        ],
+        "type": "object"
+      },
+      "items": {
+        "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:responses_item:1.0.0"
+      },
+      "minContains": 1,
+      "type": "array"
+    },
+    "instructions": false,
+    "model": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "parallel_tool_calls": {
+      "const": false
+    },
+    "previous_response_id": {
+      "type": "string"
+    },
+    "prompt_cache_key": {
+      "type": "string"
+    },
+    "reasoning": {
+      "additionalProperties": true,
+      "properties": {
+        "context": {
+          "const": "all_turns"
+        }
+      },
+      "required": [
+        "context"
+      ],
+      "type": "object"
+    },
+    "service_tier": {
+      "type": "string"
+    },
+    "store": {
+      "const": false
+    },
+    "stream": {
+      "const": true
+    },
+    "stream_options": {
+      "type": "object"
+    },
+    "text": {
+      "type": "object"
+    },
+    "tool_choice": {
+      "const": "auto"
+    },
+    "tools": false,
+    "type": {
+      "const": "response.create"
+    }
+  },
+  "required": [
+    "client_metadata",
+    "include",
+    "input",
+    "model",
+    "parallel_tool_calls",
+    "reasoning",
+    "store",
+    "stream",
+    "tool_choice",
+    "type"
+  ],
+  "title": "Codex Responses Lite WebSocket response.create message",
+  "type": "object",
+  "x-codex-wire-audit-certainty": "source_derived",
+  "x-codex-wire-audit-entity": "schema.rust.responsecreatewsrequest",
+  "x-codex-wire-audit-entity-refs": [],
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-validation-coverage": "structural"
+}

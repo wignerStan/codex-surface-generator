@@ -1,0 +1,15 @@
+{
+  "client_metadata": {
+    "session_id": "00000000-0000-0000-0000-000000000001",
+    "thread_id": "00000000-0000-0000-0000-000000000002",
+    "x-codex-installation-id": "install-example",
+    "x-codex-turn-metadata": "{\"request_kind\":\"turn\",\"session_id\":\"00000000-0000-0000-0000-000000000001\",\"team\":\"infra\",\"thread_id\":\"00000000-0000-0000-0000-000000000002\"}",
+    "x-codex-window-id": "window-example",
+    "x-codex-ws-stream-request-start-ms": "1725494400000"
+  },
+  "generate": false,
+  "model": "gpt-example",
+  "store": false,
+  "stream": true,
+  "type": "response.create"
+}

@@ -1,0 +1,206 @@
+{
+  "diagnostics": [
+    {
+      "category": "semantic_classification",
+      "code": "FIELD_EMISSION_EXPRESSION_UNCLASSIFIED",
+      "details": {
+        "expression": "new_helper(self.turn_id.as_deref())",
+        "field": "turn_id"
+      },
+      "entity_id": "turn_metadata.field.turn_id",
+      "extractor_id": "extractor.turn_metadata",
+      "id": "diag.field_emission_expression_unclassified.54d1631693fb",
+      "message": "The emission expression for turn-metadata field turn_id is unclassified.",
+      "recoverable": true,
+      "severity": "warning",
+      "source_refs": [
+        "codex-rs/core/src/responses_metadata.rs:4"
+      ],
+      "strict_failure": true
+    }
+  ],
+  "evolution_contract": {
+    "$schema": "codex_wire_audit_v11_schemas/evolution-contract.schema.json",
+    "coverage_profile": "fixture",
+    "diagnostic_refs": [
+      "diag.field_emission_expression_unclassified.54d1631693fb"
+    ],
+    "diagnostic_summary": {
+      "error": 0,
+      "info": 0,
+      "warning": 1
+    },
+    "extractors": {
+      "extractor.turn_metadata": {
+        "data": {
+          "construction_function": "CodexResponsesMetadata::turn_metadata_payload",
+          "field_groups": {
+            "flattened_extra": [
+              "extra"
+            ],
+            "turn_identity": [
+              "turn_id"
+            ]
+          },
+          "field_order": [
+            "turn_id",
+            "extra"
+          ],
+          "fields": {
+            "extra": {
+              "emission_fingerprint": "dee2edcfb951c836673e37b49ea5d32e9e409e776507f78aa981642bdac2f7c2",
+              "field_name": "extra",
+              "gate_refs": [],
+              "id": "turn_metadata.field.extra",
+              "identity_domain": "flattened_extra",
+              "kind": "flattened_extra",
+              "machine_evaluable": true,
+              "predicate": {
+                "op": "const",
+                "value": true
+              },
+              "semantic_fingerprint": "0c18ecf17f7f60cf150c49b3225398c9e37fb7b4fc85b60009b429b22ff74cda",
+              "source_expression": "&self.extra",
+              "source_ref": "codex-rs/core/src/responses_metadata.rs:5",
+              "value_expression": "&self.extra"
+            },
+            "turn_id": {
+              "emission_fingerprint": "84bc13bc75581c639a8a4d4b48719fc9da2e769d2dc70db5b8cca1b5f24b3502",
+              "field_name": "turn_id",
+              "gate_refs": [],
+              "id": "turn_metadata.field.turn_id",
+              "identity_domain": "turn_identity",
+              "kind": "unclassified",
+              "machine_evaluable": false,
+              "predicate": {
+                "expression": "new_helper(self.turn_id.as_deref())",
+                "machine_evaluable": false,
+                "op": "rust_expression"
+              },
+              "semantic_fingerprint": "daf71725e492e05316bdf50685752a30b961bfe2410ed14497baa55a3ec73852",
+              "source_expression": "new_helper(self.turn_id.as_deref())",
+              "source_ref": "codex-rs/core/src/responses_metadata.rs:4",
+              "value_expression": "new_helper(self.turn_id.as_deref())"
+            }
+          },
+          "gates": {},
+          "local_bindings": {},
+          "semantic_complete": false,
+          "semantic_digest": "a6cbbbf16e92365c1e8d3fa61bc6bed0e49c63339b2d7d6e1f76fc199e8e396d",
+          "source_path": "codex-rs/core/src/responses_metadata.rs",
+          "source_sha256": "38c5f04ecb7c6270037616078bd8b2a3d66481c824bd961173a396f2560ce504"
+        },
+        "extractor_id": "extractor.turn_metadata",
+        "schema_version": "1.0.0",
+        "semantic_complete": false,
+        "source_spec_ids": [
+          "source_spec.base.metadata"
+        ]
+      }
+    },
+    "generator_version": "11.0.0",
+    "integrity": {
+      "algorithm": "sha256",
+      "canonical_ir_sha256": "c61290cfabed42d5425204d1809037b9cbc328362dbc8dfd6017e37d7f27633a",
+      "canonicalization": "codex-wire-audit-canonical-json-v2"
+    },
+    "migration": {
+      "canonical_ir_extractors": [
+        "extractor.turn_metadata"
+      ],
+      "extension_contract": "new source-aware semantic extractors register independently and emit canonical IR fragments; the compatibility adapter is not edited for new semantics",
+      "legacy_adapter": "frozen v10 extraction/report renderer",
+      "legacy_machine_reconstruction_remaining": true,
+      "stage": "hybrid_canonical_ir"
+    },
+    "schema_version": "1.0.0",
+    "source_registry": {
+      "counts": {
+        "base": 1,
+        "extra": 0,
+        "optional": 0,
+        "required": 1,
+        "surface": 0,
+        "total": 1
+      },
+      "schema_version": "1.0.0",
+      "sources": {
+        "source_spec.base.metadata": {
+          "expected_symbols": [
+            "CodexResponsesMetadata",
+            "CodexTurnMetadataPayload",
+            "turn_metadata_payload"
+          ],
+          "extractor_ids": [
+            "extractor.turn_metadata"
+          ],
+          "group": "base",
+          "id": "source_spec.base.metadata",
+          "legacy_key": "metadata",
+          "path_candidates": [
+            "codex-rs/core/src/responses_metadata.rs"
+          ],
+          "required": true,
+          "roles": [
+            "responses_metadata",
+            "turn_metadata_semantics"
+          ]
+        }
+      }
+    },
+    "source_revision": {
+      "commit_date": null,
+      "commit_message": "deterministic maintainability fixture",
+      "dirty": null,
+      "repository": "openai/codex",
+      "requested_ref": "responses_metadata_unclassified.rs",
+      "resolved_commit_sha": null,
+      "source_mode": "fixture",
+      "source_revision_id": "sha256:5b8b4a84d321b4a30cb0a8da3b66d0031e4ae4f52fc13c030a99c745da81f30a",
+      "source_set_sha256": "5b8b4a84d321b4a30cb0a8da3b66d0031e4ae4f52fc13c030a99c745da81f30a"
+    },
+    "source_snapshot": {
+      "counts": {
+        "available": 1,
+        "unavailable": 0
+      },
+      "files": {
+        "source_spec.base.metadata": {
+          "byte_identity": "exact",
+          "byte_length": 243,
+          "encoding": "utf-8",
+          "git_blob_sha": "6d7052b8bf9ebadde36b3af5c31f01086218a495",
+          "group": "base",
+          "legacy_key": "metadata",
+          "line_count": 8,
+          "path": "codex-rs/core/src/responses_metadata.rs",
+          "path_candidate_index": 0,
+          "repository_blob_sha": null,
+          "sha256": "38c5f04ecb7c6270037616078bd8b2a3d66481c824bd961173a396f2560ce504",
+          "spec_id": "source_spec.base.metadata"
+        }
+      },
+      "revision": {
+        "commit_date": null,
+        "commit_message": "deterministic maintainability fixture",
+        "dirty": null,
+        "repository": "openai/codex",
+        "requested_ref": "responses_metadata_unclassified.rs",
+        "resolved_commit_sha": null,
+        "source_mode": "fixture",
+        "source_revision_id": "sha256:5b8b4a84d321b4a30cb0a8da3b66d0031e4ae4f52fc13c030a99c745da81f30a",
+        "source_set_sha256": "5b8b4a84d321b4a30cb0a8da3b66d0031e4ae4f52fc13c030a99c745da81f30a"
+      },
+      "unavailable_specs": {}
+    },
+    "status": {
+      "current_main_conformance": "not_compared",
+      "overall": "partial",
+      "runtime_observation": "not_run",
+      "schema_resolution": "pending_report_upgrade",
+      "semantic_classification": "partial",
+      "source_inventory": "complete",
+      "syntax_extraction": "complete"
+    }
+  }
+}

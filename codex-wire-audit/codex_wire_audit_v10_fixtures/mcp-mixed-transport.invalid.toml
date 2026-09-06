@@ -1,0 +1,3 @@
+[mcp_servers.bad]
+command = "example-mcp-server"
+url = "https://example.invalid/mcp"

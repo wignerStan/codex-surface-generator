@@ -1,0 +1,87 @@
+{
+  "catalog_sha256": "12f3521d0584123e3c9244c9cb0359eff613442db00b0bfeea11c93de1646aed",
+  "format": "codex-wire-audit-metadata-history-transitions/v1",
+  "transitions": [
+    {
+      "at_version_ref": "version.2026-07-25.code_mode_metadata_introduced",
+      "classification": "introduced",
+      "description": "Add code_mode_tool_names to Responses Lite nested turn metadata and reserve the key.",
+      "from_state_ref": "state.code_mode.absent",
+      "id": "transition.code_mode.introduced",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.active_unbounded_header"
+    },
+    {
+      "at_version_ref": "version.2026-07-25.compatibility_header_bounded",
+      "classification": "projection_bounded",
+      "description": "Omit the unbounded map from direct compatibility-header JSON.",
+      "from_state_ref": "state.code_mode.active_unbounded_header",
+      "id": "transition.code_mode.compatibility_bounded",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.active_bounded_header"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.include_tool_metadata_setting",
+      "classification": "renamed",
+      "description": "Rename include_tool_namespaces_info to include_tool_metadata.",
+      "from_state_ref": "state.cfg_include_namespaces.active",
+      "id": "transition.cfg.namespaces_to_metadata",
+      "key_ref": "key.config.tool_registry.include_tool_namespaces_info",
+      "to_state_ref": "state.cfg_include_namespaces.renamed"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.turn_metadata_includes_tool_info_setting",
+      "classification": "renamed",
+      "description": "Rename include_tool_metadata to turn_metadata_includes_tool_info.",
+      "from_state_ref": "state.cfg_include_metadata.active",
+      "id": "transition.cfg.metadata_to_turn_info",
+      "key_ref": "key.config.tool_registry.include_tool_metadata",
+      "to_state_ref": "state.cfg_include_metadata.renamed"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.tool_namespaces_info_introduced",
+      "classification": "replacement_introduced",
+      "description": "Add richer opt-in namespace/function inventory including per-function code_mode_name.",
+      "from_state_ref": "state.tool_namespaces.absent",
+      "id": "transition.tool_namespaces.introduced",
+      "key_ref": "key.turn_metadata.tool_namespaces_info",
+      "to_state_ref": "state.tool_namespaces.active_opt_in"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.tool_namespaces_info_introduced",
+      "classification": "replacement_introduced",
+      "description": "Mark the old map as coexisting with its richer successor.",
+      "from_state_ref": "state.code_mode.active_bounded_header",
+      "id": "transition.code_mode.successor",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.active_with_successor"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.code_mode_metadata_removed",
+      "classification": "removed_reserved",
+      "description": "Remove the wire field while retaining a legacy reservation against caller-provided extras.",
+      "from_state_ref": "state.code_mode.active_with_successor",
+      "id": "transition.code_mode.removed_reserved",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.removed_reserved"
+    },
+    {
+      "at_version_ref": "version.2026-08-26.core_window_fork_keys",
+      "classification": "core_ownership_transition",
+      "description": "Convert the former configurable extra name into a typed core-owned field while accepting then filtering legacy input.",
+      "from_state_ref": "state.window_number.legacy_extra",
+      "id": "transition.window_number.core_owned",
+      "key_ref": "key.turn_metadata.window_number",
+      "to_state_ref": "state.window_number.core_owned"
+    },
+    {
+      "at_version_ref": "version.2026-08-26.core_window_fork_keys",
+      "classification": "core_ownership_transition",
+      "description": "Convert the former configurable extra name into a typed core-owned lineage field while accepting then filtering legacy input.",
+      "from_state_ref": "state.fork_ordinal.legacy_extra",
+      "id": "transition.fork_ordinal.core_owned",
+      "key_ref": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "to_state_ref": "state.fork_ordinal.core_owned"
+    }
+  ]
+}

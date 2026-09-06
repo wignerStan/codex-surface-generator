@@ -1,0 +1,617 @@
+{
+  "$defs": {
+    "assertions": {
+      "additionalProperties": false,
+      "properties": {
+        "backward_compatible_reserved": {
+          "type": "boolean"
+        },
+        "compatibility_header_container": {
+          "enum": [
+            "absent",
+            "emitted",
+            "emitted_conditionally",
+            "omitted"
+          ]
+        },
+        "constant_names": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "definition_present": {
+          "type": "boolean"
+        },
+        "internal_identifier_present": {
+          "type": "boolean"
+        },
+        "mcp_container": {
+          "enum": [
+            "absent",
+            "emitted",
+            "emitted_conditionally",
+            "omitted"
+          ]
+        },
+        "payload_container": {
+          "enum": [
+            "absent",
+            "emitted",
+            "emitted_conditionally",
+            "flattened_extra_string"
+          ]
+        },
+        "replacement_code_mode_name_field_present": {
+          "type": "boolean"
+        },
+        "reserved_extra_key": {
+          "type": "boolean"
+        },
+        "runtime_use_present": {
+          "type": "boolean"
+        },
+        "schema_property_present": {
+          "type": "boolean"
+        },
+        "successor_mapping_present": {
+          "type": "boolean"
+        },
+        "top_level_client_metadata": {
+          "enum": [
+            "absent",
+            "emitted"
+          ]
+        },
+        "wire_literal_present": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "condition": {
+      "additionalProperties": false,
+      "properties": {
+        "op": {
+          "enum": [
+            "all",
+            "any",
+            "none"
+          ]
+        },
+        "operands": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "operator": {
+                "enum": [
+                  "eq",
+                  "exists"
+                ]
+              },
+              "path": {
+                "type": "string"
+              },
+              "value": {}
+            },
+            "required": [
+              "path",
+              "operator",
+              "value"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "op",
+        "operands"
+      ],
+      "type": "object"
+    },
+    "containers": {
+      "additionalProperties": false,
+      "properties": {
+        "compatibility_header_json": {
+          "enum": [
+            "absent",
+            "emitted",
+            "emitted_conditionally",
+            "omitted",
+            "reserved_filtered",
+            "accepted",
+            "accepted_filtered",
+            "renamed",
+            "internal_only",
+            "not_applicable",
+            "unknown"
+          ]
+        },
+        "config_input": {
+          "enum": [
+            "absent",
+            "emitted",
+            "emitted_conditionally",
+            "omitted",
+            "reserved_filtered",
+            "accepted",
+            "accepted_filtered",
+            "renamed",
+            "internal_only",
+            "not_applicable",
+            "unknown"
+          ]
+        },
+        "flat_client_metadata": {
+          "enum": [
+            "absent",
+            "emitted",
+            "emitted_conditionally",
+            "omitted",
+            "reserved_filtered",
+            "accepted",
+            "accepted_filtered",
+            "renamed",
+            "internal_only",
+            "not_applicable",
+            "unknown"
+          ]
+        },
+        "internal_runtime": {
+          "enum": [
+            "absent",
+            "emitted",
+            "emitted_conditionally",
+            "omitted",
+            "reserved_filtered",
+            "accepted",
+            "accepted_filtered",
+            "renamed",
+            "internal_only",
+            "not_applicable",
+            "unknown"
+          ]
+        },
+        "mcp_request_meta": {
+          "enum": [
+            "absent",
+            "emitted",
+            "emitted_conditionally",
+            "omitted",
+            "reserved_filtered",
+            "accepted",
+            "accepted_filtered",
+            "renamed",
+            "internal_only",
+            "not_applicable",
+            "unknown"
+          ]
+        },
+        "nested_turn_metadata": {
+          "enum": [
+            "absent",
+            "emitted",
+            "emitted_conditionally",
+            "omitted",
+            "reserved_filtered",
+            "accepted",
+            "accepted_filtered",
+            "renamed",
+            "internal_only",
+            "not_applicable",
+            "unknown"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "commit_sha": {
+          "$ref": "#/$defs/sha"
+        },
+        "committed_at": {
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^evidence\\.",
+          "type": "string"
+        },
+        "repository_blob_shas": {
+          "additionalProperties": {
+            "$ref": "#/$defs/sha"
+          },
+          "type": "object"
+        },
+        "source_paths": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "commit_sha",
+        "committed_at",
+        "title",
+        "url",
+        "source_paths"
+      ],
+      "type": "object"
+    },
+    "integrity": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "canonical_payload_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "algorithm",
+        "canonical_payload_sha256"
+      ],
+      "type": "object"
+    },
+    "key": {
+      "additionalProperties": false,
+      "properties": {
+        "current_state_ref": {
+          "pattern": "^state\\.",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^key\\.",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "turn_metadata_key",
+            "configuration_key"
+          ]
+        },
+        "namespace": {
+          "enum": [
+            "responses_client_metadata",
+            "codex_turn_metadata",
+            "features_tool_registry"
+          ]
+        },
+        "replacement_key_refs": {
+          "items": {
+            "pattern": "^key\\.",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "source_candidates": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "state_refs": {
+          "items": {
+            "pattern": "^state\\.",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "wire_name": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "wire_name",
+        "kind",
+        "namespace",
+        "description",
+        "state_refs",
+        "current_state_ref",
+        "replacement_key_refs",
+        "source_candidates"
+      ],
+      "type": "object"
+    },
+    "reviewedThrough": {
+      "additionalProperties": false,
+      "properties": {
+        "commit_sha": {
+          "$ref": "#/$defs/sha"
+        },
+        "committed_at": {
+          "type": "string"
+        },
+        "source_basis": {
+          "enum": [
+            "github_commit_history_and_source_diffs"
+          ]
+        }
+      },
+      "required": [
+        "commit_sha",
+        "committed_at",
+        "source_basis"
+      ],
+      "type": "object"
+    },
+    "sha": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "state": {
+      "additionalProperties": false,
+      "properties": {
+        "assertions": {
+          "$ref": "#/$defs/assertions"
+        },
+        "condition": {
+          "$ref": "#/$defs/condition"
+        },
+        "containers": {
+          "$ref": "#/$defs/containers"
+        },
+        "description": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^evidence\\.",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "id": {
+          "pattern": "^state\\.",
+          "type": "string"
+        },
+        "key_ref": {
+          "pattern": "^key\\.",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "absent",
+            "active",
+            "active_bounded",
+            "active_with_successor",
+            "removed_reserved",
+            "legacy_input",
+            "core_owned_legacy_input_filtered",
+            "renamed"
+          ]
+        },
+        "value_schema": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "key_ref",
+        "status",
+        "description",
+        "assertions",
+        "containers",
+        "value_schema",
+        "evidence_refs"
+      ],
+      "type": "object"
+    },
+    "transition": {
+      "additionalProperties": false,
+      "properties": {
+        "at_version_ref": {
+          "pattern": "^version\\.",
+          "type": "string"
+        },
+        "classification": {
+          "enum": [
+            "introduced",
+            "projection_bounded",
+            "replacement_introduced",
+            "removed_reserved",
+            "renamed",
+            "core_ownership_transition"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "from_state_ref": {
+          "pattern": "^state\\.",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^transition\\.",
+          "type": "string"
+        },
+        "key_ref": {
+          "pattern": "^key\\.",
+          "type": "string"
+        },
+        "to_state_ref": {
+          "pattern": "^state\\.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "key_ref",
+        "from_state_ref",
+        "to_state_ref",
+        "at_version_ref",
+        "classification",
+        "description"
+      ],
+      "type": "object"
+    },
+    "version": {
+      "additionalProperties": false,
+      "properties": {
+        "commit_sha": {
+          "$ref": "#/$defs/sha"
+        },
+        "committed_at": {
+          "type": "string"
+        },
+        "event": {
+          "enum": [
+            "baseline",
+            "metadata_introduced",
+            "projection_bounded",
+            "config_key_introduced",
+            "config_key_renamed",
+            "successor_introduced",
+            "legacy_key_removed",
+            "core_ownership_transition",
+            "current_snapshot"
+          ]
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        },
+        "exact_snapshot": {
+          "type": "boolean"
+        },
+        "id": {
+          "pattern": "^version\\.",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "state_refs": {
+          "additionalProperties": {
+            "pattern": "^state\\.",
+            "type": "string"
+          },
+          "minProperties": 1,
+          "type": "object"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "ordinal",
+        "commit_sha",
+        "committed_at",
+        "title",
+        "event",
+        "exact_snapshot",
+        "state_refs",
+        "evidence"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openai.example/codex-wire-audit/metadata-key-history-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "const": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "catalog_version": {
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "type": "string"
+    },
+    "current_version_ref": {
+      "type": "string"
+    },
+    "format": {
+      "const": "codex-wire-audit-metadata-key-history/v1"
+    },
+    "integrity": {
+      "$ref": "#/$defs/integrity"
+    },
+    "keys": {
+      "additionalProperties": {
+        "$ref": "#/$defs/key"
+      },
+      "minProperties": 1,
+      "type": "object"
+    },
+    "repository": {
+      "const": "openai/codex"
+    },
+    "reviewed_through": {
+      "$ref": "#/$defs/reviewedThrough"
+    },
+    "schema_id": {
+      "const": "https://openai.example/codex-wire-audit/metadata-key-history-v1.schema.json"
+    },
+    "states": {
+      "additionalProperties": {
+        "$ref": "#/$defs/state"
+      },
+      "minProperties": 1,
+      "type": "object"
+    },
+    "transitions": {
+      "items": {
+        "$ref": "#/$defs/transition"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "versions": {
+      "additionalProperties": {
+        "$ref": "#/$defs/version"
+      },
+      "minProperties": 2,
+      "type": "object"
+    }
+  },
+  "required": [
+    "$schema",
+    "schema_id",
+    "format",
+    "catalog_version",
+    "repository",
+    "reviewed_through",
+    "keys",
+    "states",
+    "versions",
+    "transitions",
+    "current_version_ref",
+    "integrity"
+  ],
+  "title": "Codex wire audit metadata-key history catalog v1",
+  "type": "object"
+}

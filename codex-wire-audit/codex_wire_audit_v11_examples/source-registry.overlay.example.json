@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "sources": {
+    "source_spec.base.metadata": {
+      "path_candidates": [
+        "codex-rs/core/src/responses/metadata.rs",
+        "codex-rs/core/src/responses_metadata.rs"
+      ]
+    }
+  }
+}

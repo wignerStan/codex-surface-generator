@@ -1,0 +1,35 @@
+{
+  "client_metadata": {
+    "session_id": "00000000-0000-0000-0000-000000000001",
+    "thread_id": "00000000-0000-0000-0000-000000000002",
+    "x-codex-installation-id": "install-example",
+    "x-codex-turn-metadata": "{\"request_kind\":\"turn\",\"session_id\":\"00000000-0000-0000-0000-000000000001\",\"team\":\"infra\",\"thread_id\":\"00000000-0000-0000-0000-000000000002\"}",
+    "x-codex-window-id": "window-example"
+  },
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "input": [
+    {
+      "content": [
+        {
+          "text": "Hello",
+          "type": "input_text"
+        }
+      ],
+      "role": "user",
+      "type": "message"
+    }
+  ],
+  "instructions": "Follow the project instructions.",
+  "model": "gpt-example",
+  "parallel_tool_calls": true,
+  "reasoning": {
+    "effort": "medium",
+    "summary": "auto"
+  },
+  "store": false,
+  "stream": true,
+  "tool_choice": "auto",
+  "tools": []
+}

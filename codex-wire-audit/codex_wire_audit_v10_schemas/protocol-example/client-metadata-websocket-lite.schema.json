@@ -1,0 +1,61 @@
+{
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:client_metadata_websocket_lite:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": {
+    "type": "string"
+  },
+  "description": "Base Codex client metadata plus per-response.create trace, timing, continuation, and transport markers.",
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "thread_id": {
+      "type": "string"
+    },
+    "turn_id": {
+      "type": "string"
+    },
+    "ws_request_header_traceparent": {
+      "type": "string"
+    },
+    "ws_request_header_tracestate": {
+      "type": "string"
+    },
+    "ws_request_header_x_openai_internal_codex_responses_lite": {
+      "const": "true"
+    },
+    "x-codex-installation-id": {
+      "type": "string"
+    },
+    "x-codex-turn-metadata": {
+      "contentMediaType": "application/json",
+      "contentSchema": {
+        "$ref": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:codex_turn_metadata_full:1.0.0"
+      },
+      "type": "string"
+    },
+    "x-codex-turn-state": {
+      "type": "string"
+    },
+    "x-codex-window-id": {
+      "type": "string"
+    },
+    "x-codex-ws-stream-request-start-ms": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_id",
+    "thread_id",
+    "ws_request_header_x_openai_internal_codex_responses_lite",
+    "x-codex-installation-id",
+    "x-codex-window-id",
+    "x-codex-ws-stream-request-start-ms"
+  ],
+  "title": "Responses Lite WebSocket response.create client_metadata",
+  "type": "object",
+  "x-codex-wire-audit-entity-refs": [],
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-validation-coverage": "structural"
+}

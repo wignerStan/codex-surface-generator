@@ -1,0 +1,49 @@
+include README.md
+include README_CODEX_WIRE_AUDIT_V11.md
+include README_CODEX_WIRE_AUDIT_V13.md
+include CODEX_WIRE_AUDIT_V11_ARCHITECTURE.md
+include CODEX_WIRE_AUDIT_V11_MIGRATION.md
+include CODEX_WIRE_AUDIT_V11_METRICS.md
+include CODEX_WIRE_AUDIT_V13_METRICS.md
+include CODEX_WIRE_AUDIT_V13_RELEASE_NOTES.md
+include CODEX_WIRE_AUDIT_V12.md
+include CHANGELOG_V11.md
+include Makefile
+include pyproject.toml
+include test_codex_wire_audit_v10.py
+include test_codex_wire_audit_v11.py
+include validate_codex_wire_fixtures_v10.py
+include codex_wire_audit_v11_maintainability_metrics.json
+include codex_wire_audit_v13_maintainability_metrics.json
+include codex_wire_audit_v13_coverage_ratchet.json
+recursive-include codex_wire_audit/schema_templates *.json
+recursive-include codex_wire_audit/proof_schema_templates *.json
+recursive-include codex_wire_audit/metadata_history_data *.json
+recursive-include codex_wire_audit/metadata_history_container_data *.json
+include codex_wire_audit/coverage_profiles.v1.json
+include codex_wire_audit/coverage_profiles.v2.json
+recursive-include codex_wire_audit_v10_schemas *.json
+recursive-include codex_wire_audit_v10_examples *.json *.md
+recursive-include codex_wire_audit_v10_fixtures *.json *.toml
+recursive-include codex_wire_audit_v11_schemas *.json
+recursive-include codex_wire_audit_v11_examples *.json *.md
+recursive-include codex_wire_audit_v11_fixtures *.rs
+recursive-include docs *.md
+recursive-include ci *.yml *.md *.txt
+recursive-include tests *.py
+recursive-include tools *.py
+recursive-include scripts *.py
+recursive-include .github/workflows *.yml
+
+recursive-include codex_wire_audit/context_management_container_data *.json
+include codex_wire_audit/coverage_profiles.v3.json
+include CODEX_WIRE_AUDIT_V16_RELEASE_NOTES.md
+include README_CODEX_WIRE_AUDIT_V16.md
+
+include CODEX_WIRE_AUDIT_V17_RELEASE_NOTES.md
+include README_CODEX_WIRE_AUDIT_V17.md
+include codex_wire_audit/release_spec.v1.json
+
+include CODEX_WIRE_AUDIT_V18_RELEASE_NOTES.md
+include README_CODEX_WIRE_AUDIT_V18.md
+include codex_wire_audit/release_spec.schema.json

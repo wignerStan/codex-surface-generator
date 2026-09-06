@@ -1,0 +1,158 @@
+{
+  "artifact_groups": {
+    "machine_assets": [
+      "context_container",
+      "validation_json",
+      "release_attestation",
+      "artifact_inventory",
+      "release_spec_copy",
+      "readme",
+      "release_notes"
+    ]
+  },
+  "artifacts": {
+    "artifact_inventory": "codex_wire_audit_v18_artifact_inventory.json",
+    "bundle": "codex_wire_audit_v18_release_pipeline_bundle.zip",
+    "bundle_sidecar": "codex_wire_audit_v18_release_pipeline_bundle.zip.sha256",
+    "checksums": "SHA256SUMS_codex_wire_audit_v18.txt",
+    "context_container": "codex_wire_audit_v18_context_management_container.zip",
+    "machine_assets": "codex_wire_audit_v18_machine_assets.zip",
+    "readme": "README_CODEX_WIRE_AUDIT_V18.md",
+    "release_attestation": "codex_wire_audit_v18_release_attestation.json",
+    "release_notes": "CODEX_WIRE_AUDIT_V18_RELEASE_NOTES.md",
+    "release_spec_copy": "codex_wire_audit_v18_release_spec.json",
+    "sdist": "codex_wire_audit-11.0.0.tar.gz",
+    "source_zip": "codex_wire_audit_v18_source.zip",
+    "validation_json": "codex_wire_audit_v18_validation.json",
+    "validation_log": "codex_wire_audit_v18_validation.txt",
+    "wheel": "codex_wire_audit-11.0.0-py3-none-any.whl"
+  },
+  "capability_claims": [
+    {
+      "extractor_ids": [
+        "extractor.turn_metadata"
+      ],
+      "id": "turn_metadata",
+      "profile_assertions": {
+        "hybrid_v18": {
+          "required_extractors_contains": [
+            "extractor.turn_metadata"
+          ]
+        }
+      },
+      "required_resources": [
+        "extractors/turn_metadata.py",
+        "schema_templates/turn-metadata-semantics.schema.json"
+      ],
+      "status": "active_package"
+    },
+    {
+      "container_verifier": "codex_wire_audit.context_management_reference:verify_context_management_container",
+      "extractor_ids": [
+        "extractor.context_management"
+      ],
+      "id": "context_management",
+      "profile_assertions": {
+        "codex_wire_full": {
+          "required_extractors_contains": [
+            "extractor.context_management"
+          ],
+          "required_runtime_scenarios_contains": [
+            "context_management_activation",
+            "context_window_rollover",
+            "history_notes_retrieval"
+          ]
+        },
+        "hybrid_v18": {
+          "required_extractors_contains": [
+            "extractor.context_management"
+          ]
+        }
+      },
+      "required_resources": [
+        "extractors/context_management.py",
+        "extractors/context_management_support.py",
+        "context_management_reference.py",
+        "coverage_profiles.v3.json",
+        "proof_schema_templates/context-management-semantics-v1.schema.json",
+        "context_management_container_data/index.json",
+        "context_management_container_data/current_main.json"
+      ],
+      "status": "active_package"
+    },
+    {
+      "container_verifier": "codex_wire_audit.metadata_history_reference:verify_metadata_history_container",
+      "extractor_ids": [],
+      "id": "metadata_history",
+      "profile_assertions": {
+        "hybrid_v18": {
+          "required_dimensions_contains": [
+            "metadata_history"
+          ]
+        }
+      },
+      "required_resources": [
+        "metadata_history.py",
+        "metadata_history_container.py",
+        "metadata_history_reference.py",
+        "metadata_history_data/metadata-key-history.v1.json",
+        "metadata_history_container_data/index.json"
+      ],
+      "status": "active_package"
+    }
+  ],
+  "format": "codex-wire-audit-release-spec/v1",
+  "legacy_evidence": {
+    "allowed_source_names": [
+      "codex_wire_audit_v15_guardian_history_container.zip",
+      "codex_wire_audit_v15_alpha_history_notes_container.zip"
+    ],
+    "may_satisfy_active_capability_claims": false,
+    "output_prefix": "legacy_",
+    "role": "legacy_evidence_only"
+  },
+  "release": {
+    "generator_version": "11.0.0",
+    "id": "codex-wire-audit-v18-release-pipeline",
+    "package_import": "codex_wire_audit",
+    "package_name": "codex-wire-audit",
+    "package_version": "11.0.0",
+    "reviewed_codex_commit": "6af345407d9c2a568da9d01b6c4b81a9e61495c0",
+    "runtime_dependencies": [
+      "jsonschema<5,>=4.23",
+      "referencing<1,>=0.35",
+      "tomli<3,>=2; python_version < \"3.11\""
+    ],
+    "series": "v18",
+    "source_date_epoch": 315532800
+  },
+  "source_snapshot": {
+    "exclude_directory_names": [
+      ".git",
+      ".pytest_cache",
+      "__pycache__",
+      "build",
+      "dist",
+      "ci-out",
+      "htmlcov"
+    ],
+    "exclude_directory_suffixes": [
+      ".egg-info"
+    ],
+    "exclude_root_directory_globs": [
+      "release_v*"
+    ],
+    "exclude_root_globs": [
+      ".coverage",
+      "codex_wire_audit_v*_source_capabilities.json",
+      "codex_wire_audit_v*_validation.json",
+      "codex_wire_audit_v*_validation.txt",
+      "coverage-*.json",
+      "dist-manifest.json",
+      "release_v*.failure.json",
+      "release_v*.failure.log",
+      "release_v*.verify.failure.json",
+      "release_v*.verify.failure.log"
+    ]
+  }
+}

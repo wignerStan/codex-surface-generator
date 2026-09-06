@@ -1,0 +1,1 @@
+{"auto_token_budget_compaction":"fresh context window without model/server summary","environment_state_preserved":true,"format":"codex-wire-audit-context-management-rollover/v1","manual_token_budget_compaction":"fresh context window without model/server summary","reviewed_commit":"6af345407d9c2a568da9d01b6c4b81a9e61495c0","summarizes_history":false,"tool":"new_context"}

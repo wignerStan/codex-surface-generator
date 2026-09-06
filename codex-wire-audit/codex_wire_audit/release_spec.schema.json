@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openai.example/codex-wire-audit/release-spec-v1.schema.json",
+  "title": "Codex wire audit release specification v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "release",
+    "artifacts",
+    "artifact_groups",
+    "capability_claims",
+    "legacy_evidence",
+    "source_snapshot"
+  ],
+  "properties": {
+    "format": {
+      "const": "codex-wire-audit-release-spec/v1"
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "series",
+        "package_name",
+        "package_import",
+        "package_version",
+        "generator_version",
+        "runtime_dependencies",
+        "reviewed_codex_commit",
+        "source_date_epoch"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "series": {
+          "type": "string",
+          "pattern": "^v[1-9][0-9]*$"
+        },
+        "package_name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "package_import": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_.]*$"
+        },
+        "package_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[A-Za-z0-9._+-]*)?$"
+        },
+        "generator_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[A-Za-z0-9._+-]*)?$"
+        },
+        "reviewed_codex_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "source_date_epoch": {
+          "type": "integer",
+          "minimum": 315532800
+        },
+        "runtime_dependencies": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_inventory",
+        "bundle",
+        "bundle_sidecar",
+        "checksums",
+        "context_container",
+        "machine_assets",
+        "readme",
+        "release_attestation",
+        "release_notes",
+        "release_spec_copy",
+        "sdist",
+        "source_zip",
+        "validation_json",
+        "validation_log",
+        "wheel"
+      ],
+      "properties": {
+        "artifact_inventory": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "bundle": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "bundle_sidecar": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "checksums": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "context_container": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "machine_assets": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "readme": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "release_attestation": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "release_notes": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "release_spec_copy": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "sdist": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "source_zip": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "validation_json": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "validation_log": {
+          "$ref": "#/$defs/topLevelName"
+        },
+        "wheel": {
+          "$ref": "#/$defs/topLevelName"
+        }
+      }
+    },
+    "artifact_groups": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "machine_assets"
+      ],
+      "properties": {
+        "machine_assets": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "capability_claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/capabilityClaim"
+      }
+    },
+    "legacy_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_source_names",
+        "may_satisfy_active_capability_claims",
+        "output_prefix",
+        "role"
+      ],
+      "properties": {
+        "allowed_source_names": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/topLevelName"
+          }
+        },
+        "may_satisfy_active_capability_claims": {
+          "const": false
+        },
+        "output_prefix": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]*$",
+          "maxLength": 80
+        },
+        "role": {
+          "const": "legacy_evidence_only"
+        }
+      }
+    },
+    "source_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exclude_directory_names",
+        "exclude_directory_suffixes",
+        "exclude_root_globs",
+        "exclude_root_directory_globs"
+      ],
+      "properties": {
+        "exclude_directory_names": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "exclude_directory_suffixes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "exclude_root_globs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "exclude_root_directory_globs": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "topLevelName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240,
+      "pattern": "^[^/\\\\]+$"
+    },
+    "safeRelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(/|$)).+$"
+    },
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 240
+      }
+    },
+    "profileAssertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required_extractors_contains": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "required_dimensions_contains": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "required_runtime_scenarios_contains": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "capabilityClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "extractor_ids",
+        "profile_assertions",
+        "required_resources"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_.-]*$"
+        },
+        "status": {
+          "const": "active_package"
+        },
+        "extractor_ids": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "profile_assertions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/profileAssertion"
+          }
+        },
+        "required_resources": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/safeRelativePath"
+          }
+        },
+        "container_verifier": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_.]*:[A-Za-z_][A-Za-z0-9_]*$"
+        }
+      }
+    }
+  }
+}

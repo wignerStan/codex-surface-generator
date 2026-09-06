@@ -1,0 +1,195 @@
+{
+  "$defs": {
+    "field": {
+      "additionalProperties": false,
+      "properties": {
+        "emission_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "field_name": {
+          "type": "string"
+        },
+        "gate_refs": {
+          "items": {
+            "pattern": "^turn_metadata\\.gate\\.",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "id": {
+          "pattern": "^turn_metadata\\.field\\.",
+          "type": "string"
+        },
+        "identity_domain": {
+          "enum": [
+            "request_identity",
+            "thread_identity",
+            "turn_identity",
+            "lineage",
+            "execution_context",
+            "tool_inventory",
+            "timing_and_history",
+            "compaction",
+            "flattened_extra",
+            "other"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "conditional_option_passthrough",
+            "conditional_value",
+            "option_passthrough",
+            "value_passthrough",
+            "flattened_extra",
+            "non_empty_projection",
+            "derived_local",
+            "unclassified"
+          ]
+        },
+        "machine_evaluable": {
+          "type": "boolean"
+        },
+        "predicate": {
+          "$ref": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json"
+        },
+        "semantic_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "source_expression": {
+          "type": "string"
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "value_expression": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "field_name",
+        "kind",
+        "source_expression",
+        "value_expression",
+        "predicate",
+        "gate_refs",
+        "identity_domain",
+        "emission_fingerprint",
+        "semantic_fingerprint",
+        "source_ref",
+        "machine_evaluable"
+      ],
+      "type": "object"
+    },
+    "gate": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^turn_metadata\\.gate\\.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "predicate": {
+          "$ref": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json"
+        },
+        "semantic_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "source_expression": {
+          "type": "string"
+        },
+        "source_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "source_expression",
+        "predicate",
+        "semantic_fingerprint",
+        "source_ref"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.codex-wire-audit.invalid/v11/turn-metadata-semantics.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "construction_function": {
+      "const": "CodexResponsesMetadata::turn_metadata_payload"
+    },
+    "field_groups": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array",
+        "uniqueItems": true
+      },
+      "type": "object"
+    },
+    "field_order": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "fields": {
+      "additionalProperties": {
+        "$ref": "#/$defs/field"
+      },
+      "type": "object"
+    },
+    "gates": {
+      "additionalProperties": {
+        "$ref": "#/$defs/gate"
+      },
+      "type": "object"
+    },
+    "local_bindings": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "semantic_complete": {
+      "type": "boolean"
+    },
+    "semantic_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "source_path": {
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "construction_function",
+    "source_path",
+    "source_sha256",
+    "gates",
+    "fields",
+    "field_order",
+    "field_groups",
+    "local_bindings",
+    "semantic_complete",
+    "semantic_digest"
+  ],
+  "title": "Canonical turn metadata emission semantics",
+  "type": "object"
+}

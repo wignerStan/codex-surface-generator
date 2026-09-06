@@ -1,0 +1,95 @@
+name: machine-proof-v18-release-pipeline
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 8 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: machine-proof-v18-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Install constrained dependencies
+        run: |
+          python -m pip install --constraint ci/constraints.txt -e '.[test]'
+          mkdir -p ci-out
+          python -m pip inspect > ci-out/pip-inspect.json
+      - name: Compile and test all inherited and release-closure code
+        run: |
+          make compile
+          python -m pytest -q | tee ci-out/pytest.txt
+      - name: Probe active source package contract
+        run: |
+          python -m codex_wire_audit.release_contract \
+            --output ci-out/source-capability-probe.json
+      - name: Validate schemas and deterministic package assets
+        run: make check-assets
+      - name: Maintainability guardrails
+        if: matrix.python == '3.13'
+        run: python tools/maintainability_metrics.py --check
+      - name: Proof-critical branch and line coverage ratchet
+        if: matrix.python == '3.13'
+        run: |
+          coverage erase
+          coverage run --branch -m pytest -q
+          coverage json -o ci-out/coverage-v18.json
+          python tools/check_v13_coverage.py \
+            ci-out/coverage-v18.json \
+            --output ci-out/coverage-ratchet.json
+      - name: Upload durable package evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: machine-proof-v18-python-${{ matrix.python }}
+          path: ci-out
+          if-no-files-found: warn
+          retention-days: 14
+
+  release-closure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: package-proof
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install constrained release dependencies
+        run: python -m pip install --constraint ci/constraints.txt -e '.[test]'
+      - name: Build one source/wheel/sdist/capability closure
+        run: |
+          mkdir -p ci-out
+          python tools/release_pipeline.py release \
+            --output-dir ci-out/release | tee ci-out/release-summary.json
+      - name: Independently verify assembled release
+        run: |
+          python tools/release_pipeline.py verify \
+            --release-dir ci-out/release | tee ci-out/release-verification.json
+      - name: Upload release-closure evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: codex-wire-audit-v18-release-pipeline
+          path: ci-out
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,1171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "catalog_version": "1.0.0",
+  "current_version_ref": "version.2026-09-05.current_main",
+  "format": "codex-wire-audit-metadata-key-history/v1",
+  "integrity": {
+    "algorithm": "sha256",
+    "canonical_payload_sha256": "12f3521d0584123e3c9244c9cb0359eff613442db00b0bfeea11c93de1646aed"
+  },
+  "keys": {
+    "key.config.tool_registry.include_tool_metadata": {
+      "current_state_ref": "state.cfg_include_metadata.renamed",
+      "description": "Intermediate configuration name used briefly before the per-turn scope was made explicit.",
+      "id": "key.config.tool_registry.include_tool_metadata",
+      "kind": "configuration_key",
+      "namespace": "features_tool_registry",
+      "replacement_key_refs": [
+        "key.config.tool_registry.turn_metadata_includes_tool_info"
+      ],
+      "source_candidates": [
+        "codex-rs/features/src/feature_configs.rs",
+        "codex-rs/core/config.schema.json",
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "state_refs": [
+        "state.cfg_include_metadata.absent",
+        "state.cfg_include_metadata.active",
+        "state.cfg_include_metadata.renamed"
+      ],
+      "wire_name": "include_tool_metadata"
+    },
+    "key.config.tool_registry.include_tool_namespaces_info": {
+      "current_state_ref": "state.cfg_include_namespaces.renamed",
+      "description": "First public configuration name for opt-in tool namespace metadata.",
+      "id": "key.config.tool_registry.include_tool_namespaces_info",
+      "kind": "configuration_key",
+      "namespace": "features_tool_registry",
+      "replacement_key_refs": [
+        "key.config.tool_registry.include_tool_metadata"
+      ],
+      "source_candidates": [
+        "codex-rs/features/src/feature_configs.rs",
+        "codex-rs/core/config.schema.json",
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "state_refs": [
+        "state.cfg_include_namespaces.absent",
+        "state.cfg_include_namespaces.active",
+        "state.cfg_include_namespaces.renamed"
+      ],
+      "wire_name": "include_tool_namespaces_info"
+    },
+    "key.config.tool_registry.turn_metadata_includes_tool_info": {
+      "current_state_ref": "state.cfg_turn_metadata_info.active",
+      "description": "Current configuration key controlling opt-in authoritative tool information in per-turn metadata.",
+      "id": "key.config.tool_registry.turn_metadata_includes_tool_info",
+      "kind": "configuration_key",
+      "namespace": "features_tool_registry",
+      "replacement_key_refs": [],
+      "source_candidates": [
+        "codex-rs/features/src/feature_configs.rs",
+        "codex-rs/core/config.schema.json",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/core/src/session/mod.rs"
+      ],
+      "state_refs": [
+        "state.cfg_turn_metadata_info.absent",
+        "state.cfg_turn_metadata_info.active"
+      ],
+      "wire_name": "turn_metadata_includes_tool_info"
+    },
+    "key.turn_metadata.code_mode_tool_names": {
+      "current_state_ref": "state.code_mode.removed_reserved",
+      "description": "Historical Responses Lite tool-name inventory; now removed from the wire but kept reserved.",
+      "id": "key.turn_metadata.code_mode_tool_names",
+      "kind": "turn_metadata_key",
+      "namespace": "codex_turn_metadata",
+      "replacement_key_refs": [
+        "key.turn_metadata.tool_namespaces_info"
+      ],
+      "source_candidates": [
+        "codex-rs/core/src/responses_metadata.rs",
+        "codex-rs/core/src/turn_metadata.rs",
+        "codex-rs/core/src/tools/tool_namespaces_info.rs",
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/core/src/tools/router.rs"
+      ],
+      "state_refs": [
+        "state.code_mode.absent",
+        "state.code_mode.active_unbounded_header",
+        "state.code_mode.active_bounded_header",
+        "state.code_mode.active_with_successor",
+        "state.code_mode.removed_reserved"
+      ],
+      "wire_name": "code_mode_tool_names"
+    },
+    "key.turn_metadata.forked_from_ordinal_exclusive": {
+      "current_state_ref": "state.fork_ordinal.core_owned",
+      "description": "Formerly usable as configured extra metadata; now a core-owned typed lineage field while legacy input is accepted then filtered.",
+      "id": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "kind": "turn_metadata_key",
+      "namespace": "codex_turn_metadata",
+      "replacement_key_refs": [],
+      "source_candidates": [
+        "codex-rs/core/src/responses_metadata.rs"
+      ],
+      "state_refs": [
+        "state.fork_ordinal.legacy_extra",
+        "state.fork_ordinal.core_owned"
+      ],
+      "wire_name": "forked_from_ordinal_exclusive"
+    },
+    "key.turn_metadata.tool_namespaces_info": {
+      "current_state_ref": "state.tool_namespaces.active_opt_in",
+      "description": "Opt-in authoritative namespace/function inventory that replaced the removed code-mode-only map.",
+      "id": "key.turn_metadata.tool_namespaces_info",
+      "kind": "turn_metadata_key",
+      "namespace": "codex_turn_metadata",
+      "replacement_key_refs": [],
+      "source_candidates": [
+        "codex-rs/core/src/responses_metadata.rs",
+        "codex-rs/core/src/turn_metadata.rs",
+        "codex-rs/core/src/tools/tool_namespaces_info.rs",
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/core/src/session/mod.rs"
+      ],
+      "state_refs": [
+        "state.tool_namespaces.absent",
+        "state.tool_namespaces.active_opt_in"
+      ],
+      "wire_name": "tool_namespaces_info"
+    },
+    "key.turn_metadata.window_number": {
+      "current_state_ref": "state.window_number.core_owned",
+      "description": "Formerly usable as configured extra metadata; now a core-owned typed field while legacy input is accepted then filtered.",
+      "id": "key.turn_metadata.window_number",
+      "kind": "turn_metadata_key",
+      "namespace": "codex_turn_metadata",
+      "replacement_key_refs": [],
+      "source_candidates": [
+        "codex-rs/core/src/responses_metadata.rs"
+      ],
+      "state_refs": [
+        "state.window_number.legacy_extra",
+        "state.window_number.core_owned"
+      ],
+      "wire_name": "window_number"
+    }
+  },
+  "repository": "openai/codex",
+  "reviewed_through": {
+    "commit_sha": "ddf04ad26789d040f9ef6a96736f76602e35a6cc",
+    "committed_at": "2026-09-05T05:31:48Z",
+    "source_basis": "github_commit_history_and_source_diffs"
+  },
+  "schema_id": "https://openai.example/codex-wire-audit/metadata-key-history-v1.schema.json",
+  "states": {
+    "state.cfg_include_metadata.absent": {
+      "assertions": {
+        "definition_present": false,
+        "runtime_use_present": false,
+        "schema_property_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "absent",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Configuration name is not defined.",
+      "evidence_refs": [
+        "evidence.commit.4ee41929"
+      ],
+      "id": "state.cfg_include_metadata.absent",
+      "key_ref": "key.config.tool_registry.include_tool_metadata",
+      "status": "absent",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "state.cfg_include_metadata.active": {
+      "assertions": {
+        "definition_present": true,
+        "runtime_use_present": true,
+        "schema_property_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Intermediate opt-in configuration name.",
+      "evidence_refs": [
+        "evidence.commit.c87a218b"
+      ],
+      "id": "state.cfg_include_metadata.active",
+      "key_ref": "key.config.tool_registry.include_tool_metadata",
+      "status": "active",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "state.cfg_include_metadata.renamed": {
+      "assertions": {
+        "definition_present": false,
+        "runtime_use_present": false,
+        "schema_property_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "renamed",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Renamed to turn_metadata_includes_tool_info.",
+      "evidence_refs": [
+        "evidence.commit.248d8c0e"
+      ],
+      "id": "state.cfg_include_metadata.renamed",
+      "key_ref": "key.config.tool_registry.include_tool_metadata",
+      "status": "renamed",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "state.cfg_include_namespaces.absent": {
+      "assertions": {
+        "definition_present": false,
+        "runtime_use_present": false,
+        "schema_property_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "absent",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Configuration name is not defined.",
+      "evidence_refs": [
+        "evidence.commit.63fe5a6b"
+      ],
+      "id": "state.cfg_include_namespaces.absent",
+      "key_ref": "key.config.tool_registry.include_tool_namespaces_info",
+      "status": "absent",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "state.cfg_include_namespaces.active": {
+      "assertions": {
+        "definition_present": true,
+        "runtime_use_present": true,
+        "schema_property_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Initial opt-in configuration name.",
+      "evidence_refs": [
+        "evidence.commit.4ee41929"
+      ],
+      "id": "state.cfg_include_namespaces.active",
+      "key_ref": "key.config.tool_registry.include_tool_namespaces_info",
+      "status": "active",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "state.cfg_include_namespaces.renamed": {
+      "assertions": {
+        "definition_present": false,
+        "runtime_use_present": false,
+        "schema_property_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "renamed",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Renamed to include_tool_metadata.",
+      "evidence_refs": [
+        "evidence.commit.c87a218b"
+      ],
+      "id": "state.cfg_include_namespaces.renamed",
+      "key_ref": "key.config.tool_registry.include_tool_namespaces_info",
+      "status": "renamed",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "state.cfg_turn_metadata_info.absent": {
+      "assertions": {
+        "definition_present": false,
+        "runtime_use_present": false,
+        "schema_property_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "absent",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Current configuration name is not defined yet.",
+      "evidence_refs": [
+        "evidence.commit.c87a218b"
+      ],
+      "id": "state.cfg_turn_metadata_info.absent",
+      "key_ref": "key.config.tool_registry.turn_metadata_includes_tool_info",
+      "status": "absent",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "state.cfg_turn_metadata_info.active": {
+      "assertions": {
+        "definition_present": true,
+        "runtime_use_present": true,
+        "schema_property_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Current opt-in configuration name.",
+      "evidence_refs": [
+        "evidence.commit.248d8c0e",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.cfg_turn_metadata_info.active",
+      "key_ref": "key.config.tool_registry.turn_metadata_includes_tool_info",
+      "status": "active",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "state.code_mode.absent": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "absent",
+        "constant_names": [],
+        "mcp_container": "absent",
+        "payload_container": "absent",
+        "reserved_extra_key": false,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "not_applicable",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "The key is not defined as Responses turn metadata.",
+      "evidence_refs": [
+        "evidence.commit.63fe5a6b"
+      ],
+      "id": "state.code_mode.absent",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "absent",
+      "value_schema": null
+    },
+    "state.code_mode.active_bounded_header": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "omitted",
+        "constant_names": [
+          "CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "omitted",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "The canonical nested client-metadata payload keeps the map, but compatibility-header JSON omits it to remain bounded.",
+      "evidence_refs": [
+        "evidence.commit.5c36e869"
+      ],
+      "id": "state.code_mode.active_bounded_header",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "active_bounded",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:ToolName"
+        },
+        "type": "object"
+      }
+    },
+    "state.code_mode.active_unbounded_header": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "emitted_conditionally",
+        "constant_names": [
+          "CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Responses Lite emits the map inside nested turn metadata; the direct compatibility header still mirrors it.",
+      "evidence_refs": [
+        "evidence.commit.25b6fc9b"
+      ],
+      "id": "state.code_mode.active_unbounded_header",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "active",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:ToolName"
+        },
+        "type": "object"
+      }
+    },
+    "state.code_mode.active_with_successor": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "omitted",
+        "constant_names": [
+          "CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "replacement_code_mode_name_field_present": true,
+        "reserved_extra_key": true,
+        "successor_mapping_present": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "omitted",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "The legacy map coexists briefly with the richer opt-in tool_namespaces_info replacement.",
+      "evidence_refs": [
+        "evidence.commit.2b1811e5"
+      ],
+      "id": "state.code_mode.active_with_successor",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "active_with_successor",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:ToolName"
+        },
+        "type": "object"
+      }
+    },
+    "state.code_mode.removed_reserved": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "absent",
+        "constant_names": [
+          "LEGACY_CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "internal_identifier_present": true,
+        "mcp_container": "absent",
+        "payload_container": "absent",
+        "replacement_code_mode_name_field_present": true,
+        "reserved_extra_key": true,
+        "successor_mapping_present": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "internal_only",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "The wire field is removed. Its literal remains reserved so caller extras cannot reintroduce the unbounded inventory.",
+      "evidence_refs": [
+        "evidence.commit.8e4b1044",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.code_mode.removed_reserved",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "removed_reserved",
+      "value_schema": null
+    },
+    "state.fork_ordinal.core_owned": {
+      "assertions": {
+        "backward_compatible_reserved": true,
+        "compatibility_header_container": "emitted_conditionally",
+        "constant_names": [
+          "FORKED_FROM_ORDINAL_EXCLUSIVE_KEY"
+        ],
+        "mcp_container": "emitted_conditionally",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "emitted_conditionally",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Core emits a typed fork cutoff. Existing configured values remain accepted but are filtered before construction.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.fork_ordinal.core_owned",
+      "key_ref": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "status": "core_owned_legacy_input_filtered",
+      "value_schema": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "state.fork_ordinal.legacy_extra": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "constant_names": [],
+        "payload_container": "flattened_extra_string",
+        "reserved_extra_key": false
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "emitted_conditionally",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Before core ownership, this valid extra-metadata name could be flattened as a caller-supplied string.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65"
+      ],
+      "id": "state.fork_ordinal.legacy_extra",
+      "key_ref": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "status": "legacy_input",
+      "value_schema": {
+        "type": "string"
+      }
+    },
+    "state.tool_namespaces.absent": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "absent",
+        "constant_names": [],
+        "mcp_container": "absent",
+        "payload_container": "absent",
+        "reserved_extra_key": false,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "not_applicable",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "The replacement field does not yet exist.",
+      "evidence_refs": [
+        "evidence.commit.63fe5a6b"
+      ],
+      "id": "state.tool_namespaces.absent",
+      "key_ref": "key.turn_metadata.tool_namespaces_info",
+      "status": "absent",
+      "value_schema": null
+    },
+    "state.tool_namespaces.active_opt_in": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "omitted",
+        "constant_names": [
+          "TOOL_NAMESPACES_INFO_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "replacement_code_mode_name_field_present": true,
+        "reserved_extra_key": true,
+        "successor_mapping_present": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          },
+          {
+            "operator": "eq",
+            "path": "config.features.tool_registry.turn_metadata_includes_tool_info",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "omitted",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Responses Lite may emit authoritative namespace/function metadata when explicitly enabled; compatibility and MCP projections omit it.",
+      "evidence_refs": [
+        "evidence.commit.2b1811e5",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.tool_namespaces.active_opt_in",
+      "key_ref": "key.turn_metadata.tool_namespaces_info",
+      "status": "active",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:TurnToolNamespaceInfo"
+        },
+        "type": "object"
+      }
+    },
+    "state.window_number.core_owned": {
+      "assertions": {
+        "backward_compatible_reserved": true,
+        "compatibility_header_container": "emitted_conditionally",
+        "constant_names": [
+          "WINDOW_NUMBER_KEY"
+        ],
+        "mcp_container": "absent",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Core emits a typed zero-based window number. Existing configured values remain accepted but are filtered before construction.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65",
+        "evidence.commit.ddf04ad2"
+      ],
+      "id": "state.window_number.core_owned",
+      "key_ref": "key.turn_metadata.window_number",
+      "status": "core_owned_legacy_input_filtered",
+      "value_schema": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "state.window_number.legacy_extra": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "constant_names": [],
+        "payload_container": "flattened_extra_string",
+        "reserved_extra_key": false
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "emitted_conditionally",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Before core ownership, this valid extra-metadata name could be flattened as a caller-supplied string.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65"
+      ],
+      "id": "state.window_number.legacy_extra",
+      "key_ref": "key.turn_metadata.window_number",
+      "status": "legacy_input",
+      "value_schema": {
+        "type": "string"
+      }
+    }
+  },
+  "transitions": [
+    {
+      "at_version_ref": "version.2026-07-25.code_mode_metadata_introduced",
+      "classification": "introduced",
+      "description": "Add code_mode_tool_names to Responses Lite nested turn metadata and reserve the key.",
+      "from_state_ref": "state.code_mode.absent",
+      "id": "transition.code_mode.introduced",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.active_unbounded_header"
+    },
+    {
+      "at_version_ref": "version.2026-07-25.compatibility_header_bounded",
+      "classification": "projection_bounded",
+      "description": "Omit the unbounded map from direct compatibility-header JSON.",
+      "from_state_ref": "state.code_mode.active_unbounded_header",
+      "id": "transition.code_mode.compatibility_bounded",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.active_bounded_header"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.include_tool_metadata_setting",
+      "classification": "renamed",
+      "description": "Rename include_tool_namespaces_info to include_tool_metadata.",
+      "from_state_ref": "state.cfg_include_namespaces.active",
+      "id": "transition.cfg.namespaces_to_metadata",
+      "key_ref": "key.config.tool_registry.include_tool_namespaces_info",
+      "to_state_ref": "state.cfg_include_namespaces.renamed"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.turn_metadata_includes_tool_info_setting",
+      "classification": "renamed",
+      "description": "Rename include_tool_metadata to turn_metadata_includes_tool_info.",
+      "from_state_ref": "state.cfg_include_metadata.active",
+      "id": "transition.cfg.metadata_to_turn_info",
+      "key_ref": "key.config.tool_registry.include_tool_metadata",
+      "to_state_ref": "state.cfg_include_metadata.renamed"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.tool_namespaces_info_introduced",
+      "classification": "replacement_introduced",
+      "description": "Add richer opt-in namespace/function inventory including per-function code_mode_name.",
+      "from_state_ref": "state.tool_namespaces.absent",
+      "id": "transition.tool_namespaces.introduced",
+      "key_ref": "key.turn_metadata.tool_namespaces_info",
+      "to_state_ref": "state.tool_namespaces.active_opt_in"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.tool_namespaces_info_introduced",
+      "classification": "replacement_introduced",
+      "description": "Mark the old map as coexisting with its richer successor.",
+      "from_state_ref": "state.code_mode.active_bounded_header",
+      "id": "transition.code_mode.successor",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.active_with_successor"
+    },
+    {
+      "at_version_ref": "version.2026-08-07.code_mode_metadata_removed",
+      "classification": "removed_reserved",
+      "description": "Remove the wire field while retaining a legacy reservation against caller-provided extras.",
+      "from_state_ref": "state.code_mode.active_with_successor",
+      "id": "transition.code_mode.removed_reserved",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "to_state_ref": "state.code_mode.removed_reserved"
+    },
+    {
+      "at_version_ref": "version.2026-08-26.core_window_fork_keys",
+      "classification": "core_ownership_transition",
+      "description": "Convert the former configurable extra name into a typed core-owned field while accepting then filtering legacy input.",
+      "from_state_ref": "state.window_number.legacy_extra",
+      "id": "transition.window_number.core_owned",
+      "key_ref": "key.turn_metadata.window_number",
+      "to_state_ref": "state.window_number.core_owned"
+    },
+    {
+      "at_version_ref": "version.2026-08-26.core_window_fork_keys",
+      "classification": "core_ownership_transition",
+      "description": "Convert the former configurable extra name into a typed core-owned lineage field while accepting then filtering legacy input.",
+      "from_state_ref": "state.fork_ordinal.legacy_extra",
+      "id": "transition.fork_ordinal.core_owned",
+      "key_ref": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "to_state_ref": "state.fork_ordinal.core_owned"
+    }
+  ],
+  "versions": {
+    "version.2026-07-25.code_mode_metadata_introduced": {
+      "commit_sha": "25b6fc9bbc49bbec12e8d38ceee550fc07cbc60d",
+      "committed_at": "2026-07-25T01:05:33Z",
+      "event": "metadata_introduced",
+      "evidence": {
+        "commit_sha": "25b6fc9bbc49bbec12e8d38ceee550fc07cbc60d",
+        "committed_at": "2026-07-25T01:05:33Z",
+        "id": "evidence.commit.25b6fc9b",
+        "repository_blob_shas": {
+          "codex-rs/core/src/responses_metadata.rs": "6724516a15d2d800c7b8b8c203a131ce640cef4d"
+        },
+        "source_paths": [
+          "codex-rs/core/src/responses_metadata.rs",
+          "codex-rs/core/src/turn_metadata.rs"
+        ],
+        "title": "Include code-mode tool names in Responses Lite metadata (#35271)",
+        "url": "https://github.com/openai/codex/commit/25b6fc9bbc49bbec12e8d38ceee550fc07cbc60d"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-07-25.code_mode_metadata_introduced",
+      "ordinal": 1,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.absent",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.absent",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.absent",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.active_unbounded_header",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.legacy_extra",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.absent",
+        "key.turn_metadata.window_number": "state.window_number.legacy_extra"
+      },
+      "title": "Include code-mode tool names in Responses Lite metadata (#35271)"
+    },
+    "version.2026-07-25.compatibility_header_bounded": {
+      "commit_sha": "5c36e869c1a7bdc5ec4c1325d02e60dfbadcc9b8",
+      "committed_at": "2026-07-25T16:12:42Z",
+      "event": "projection_bounded",
+      "evidence": {
+        "commit_sha": "5c36e869c1a7bdc5ec4c1325d02e60dfbadcc9b8",
+        "committed_at": "2026-07-25T16:12:42Z",
+        "id": "evidence.commit.5c36e869",
+        "repository_blob_shas": {
+          "codex-rs/core/src/responses_metadata.rs": "794b50930e3d2ff86027ffede27896e938a2b3a2"
+        },
+        "source_paths": [
+          "codex-rs/core/src/responses_metadata.rs"
+        ],
+        "title": "Bound Code Mode metadata compatibility headers (#35364)",
+        "url": "https://github.com/openai/codex/commit/5c36e869c1a7bdc5ec4c1325d02e60dfbadcc9b8"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-07-25.compatibility_header_bounded",
+      "ordinal": 2,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.absent",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.absent",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.absent",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.active_bounded_header",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.legacy_extra",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.absent",
+        "key.turn_metadata.window_number": "state.window_number.legacy_extra"
+      },
+      "title": "Bound Code Mode metadata compatibility headers (#35364)"
+    },
+    "version.2026-07-25.pre_code_mode_metadata": {
+      "commit_sha": "63fe5a6b71d45dfff24a6a1e5da0699e054f145d",
+      "committed_at": "2026-07-25T00:10:48Z",
+      "event": "baseline",
+      "evidence": {
+        "commit_sha": "63fe5a6b71d45dfff24a6a1e5da0699e054f145d",
+        "committed_at": "2026-07-25T00:10:48Z",
+        "id": "evidence.commit.63fe5a6b",
+        "source_paths": [
+          "codex-rs/core/src/responses_metadata.rs"
+        ],
+        "title": "Pre-introduction baseline",
+        "url": "https://github.com/openai/codex/commit/63fe5a6b71d45dfff24a6a1e5da0699e054f145d"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-07-25.pre_code_mode_metadata",
+      "ordinal": 0,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.absent",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.absent",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.absent",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.absent",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.legacy_extra",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.absent",
+        "key.turn_metadata.window_number": "state.window_number.legacy_extra"
+      },
+      "title": "Pre-introduction baseline"
+    },
+    "version.2026-08-07.code_mode_metadata_removed": {
+      "commit_sha": "8e4b10446eed7bafb39d8a469f9be25a41f4864f",
+      "committed_at": "2026-08-07T20:26:08Z",
+      "event": "legacy_key_removed",
+      "evidence": {
+        "commit_sha": "8e4b10446eed7bafb39d8a469f9be25a41f4864f",
+        "committed_at": "2026-08-07T20:26:08Z",
+        "id": "evidence.commit.8e4b1044",
+        "repository_blob_shas": {
+          "codex-rs/core/src/responses_metadata.rs": "b269fdd79c6ce5a11a61a4535c9f217bf7348b23"
+        },
+        "source_paths": [
+          "codex-rs/core/src/responses_metadata.rs",
+          "codex-rs/core/src/turn_metadata.rs",
+          "codex-rs/core/src/tools/spec_plan.rs"
+        ],
+        "title": "Remove the legacy code-mode tool metadata inventory (#37500)",
+        "url": "https://github.com/openai/codex/commit/8e4b10446eed7bafb39d8a469f9be25a41f4864f"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-08-07.code_mode_metadata_removed",
+      "ordinal": 7,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.renamed",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.renamed",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.active",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.removed_reserved",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.legacy_extra",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.active_opt_in",
+        "key.turn_metadata.window_number": "state.window_number.legacy_extra"
+      },
+      "title": "Remove the legacy code-mode tool metadata inventory (#37500)"
+    },
+    "version.2026-08-07.include_tool_metadata_setting": {
+      "commit_sha": "c87a218bd3e7ee0a0181109b3ff7bbc2156de13e",
+      "committed_at": "2026-08-07T07:35:37Z",
+      "event": "config_key_renamed",
+      "evidence": {
+        "commit_sha": "c87a218bd3e7ee0a0181109b3ff7bbc2156de13e",
+        "committed_at": "2026-08-07T07:35:37Z",
+        "id": "evidence.commit.c87a218b",
+        "source_paths": [
+          "codex-rs/features/src/feature_configs.rs",
+          "codex-rs/core/config.schema.json",
+          "codex-rs/core/src/config/mod.rs"
+        ],
+        "title": "Rename the tool registry metadata setting (#37400)",
+        "url": "https://github.com/openai/codex/commit/c87a218bd3e7ee0a0181109b3ff7bbc2156de13e"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-08-07.include_tool_metadata_setting",
+      "ordinal": 4,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.active",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.renamed",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.absent",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.active_bounded_header",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.legacy_extra",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.absent",
+        "key.turn_metadata.window_number": "state.window_number.legacy_extra"
+      },
+      "title": "Rename the tool registry metadata setting (#37400)"
+    },
+    "version.2026-08-07.include_tool_namespaces_info_setting": {
+      "commit_sha": "4ee41929eaf4fc1e5662c9b4befd05230688ca62",
+      "committed_at": "2026-08-07T06:29:09Z",
+      "event": "config_key_introduced",
+      "evidence": {
+        "commit_sha": "4ee41929eaf4fc1e5662c9b4befd05230688ca62",
+        "committed_at": "2026-08-07T06:29:09Z",
+        "id": "evidence.commit.4ee41929",
+        "source_paths": [
+          "codex-rs/features/src/feature_configs.rs",
+          "codex-rs/core/config.schema.json",
+          "codex-rs/core/src/config/mod.rs"
+        ],
+        "title": "Add tool namespace metadata configuration (#37389)",
+        "url": "https://github.com/openai/codex/commit/4ee41929eaf4fc1e5662c9b4befd05230688ca62"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-08-07.include_tool_namespaces_info_setting",
+      "ordinal": 3,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.absent",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.active",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.absent",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.active_bounded_header",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.legacy_extra",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.absent",
+        "key.turn_metadata.window_number": "state.window_number.legacy_extra"
+      },
+      "title": "Add tool namespace metadata configuration (#37389)"
+    },
+    "version.2026-08-07.tool_namespaces_info_introduced": {
+      "commit_sha": "2b1811e56201ba4c7a0b26fd1cf07a077d42d32f",
+      "committed_at": "2026-08-07T19:32:15Z",
+      "event": "successor_introduced",
+      "evidence": {
+        "commit_sha": "2b1811e56201ba4c7a0b26fd1cf07a077d42d32f",
+        "committed_at": "2026-08-07T19:32:15Z",
+        "id": "evidence.commit.2b1811e5",
+        "repository_blob_shas": {
+          "codex-rs/core/src/responses_metadata.rs": "ddf961e0f4fe50cd29127641712d43f0839fccc6"
+        },
+        "source_paths": [
+          "codex-rs/core/src/responses_metadata.rs",
+          "codex-rs/core/src/tools/tool_namespaces_info.rs",
+          "codex-rs/core/src/tools/spec_plan.rs"
+        ],
+        "title": "Include tool namespace inventory in turn metadata (#37492)",
+        "url": "https://github.com/openai/codex/commit/2b1811e56201ba4c7a0b26fd1cf07a077d42d32f"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-08-07.tool_namespaces_info_introduced",
+      "ordinal": 6,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.renamed",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.renamed",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.active",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.active_with_successor",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.legacy_extra",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.active_opt_in",
+        "key.turn_metadata.window_number": "state.window_number.legacy_extra"
+      },
+      "title": "Include tool namespace inventory in turn metadata (#37492)"
+    },
+    "version.2026-08-07.turn_metadata_includes_tool_info_setting": {
+      "commit_sha": "248d8c0e2297ef0851832f593f8340b465044726",
+      "committed_at": "2026-08-07T17:44:05Z",
+      "event": "config_key_renamed",
+      "evidence": {
+        "commit_sha": "248d8c0e2297ef0851832f593f8340b465044726",
+        "committed_at": "2026-08-07T17:44:05Z",
+        "id": "evidence.commit.248d8c0e",
+        "source_paths": [
+          "codex-rs/features/src/feature_configs.rs",
+          "codex-rs/core/config.schema.json",
+          "codex-rs/core/src/config/mod.rs"
+        ],
+        "title": "Include call IDs in MCP requests and clarify metadata config (#37477)",
+        "url": "https://github.com/openai/codex/commit/248d8c0e2297ef0851832f593f8340b465044726"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-08-07.turn_metadata_includes_tool_info_setting",
+      "ordinal": 5,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.renamed",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.renamed",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.active",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.active_bounded_header",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.legacy_extra",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.absent",
+        "key.turn_metadata.window_number": "state.window_number.legacy_extra"
+      },
+      "title": "Include call IDs in MCP requests and clarify metadata config (#37477)"
+    },
+    "version.2026-08-26.core_window_fork_keys": {
+      "commit_sha": "0d654e653614b0f99b8da3e4a74aa2558ee61752",
+      "committed_at": "2026-08-26T22:37:59Z",
+      "event": "core_ownership_transition",
+      "evidence": {
+        "commit_sha": "0d654e653614b0f99b8da3e4a74aa2558ee61752",
+        "committed_at": "2026-08-26T22:37:59Z",
+        "id": "evidence.commit.0d654e65",
+        "repository_blob_shas": {
+          "codex-rs/core/src/responses_metadata.rs": "698e5a0ca24394f29f0d3100d997c7ee21452adf"
+        },
+        "source_paths": [
+          "codex-rs/core/src/responses_metadata.rs",
+          "codex-rs/core/src/turn_metadata.rs"
+        ],
+        "title": "Track window and fork positions in turn metadata (#40987)",
+        "url": "https://github.com/openai/codex/commit/0d654e653614b0f99b8da3e4a74aa2558ee61752"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-08-26.core_window_fork_keys",
+      "ordinal": 8,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.renamed",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.renamed",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.active",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.removed_reserved",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.core_owned",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.active_opt_in",
+        "key.turn_metadata.window_number": "state.window_number.core_owned"
+      },
+      "title": "Track window and fork positions in turn metadata (#40987)"
+    },
+    "version.2026-09-05.current_main": {
+      "commit_sha": "ddf04ad26789d040f9ef6a96736f76602e35a6cc",
+      "committed_at": "2026-09-05T05:31:48Z",
+      "event": "current_snapshot",
+      "evidence": {
+        "commit_sha": "ddf04ad26789d040f9ef6a96736f76602e35a6cc",
+        "committed_at": "2026-09-05T05:31:48Z",
+        "id": "evidence.commit.ddf04ad2",
+        "repository_blob_shas": {
+          "codex-rs/core/src/responses_metadata.rs": "8edfbdfc7a324aadfd6920c9003d096c2f914cc1",
+          "codex-rs/core/src/tools/tool_namespaces_info.rs": "f43cb1fe3671aa07e37f4944f184099015c3aea8"
+        },
+        "source_paths": [
+          "codex-rs/core/src/responses_metadata.rs",
+          "codex-rs/core/src/turn_metadata.rs",
+          "codex-rs/core/src/tools/tool_namespaces_info.rs",
+          "codex-rs/core/src/tools/spec_plan.rs",
+          "codex-rs/core/src/config/mod.rs",
+          "codex-rs/features/src/feature_configs.rs",
+          "codex-rs/core/config.schema.json"
+        ],
+        "title": "Current main snapshot reviewed for metadata-key state",
+        "url": "https://github.com/openai/codex/commit/ddf04ad26789d040f9ef6a96736f76602e35a6cc"
+      },
+      "exact_snapshot": true,
+      "id": "version.2026-09-05.current_main",
+      "ordinal": 9,
+      "state_refs": {
+        "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.renamed",
+        "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.renamed",
+        "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.active",
+        "key.turn_metadata.code_mode_tool_names": "state.code_mode.removed_reserved",
+        "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.core_owned",
+        "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.active_opt_in",
+        "key.turn_metadata.window_number": "state.window_number.core_owned"
+      },
+      "title": "Current main snapshot reviewed for metadata-key state"
+    }
+  }
+}

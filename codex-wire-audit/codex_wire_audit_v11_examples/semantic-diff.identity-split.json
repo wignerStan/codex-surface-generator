@@ -1,0 +1,211 @@
+{
+  "after_source_revision_id": "sha256:67ed6b50fdf5af2dff90547b9538c2056c21b80f770be1b36b87ccfaf0066ec9",
+  "before_source_revision_id": "sha256:f9be076c0a3f9598073ffa6991b9d5960b4f8346e8a8fbc0d6b7893af0e8da51",
+  "changes": [
+    {
+      "after": {
+        "id": "turn_metadata.gate.has_thread_identity",
+        "name": "has_thread_identity",
+        "predicate": {
+          "args": [
+            {
+              "arg": {
+                "op": "exists",
+                "path": "request_kind"
+              },
+              "op": "not"
+            },
+            {
+              "argument": "request_kind",
+              "function": "CodexResponsesRequestKind::has_thread_identity",
+              "op": "call_predicate"
+            }
+          ],
+          "op": "any"
+        },
+        "semantic_fingerprint": "df29677b61844d2057937f8ff3b938ba058e39348f71579fd820158de9b792c2",
+        "source_expression": "request_kind.is_none_or(CodexResponsesRequestKind::has_thread_identity)",
+        "source_ref": "codex-rs/core/src/responses_metadata.rs:22"
+      },
+      "before": null,
+      "details": {},
+      "entity_id": "turn_metadata.gate.has_thread_identity",
+      "id": "semantic_change.gate_added.99c19a43131b2d8d",
+      "kind": "gate_added",
+      "severity": "attention"
+    },
+    {
+      "after": null,
+      "before": {
+        "id": "turn_metadata.gate.has_turn_identity",
+        "name": "has_turn_identity",
+        "predicate": {
+          "args": [
+            {
+              "arg": {
+                "op": "exists",
+                "path": "request_kind"
+              },
+              "op": "not"
+            },
+            {
+              "argument": "request_kind",
+              "function": "CodexResponsesRequestKind::has_turn_identity",
+              "op": "call_predicate"
+            }
+          ],
+          "op": "any"
+        },
+        "semantic_fingerprint": "d9854728f7fd14dd3011fc291897d5378f5e2118013e73cf4f1eb7492021bfa6",
+        "source_expression": "request_kind.is_none_or(CodexResponsesRequestKind::has_turn_identity)",
+        "source_ref": "codex-rs/core/src/responses_metadata.rs:8"
+      },
+      "details": {},
+      "entity_id": "turn_metadata.gate.has_turn_identity",
+      "id": "semantic_change.gate_removed.ecdafb8d6b976ef2",
+      "kind": "gate_removed",
+      "severity": "attention"
+    },
+    {
+      "after": "option_passthrough",
+      "before": "conditional_option_passthrough",
+      "details": {},
+      "entity_id": "turn_metadata.field.turn_id",
+      "id": "semantic_change.field_emission_kind_changed.cf77387d03544846",
+      "kind": "field_emission_kind_changed",
+      "severity": "breaking"
+    },
+    {
+      "after": [
+        "turn_metadata.gate.has_thread_identity"
+      ],
+      "before": [
+        "turn_metadata.gate.has_turn_identity"
+      ],
+      "details": {
+        "after_predicate": {
+          "name": "has_thread_identity",
+          "op": "var"
+        },
+        "before_predicate": {
+          "name": "has_turn_identity",
+          "op": "var"
+        }
+      },
+      "entity_id": "turn_metadata.field.agent_name",
+      "id": "semantic_change.field_gate_changed.b225098ae16c0766",
+      "kind": "field_gate_changed",
+      "severity": "breaking"
+    },
+    {
+      "after": [
+        "turn_metadata.gate.has_thread_identity"
+      ],
+      "before": [
+        "turn_metadata.gate.has_turn_identity"
+      ],
+      "details": {
+        "after_predicate": {
+          "name": "has_thread_identity",
+          "op": "var"
+        },
+        "before_predicate": {
+          "name": "has_turn_identity",
+          "op": "var"
+        }
+      },
+      "entity_id": "turn_metadata.field.session_id",
+      "id": "semantic_change.field_gate_changed.2a38febeeacc7265",
+      "kind": "field_gate_changed",
+      "severity": "breaking"
+    },
+    {
+      "after": [
+        "turn_metadata.gate.has_thread_identity"
+      ],
+      "before": [
+        "turn_metadata.gate.has_turn_identity"
+      ],
+      "details": {
+        "after_predicate": {
+          "name": "has_thread_identity",
+          "op": "var"
+        },
+        "before_predicate": {
+          "name": "has_turn_identity",
+          "op": "var"
+        }
+      },
+      "entity_id": "turn_metadata.field.thread_id",
+      "id": "semantic_change.field_gate_changed.26985a1bea71e76c",
+      "kind": "field_gate_changed",
+      "severity": "breaking"
+    },
+    {
+      "after": [],
+      "before": [
+        "turn_metadata.gate.has_turn_identity"
+      ],
+      "details": {
+        "after_predicate": {
+          "op": "exists",
+          "path": "self.turn_id"
+        },
+        "before_predicate": {
+          "name": "has_turn_identity",
+          "op": "var"
+        }
+      },
+      "entity_id": "turn_metadata.field.turn_id",
+      "id": "semantic_change.field_gate_changed.ecccc23abc162054",
+      "kind": "field_gate_changed",
+      "severity": "breaking"
+    },
+    {
+      "after": {
+        "args": [
+          {
+            "op": "exists",
+            "path": "request_kind"
+          },
+          {
+            "argument": "request_kind",
+            "function": "CodexResponsesRequestKind::has_thread_identity",
+            "op": "call_predicate"
+          }
+        ],
+        "op": "all"
+      },
+      "before": {
+        "args": [
+          {
+            "op": "exists",
+            "path": "request_kind"
+          },
+          {
+            "argument": "request_kind",
+            "function": "CodexResponsesRequestKind::has_turn_identity",
+            "op": "call_predicate"
+          }
+        ],
+        "op": "all"
+      },
+      "details": {
+        "after_expression": "request_kind.is_some_and(CodexResponsesRequestKind::has_thread_identity)",
+        "before_expression": "request_kind.is_some_and(CodexResponsesRequestKind::has_turn_identity)"
+      },
+      "entity_id": "turn_metadata.gate.has_request_identity",
+      "id": "semantic_change.gate_predicate_changed.998155d9c9dc6938",
+      "kind": "gate_predicate_changed",
+      "severity": "breaking"
+    }
+  ],
+  "schema_version": "1.0.0",
+  "summary": {
+    "attention": 2,
+    "breaking": 6,
+    "has_breaking_changes": true,
+    "info": 0,
+    "total": 8
+  }
+}

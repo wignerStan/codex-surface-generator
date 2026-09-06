@@ -1,0 +1,39 @@
+name: codex-wire-current-main-canary
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 5 * * *"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: audit
+      - uses: actions/checkout@v4
+        with:
+          repository: openai/codex
+          path: codex
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install ./audit
+      - name: Generate current-main report and semantic diff
+        run: |
+          codex-wire-audit \
+            --repo-root ./codex \
+            --baseline-report ./audit/ci/baselines/current-main.json \
+            --format canonical-json \
+            --output current-main.json \
+            --semantic-diff-output semantic-diff.json \
+            --fail-on-semantic-change breaking \
+            --fail-on incomplete
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: codex-wire-current-main
+          path: |
+            current-main.json
+            semantic-diff.json

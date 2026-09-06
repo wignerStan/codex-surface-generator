@@ -1,0 +1,79 @@
+{
+  "aggregate": {
+    "combined_percent": 73.83,
+    "covered_branches": 233,
+    "covered_lines": 901,
+    "num_branches": 396,
+    "num_statements": 1140,
+    "passes": true,
+    "threshold": 72.0
+  },
+  "coverage_json": "coverage-v13.json",
+  "format": "codex-wire-audit-coverage-ratchet/v1",
+  "modules": {
+    "codex_wire_audit/history_cli.py": {
+      "branches": 36,
+      "combined_percent": 64.0,
+      "covered_branches": 19,
+      "covered_lines": 93,
+      "passes": true,
+      "statements": 139,
+      "threshold": 60.0
+    },
+    "codex_wire_audit/metadata_history.py": {
+      "branches": 112,
+      "combined_percent": 74.5,
+      "covered_branches": 69,
+      "covered_lines": 194,
+      "passes": true,
+      "statements": 241,
+      "threshold": 72.0
+    },
+    "codex_wire_audit/metadata_history_container.py": {
+      "branches": 48,
+      "combined_percent": 80.85,
+      "covered_branches": 32,
+      "covered_lines": 120,
+      "passes": true,
+      "statements": 140,
+      "threshold": 78.0
+    },
+    "codex_wire_audit/metadata_history_probe.py": {
+      "branches": 30,
+      "combined_percent": 83.7,
+      "covered_branches": 19,
+      "covered_lines": 94,
+      "passes": true,
+      "statements": 105,
+      "threshold": 80.0
+    },
+    "codex_wire_audit/metadata_history_source.py": {
+      "branches": 86,
+      "combined_percent": 73.35,
+      "covered_branches": 52,
+      "covered_lines": 193,
+      "passes": true,
+      "statements": 248,
+      "threshold": 70.0
+    },
+    "codex_wire_audit/proof_gate.py": {
+      "branches": 76,
+      "combined_percent": 69.1,
+      "covered_branches": 36,
+      "covered_lines": 172,
+      "passes": true,
+      "statements": 225,
+      "threshold": 67.0
+    },
+    "codex_wire_audit/proof_metadata_history.py": {
+      "branches": 8,
+      "combined_percent": 82.0,
+      "covered_branches": 6,
+      "covered_lines": 35,
+      "passes": true,
+      "statements": 42,
+      "threshold": 80.0
+    }
+  },
+  "status": "passed"
+}

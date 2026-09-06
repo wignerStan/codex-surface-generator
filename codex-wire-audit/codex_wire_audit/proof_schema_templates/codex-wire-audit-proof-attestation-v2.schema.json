@@ -1,0 +1,283 @@
+{
+  "$defs": {
+    "dimension": {
+      "additionalProperties": false,
+      "properties": {
+        "complete": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "not_run"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "complete"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openai.example/codex-wire-audit/proof-attestation-v2.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "required": [
+          "report_sha256",
+          "coverage_profile",
+          "dimensions",
+          "rust_semantics",
+          "provenance",
+          "runtime_conformance",
+          "metadata_history",
+          "diagnostic_summary"
+        ]
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "properties": {
+              "overall": {
+                "const": "error"
+              }
+            }
+          }
+        }
+      },
+      "then": {}
+    }
+  ],
+  "properties": {
+    "$schema": {
+      "const": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "coverage_profile": {
+      "type": "object"
+    },
+    "diagnostic_summary": {
+      "type": "object"
+    },
+    "diagnostics": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "dimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata_history": {
+          "$ref": "#/$defs/dimension"
+        },
+        "profile": {
+          "$ref": "#/$defs/dimension"
+        },
+        "provenance": {
+          "$ref": "#/$defs/dimension"
+        },
+        "runtime_conformance": {
+          "$ref": "#/$defs/dimension"
+        },
+        "rust_semantics": {
+          "$ref": "#/$defs/dimension"
+        },
+        "schema": {
+          "$ref": "#/$defs/dimension"
+        }
+      },
+      "required": [
+        "schema",
+        "profile",
+        "rust_semantics",
+        "provenance",
+        "runtime_conformance",
+        "metadata_history"
+      ],
+      "type": "object"
+    },
+    "format": {
+      "const": "codex-wire-audit-proof-attestation/v2"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "integrity": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "canonical_payload_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "algorithm",
+        "canonical_payload_sha256"
+      ],
+      "type": "object"
+    },
+    "metadata_history": {
+      "additionalProperties": false,
+      "properties": {
+        "catalog_format": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "catalog_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "catalog_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "diagnostics": {
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "forward_canary": {
+          "type": "boolean"
+        },
+        "observed_commit_sha": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "probe": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "reviewed_through": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "selected_commit_sha": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "selected_version_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "selection_basis": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "not_run"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "complete",
+        "catalog_format",
+        "catalog_version",
+        "catalog_sha256",
+        "diagnostics"
+      ],
+      "type": "object"
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "report_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "runtime_conformance": {
+      "type": "object"
+    },
+    "rust_semantics": {
+      "type": "object"
+    },
+    "schema_id": {
+      "const": "https://openai.example/codex-wire-audit/proof-attestation-v2.schema.json"
+    },
+    "status": {
+      "additionalProperties": false,
+      "properties": {
+        "complete": {
+          "type": "boolean"
+        },
+        "incomplete_dimensions": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "overall": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "error"
+          ]
+        },
+        "required_dimensions": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "overall",
+        "complete"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "$schema",
+    "schema_id",
+    "format",
+    "generated_at",
+    "status",
+    "diagnostics",
+    "integrity"
+  ],
+  "title": "Codex wire audit proof attestation v2",
+  "type": "object"
+}

@@ -1,0 +1,216 @@
+{
+  "$id": "urn:codex-wire-audit:schema:report:10.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "$id": {
+      "pattern": "^urn:codex-wire-audit:",
+      "type": "string"
+    },
+    "$schema": {
+      "const": "urn:codex-wire-audit:schema:report:10.0.0"
+    },
+    "coverage": {
+      "type": "object"
+    },
+    "diagnostic_summary": {
+      "additionalProperties": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "properties": {
+        "error": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "info": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "warning": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "error",
+        "warning",
+        "info"
+      ],
+      "type": "object"
+    },
+    "diagnostics": {
+      "items": {
+        "$ref": "urn:codex-wire-audit:schema:diagnostic:1.0.0"
+      },
+      "type": "array"
+    },
+    "edges": {
+      "items": {
+        "$ref": "urn:codex-wire-audit:schema:edge:1.0.0"
+      },
+      "type": "array"
+    },
+    "entities": {
+      "additionalProperties": {
+        "type": "object"
+      },
+      "properties": {
+        "fields": {
+          "additionalProperties": {
+            "$ref": "urn:codex-wire-audit:schema:wire-field:1.0.0"
+          },
+          "type": "object"
+        },
+        "rules": {
+          "additionalProperties": {
+            "$ref": "urn:codex-wire-audit:schema:rule:1.0.0"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "surfaces",
+        "schemas",
+        "fields",
+        "headers",
+        "header_templates",
+        "settings",
+        "events",
+        "rules",
+        "wire_locations"
+      ],
+      "type": "object"
+    },
+    "format_version": {
+      "const": "10.0.0"
+    },
+    "integrity": {
+      "additionalProperties": true,
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "canonicalization": {
+          "const": "codex-wire-audit-canonical-json-v1"
+        },
+        "payload_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "algorithm",
+        "canonicalization",
+        "payload_sha256"
+      ],
+      "type": "object"
+    },
+    "machine_contract": {
+      "required": [
+        "schema_version",
+        "counts"
+      ],
+      "type": "object"
+    },
+    "parser": {
+      "required": [
+        "requested_backend",
+        "effective_backend"
+      ],
+      "type": "object"
+    },
+    "reader_compatibility": {
+      "type": "object"
+    },
+    "schema_documents": {
+      "type": "object"
+    },
+    "source_manifest": {
+      "additionalProperties": true,
+      "properties": {
+        "commit": {
+          "type": "object"
+        },
+        "files": {
+          "additionalProperties": {
+            "$ref": "urn:codex-wire-audit:schema:source:1.0.0"
+          },
+          "type": "object"
+        },
+        "locations": {
+          "type": "object"
+        },
+        "path_index": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "source_mode": {
+          "enum": [
+            "github",
+            "repo_root",
+            "source_archive",
+            "cache_only",
+            "fixture"
+          ]
+        }
+      },
+      "required": [
+        "source_mode",
+        "repository",
+        "commit",
+        "files",
+        "path_index"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "required": [
+        "state",
+        "complete",
+        "diagnostic_refs"
+      ],
+      "type": "object"
+    },
+    "versions": {
+      "required": [
+        "report_format",
+        "generator"
+      ],
+      "type": "object"
+    },
+    "views": {
+      "type": "object"
+    },
+    "wire_surface_catalog": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "$schema",
+    "$id",
+    "format_version",
+    "versions",
+    "reader_compatibility",
+    "source_manifest",
+    "parser",
+    "entities",
+    "edges",
+    "views",
+    "machine_contract",
+    "coverage",
+    "diagnostics",
+    "diagnostic_summary",
+    "status",
+    "schema_documents",
+    "integrity",
+    "wire_surface_catalog"
+  ],
+  "title": "Codex wire audit report v10",
+  "type": "object"
+}

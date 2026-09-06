@@ -1,0 +1,313 @@
+{
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:mcp_server_config:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "oneOf": [
+        {
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "url"
+                ]
+              },
+              {
+                "required": [
+                  "bearer_token_env_var"
+                ]
+              },
+              {
+                "required": [
+                  "http_headers_helper"
+                ]
+              },
+              {
+                "required": [
+                  "http_headers"
+                ]
+              },
+              {
+                "required": [
+                  "env_http_headers"
+                ]
+              },
+              {
+                "required": [
+                  "oauth"
+                ]
+              },
+              {
+                "required": [
+                  "oauth_resource"
+                ]
+              },
+              {
+                "required": [
+                  "auth"
+                ]
+              }
+            ]
+          },
+          "required": [
+            "command"
+          ],
+          "title": "stdio MCP transport"
+        },
+        {
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "command"
+                ]
+              },
+              {
+                "required": [
+                  "args"
+                ]
+              },
+              {
+                "required": [
+                  "env"
+                ]
+              },
+              {
+                "required": [
+                  "env_vars"
+                ]
+              },
+              {
+                "required": [
+                  "cwd"
+                ]
+              }
+            ]
+          },
+          "required": [
+            "url"
+          ],
+          "title": "Streamable HTTP MCP transport"
+        }
+      ]
+    },
+    {
+      "not": {
+        "required": [
+          "bearer_token"
+        ]
+      }
+    },
+    {
+      "not": {
+        "properties": {
+          "environment_id": {
+            "not": {
+              "const": "local"
+            }
+          }
+        },
+        "required": [
+          "http_headers_helper",
+          "environment_id"
+        ]
+      }
+    }
+  ],
+  "description": "MCP server configuration with an exclusive stdio-versus-Streamable-HTTP transport. Shared lifecycle, tool-exposure, approval, and OAuth settings are constrained by the selected branch.",
+  "properties": {
+    "_name": {
+      "type": "string",
+      "x-rust-type": "String"
+    },
+    "args": {
+      "items": {
+        "type": "string",
+        "x-rust-type": "String"
+      },
+      "type": "array",
+      "x-certainty": "source_derived",
+      "x-rust-type": "Vec<String>"
+    },
+    "auth": {
+      "x-certainty": "inferred",
+      "x-entity-ref": "schema.rust.mcpserverauth",
+      "x-rust-type": "McpServerAuth",
+      "x-wire-kind": "named_type"
+    },
+    "bearer_token_env_var": {
+      "type": "string",
+      "x-rust-type": "String"
+    },
+    "command": {
+      "type": "string",
+      "x-rust-type": "String"
+    },
+    "cwd": {
+      "format": "path-or-uri",
+      "type": "string",
+      "x-rust-type": "LegacyAppPathString"
+    },
+    "default_tools_approval_mode": {
+      "x-certainty": "inferred",
+      "x-entity-ref": "schema.rust.apptoolapproval",
+      "x-rust-type": "AppToolApproval",
+      "x-wire-kind": "named_type"
+    },
+    "disabled_tools": {
+      "items": {
+        "type": "string",
+        "x-rust-type": "String"
+      },
+      "type": "array",
+      "x-certainty": "source_derived",
+      "x-rust-type": "Vec<String>"
+    },
+    "enabled": {
+      "type": "boolean",
+      "x-rust-type": "bool"
+    },
+    "enabled_tools": {
+      "items": {
+        "type": "string",
+        "x-rust-type": "String"
+      },
+      "type": "array",
+      "x-certainty": "source_derived",
+      "x-rust-type": "Vec<String>"
+    },
+    "env": {
+      "additionalProperties": {
+        "type": "string",
+        "x-rust-type": "String"
+      },
+      "type": "object",
+      "x-certainty": "source_derived",
+      "x-rust-type": "HashMap<String, String>"
+    },
+    "env_http_headers": {
+      "additionalProperties": {
+        "type": "string",
+        "x-rust-type": "String"
+      },
+      "type": "object",
+      "x-certainty": "source_derived",
+      "x-rust-type": "HashMap<String, String>"
+    },
+    "env_vars": {
+      "items": {
+        "x-certainty": "inferred",
+        "x-entity-ref": "schema.rust.mcpserverenvvar",
+        "x-rust-type": "McpServerEnvVar",
+        "x-wire-kind": "named_type"
+      },
+      "type": "array",
+      "x-certainty": "source_derived",
+      "x-rust-type": "Vec<McpServerEnvVar>"
+    },
+    "environment_id": {
+      "type": "string",
+      "x-rust-type": "String"
+    },
+    "http_headers": {
+      "additionalProperties": {
+        "type": "string",
+        "x-rust-type": "String"
+      },
+      "type": "object",
+      "x-certainty": "source_derived",
+      "x-rust-type": "HashMap<String, String>"
+    },
+    "http_headers_helper": {
+      "minLength": 1,
+      "type": "string",
+      "x-rust-type": "String"
+    },
+    "oauth": {
+      "x-certainty": "inferred",
+      "x-entity-ref": "schema.rust.mcpserveroauthconfig",
+      "x-rust-type": "McpServerOAuthConfig",
+      "x-wire-kind": "named_type"
+    },
+    "oauth_resource": {
+      "type": "string",
+      "x-rust-type": "String"
+    },
+    "omit_tools_from": {
+      "items": {
+        "x-certainty": "inferred",
+        "x-entity-ref": "schema.rust.toolexposuresurface",
+        "x-rust-type": "ToolExposureSurface",
+        "x-wire-kind": "named_type"
+      },
+      "type": "array",
+      "x-certainty": "source_derived",
+      "x-rust-type": "Vec<ToolExposureSurface>"
+    },
+    "required": {
+      "type": "boolean",
+      "x-rust-type": "bool"
+    },
+    "scopes": {
+      "items": {
+        "type": "string",
+        "x-rust-type": "String"
+      },
+      "type": "array",
+      "x-certainty": "source_derived",
+      "x-rust-type": "Vec<String>"
+    },
+    "startup_timeout_ms": {
+      "minimum": 0,
+      "type": "integer",
+      "x-rust-type": "u64"
+    },
+    "startup_timeout_sec": {
+      "type": "number",
+      "x-rust-type": "f64"
+    },
+    "supports_parallel_tool_calls": {
+      "type": "boolean",
+      "x-rust-type": "bool"
+    },
+    "tool_timeout_sec": {
+      "minimum": 0,
+      "type": "number",
+      "x-certainty": "inferred",
+      "x-rust-type": "Duration",
+      "x-unit": "seconds"
+    },
+    "tools": {
+      "additionalProperties": {
+        "x-certainty": "inferred",
+        "x-entity-ref": "schema.rust.mcpservertoolconfig",
+        "x-rust-type": "McpServerToolConfig",
+        "x-wire-kind": "named_type"
+      },
+      "type": "object",
+      "x-certainty": "source_derived",
+      "x-rust-type": "HashMap<String, McpServerToolConfig>"
+    },
+    "url": {
+      "type": "string",
+      "x-rust-type": "String"
+    }
+  },
+  "title": "Codex MCP server configuration input",
+  "type": "object",
+  "x-codex-wire-audit-certainty": "source_derived",
+  "x-codex-wire-audit-entity": "schema.rust.rawmcpserverconfig",
+  "x-codex-wire-audit-entity-refs": [
+    "schema.rust.apptoolapproval",
+    "schema.rust.mcpserverauth",
+    "schema.rust.mcpserverenvvar",
+    "schema.rust.mcpserveroauthconfig",
+    "schema.rust.mcpservertoolconfig",
+    "schema.rust.toolexposuresurface"
+  ],
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-validation-coverage": "structural_with_report_entity_refs",
+  "x-codex-wire-audit-view": "deserialization_input"
+}

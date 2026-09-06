@@ -1,0 +1,202 @@
+{
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:codex_turn_metadata_mcp:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": {
+    "type": "string"
+  },
+  "description": "Object-valued MCP request _meta projection. It is not the string-valued Responses client_metadata representation.",
+  "not": {
+    "anyOf": [
+      {
+        "required": [
+          "agent_name"
+        ]
+      },
+      {
+        "required": [
+          "compaction"
+        ]
+      },
+      {
+        "required": [
+          "context_window_id"
+        ]
+      },
+      {
+        "required": [
+          "installation_id"
+        ]
+      },
+      {
+        "required": [
+          "parent_turn_id"
+        ]
+      },
+      {
+        "required": [
+          "request_kind"
+        ]
+      },
+      {
+        "required": [
+          "root_turn_id"
+        ]
+      },
+      {
+        "required": [
+          "tool_namespaces_info"
+        ]
+      },
+      {
+        "required": [
+          "window_id"
+        ]
+      },
+      {
+        "required": [
+          "window_number"
+        ]
+      }
+    ]
+  },
+  "properties": {
+    "auto_review_enabled": {
+      "type": "boolean",
+      "x-rust-type": "bool"
+    },
+    "codex_version": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "forked_from_ordinal_exclusive": {
+      "minimum": 0,
+      "type": "integer",
+      "x-rust-type": "u64"
+    },
+    "forked_from_thread_id": {
+      "format": "uuid",
+      "type": "string",
+      "x-rust-type": "ThreadId"
+    },
+    "history_ingest_requested": {
+      "type": "boolean",
+      "x-rust-type": "bool"
+    },
+    "model": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "node_repl_auto_review_required": {
+      "type": "boolean",
+      "x-rust-type": "bool"
+    },
+    "node_repl_disabled": {
+      "type": "boolean"
+    },
+    "parent_thread_id": {
+      "format": "uuid",
+      "type": "string",
+      "x-rust-type": "ThreadId"
+    },
+    "reasoning_effort": {
+      "type": "string"
+    },
+    "sandbox": {
+      "type": "string",
+      "x-rust-type": "&str"
+    },
+    "sandbox_mode": {
+      "type": "string",
+      "x-rust-type": "&str"
+    },
+    "session_id": {
+      "type": "string",
+      "x-rust-type": "&str"
+    },
+    "subagent_kind": {
+      "type": "string",
+      "x-rust-type": "&str"
+    },
+    "thread_id": {
+      "type": "string",
+      "x-rust-type": "&str"
+    },
+    "thread_source": {
+      "x-certainty": "inferred",
+      "x-entity-ref": "schema.rust.threadsource",
+      "x-rust-type": "ThreadSource",
+      "x-wire-kind": "named_type"
+    },
+    "turn_id": {
+      "type": "string",
+      "x-rust-type": "&str"
+    },
+    "turn_started_at_unix_ms": {
+      "type": "integer",
+      "x-rust-type": "i64"
+    },
+    "turn_trigger": {
+      "type": "string",
+      "x-rust-type": "&str"
+    },
+    "user_input_requested_during_turn": {
+      "type": "boolean"
+    },
+    "workspaces": {
+      "additionalProperties": {
+        "x-certainty": "inferred",
+        "x-entity-ref": "schema.rust.turnmetadataworkspace",
+        "x-rust-type": "TurnMetadataWorkspace",
+        "x-wire-kind": "named_type"
+      },
+      "type": "object",
+      "x-certainty": "source_derived",
+      "x-rust-type": "&BTreeMap<String, TurnMetadataWorkspace>"
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+  },
+  "required": [
+    "codex_version",
+    "model",
+    "node_repl_disabled"
+  ],
+  "title": "MCP x-codex-turn-metadata object",
+  "type": "object",
+  "x-codex-wire-audit-certainty": "source_derived",
+  "x-codex-wire-audit-entity": "schema.codex.turn_metadata.full",
+  "x-codex-wire-audit-entity-refs": [
+    "schema.rust.threadsource",
+    "schema.rust.turnmetadataworkspace"
+  ],
+  "x-codex-wire-audit-extra-behavior": {
+    "app_server_values": "preserved unless shadowed",
+    "config_values": "shadow without copying"
+  },
+  "x-codex-wire-audit-extra-key-max-bytes": 64,
+  "x-codex-wire-audit-extra-key-pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+  "x-codex-wire-audit-extra-reserved-keys": [
+    "installation_id",
+    "session_id",
+    "thread_id",
+    "turn_id",
+    "request_kind",
+    "x-codex-turn-metadata"
+  ],
+  "x-codex-wire-audit-extra-value-max-bytes": 128,
+  "x-codex-wire-audit-identity-effect": {
+    "therefore_omitted": [
+      "installation_id",
+      "window_id",
+      "window_number",
+      "context_window_id",
+      "request_kind",
+      "compaction"
+    ]
+  },
+  "x-codex-wire-audit-max-extra-properties": 16,
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-validation-coverage": "structural_with_report_entity_refs"
+}

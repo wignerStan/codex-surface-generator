@@ -1,0 +1,1961 @@
+{
+  "$defs": {
+    "schema_codex_turn_metadata_full_ef1b3f91e4": {
+      "additionalProperties": true,
+      "properties": {
+        "agent_name": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "auto_review_enabled": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "compaction": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.compactionturnmetadata",
+          "x-rust-type": "CompactionTurnMetadata",
+          "x-wire-kind": "named_type"
+        },
+        "context_window_id": {
+          "format": "uuid",
+          "type": "string",
+          "x-rust-type": "Uuid"
+        },
+        "forked_from_ordinal_exclusive": {
+          "minimum": 0,
+          "type": "integer",
+          "x-rust-type": "u64"
+        },
+        "forked_from_thread_id": {
+          "format": "uuid",
+          "type": "string",
+          "x-rust-type": "ThreadId"
+        },
+        "history_ingest_requested": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "installation_id": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "node_repl_auto_review_required": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "node_repl_disabled": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "parent_thread_id": {
+          "format": "uuid",
+          "type": "string",
+          "x-rust-type": "ThreadId"
+        },
+        "parent_turn_id": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "request_kind": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "root_turn_id": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "sandbox": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "sandbox_mode": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "session_id": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "subagent_kind": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "thread_id": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "thread_source": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.threadsource",
+          "x-rust-type": "ThreadSource",
+          "x-wire-kind": "named_type"
+        },
+        "tool_namespaces_info": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.turntoolnamespacesinfo",
+          "x-rust-type": "&TurnToolNamespacesInfo",
+          "x-wire-kind": "named_type"
+        },
+        "turn_id": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "turn_started_at_unix_ms": {
+          "type": "integer",
+          "x-rust-type": "i64"
+        },
+        "turn_trigger": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "window_id": {
+          "type": "string",
+          "x-rust-type": "&str"
+        },
+        "window_number": {
+          "minimum": 0,
+          "type": "integer",
+          "x-rust-type": "u64"
+        },
+        "workspaces": {
+          "additionalProperties": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.turnmetadataworkspace",
+            "x-rust-type": "TurnMetadataWorkspace",
+            "x-wire-kind": "named_type"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "&BTreeMap<String, TurnMetadataWorkspace>"
+        }
+      },
+      "title": "CodexTurnMetadataPayload",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.codex.turn_metadata.full"
+    },
+    "schema_rust_accessprograms_3916422366": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "accessprograms",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.accessprograms"
+    },
+    "schema_rust_additionaltools_faf28e3f18": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "role": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "tools": {
+          "items": {
+            "x-certainty": "source_derived",
+            "x-json-type": "any",
+            "x-rust-type": "serde_json::Value"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<serde_json::Value>"
+        }
+      },
+      "required": [
+        "role",
+        "tools"
+      ],
+      "title": "AdditionalTools",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.additionaltools"
+    },
+    "schema_rust_agentmessage_0436951dd8": {
+      "additionalProperties": true,
+      "properties": {
+        "author": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "content": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.agentmessageinputcontent",
+            "x-rust-type": "AgentMessageInputContent",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<AgentMessageInputContent>"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "internal_chat_message_metadata_passthrough": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.internalchatmessagemetadatapassthrough",
+          "x-rust-type": "InternalChatMessageMetadataPassthrough",
+          "x-wire-kind": "named_type"
+        },
+        "recipient": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "required": [
+        "author",
+        "content",
+        "recipient"
+      ],
+      "title": "AgentMessage",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.agentmessage"
+    },
+    "schema_rust_agentmessageinputcontent_fade1fb272": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "agentmessageinputcontent",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.agentmessageinputcontent"
+    },
+    "schema_rust_apptoolapproval_1747997d24": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "apptoolapproval",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.apptoolapproval"
+    },
+    "schema_rust_compaction_460e34c0e9": {
+      "additionalProperties": true,
+      "properties": {
+        "encrypted_content": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        }
+      },
+      "required": [
+        "encrypted_content"
+      ],
+      "title": "Compaction",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.compaction"
+    },
+    "schema_rust_compactionturnmetadata_11969ca7f0": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "compactionturnmetadata",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.compactionturnmetadata"
+    },
+    "schema_rust_configurationreasoning_c6df8057b9": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "configurationreasoning",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.configurationreasoning"
+    },
+    "schema_rust_configurationupdate_3be9ee4a8f": {
+      "additionalProperties": true,
+      "properties": {
+        "reasoning": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.configurationreasoning",
+          "x-rust-type": "ConfigurationReasoning",
+          "x-wire-kind": "named_type"
+        }
+      },
+      "required": [
+        "reasoning"
+      ],
+      "title": "ConfigurationUpdate",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.configurationupdate"
+    },
+    "schema_rust_contentitem_04026362b1": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "contentitem",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.contentitem"
+    },
+    "schema_rust_contextcompaction_76db7062d0": {
+      "additionalProperties": true,
+      "properties": {
+        "encrypted_content": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        }
+      },
+      "title": "ContextCompaction",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.contextcompaction"
+    },
+    "schema_rust_customtoolcall_9f63b35046": {
+      "additionalProperties": true,
+      "properties": {
+        "call_id": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "input": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "name": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "namespace": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "status": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "required": [
+        "call_id",
+        "input",
+        "name"
+      ],
+      "title": "CustomToolCall",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.customtoolcall"
+    },
+    "schema_rust_customtoolcalloutput_9bcdaae730": {
+      "additionalProperties": true,
+      "properties": {
+        "call_id": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "name": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "output": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.functioncalloutputpayload",
+          "x-rust-type": "FunctionCallOutputPayload",
+          "x-wire-kind": "named_type"
+        }
+      },
+      "required": [
+        "call_id",
+        "output"
+      ],
+      "title": "CustomToolCallOutput",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.customtoolcalloutput"
+    },
+    "schema_rust_functioncall_f1dfe42d0d": {
+      "additionalProperties": true,
+      "properties": {
+        "arguments": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "call_id": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "encrypted_function_args": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "name": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "namespace": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "required": [
+        "arguments",
+        "call_id",
+        "name"
+      ],
+      "title": "FunctionCall",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.functioncall"
+    },
+    "schema_rust_functioncalloutput_be496530f7": {
+      "additionalProperties": true,
+      "properties": {
+        "call_id": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "name": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "namespace": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "output": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.functioncalloutputpayload",
+          "x-rust-type": "FunctionCallOutputPayload",
+          "x-wire-kind": "named_type"
+        }
+      },
+      "required": [
+        "output"
+      ],
+      "title": "FunctionCallOutput",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.functioncalloutput"
+    },
+    "schema_rust_functioncalloutputpayload_9326ff77c5": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "functioncalloutputpayload",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.functioncalloutputpayload"
+    },
+    "schema_rust_imagegenerationcall_d694eb848e": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "result": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "revised_prompt": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "status": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "required": [
+        "result",
+        "status"
+      ],
+      "title": "ImageGenerationCall",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.imagegenerationcall"
+    },
+    "schema_rust_internalchatmessagemetadatapassthrough_3ea5f718b7": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "internalchatmessagemetadatapassthrough",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.internalchatmessagemetadatapassthrough"
+    },
+    "schema_rust_localshellaction_5452d0d06b": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "localshellaction",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.localshellaction"
+    },
+    "schema_rust_localshellcall_121169284b": {
+      "additionalProperties": true,
+      "properties": {
+        "action": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.localshellaction",
+          "x-rust-type": "LocalShellAction",
+          "x-wire-kind": "named_type"
+        },
+        "call_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "x-rust-type": "String"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "status": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.localshellstatus",
+          "x-rust-type": "LocalShellStatus",
+          "x-wire-kind": "named_type"
+        }
+      },
+      "required": [
+        "action",
+        "call_id",
+        "status"
+      ],
+      "title": "LocalShellCall",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.localshellcall"
+    },
+    "schema_rust_localshellstatus_87bda632e1": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "localshellstatus",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.localshellstatus"
+    },
+    "schema_rust_mcpserverauth_18b07adb98": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "mcpserverauth",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.mcpserverauth"
+    },
+    "schema_rust_mcpserverconfig_aaf3fcfc85": {
+      "additionalProperties": true,
+      "properties": {
+        "args": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "auth": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.mcpserverauth",
+          "x-rust-type": "McpServerAuth",
+          "x-wire-kind": "named_type"
+        },
+        "bearer_token_env_var": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "command": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "cwd": {
+          "format": "path-or-uri",
+          "type": "string",
+          "x-rust-type": "LegacyAppPathString"
+        },
+        "default_tools_approval_mode": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.apptoolapproval",
+          "x-rust-type": "AppToolApproval",
+          "x-wire-kind": "named_type"
+        },
+        "disabled_tools": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "enabled": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "enabled_tools": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "env": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "env_http_headers": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "env_vars": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.mcpserverenvvar",
+            "x-rust-type": "McpServerEnvVar",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<McpServerEnvVar>"
+        },
+        "environment_id": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "http_headers": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "http_headers_helper": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "oauth": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.mcpserveroauthconfig",
+          "x-rust-type": "McpServerOAuthConfig",
+          "x-wire-kind": "named_type"
+        },
+        "oauth_resource": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "omit_tools_from": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.toolexposuresurface",
+            "x-rust-type": "ToolExposureSurface",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<ToolExposureSurface>"
+        },
+        "required": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "scopes": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "startup_timeout_sec": {
+          "minimum": 0,
+          "type": "number",
+          "x-certainty": "inferred",
+          "x-rust-type": "Duration",
+          "x-unit": "seconds"
+        },
+        "supports_parallel_tool_calls": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "tool_timeout_sec": {
+          "minimum": 0,
+          "type": "number",
+          "x-certainty": "inferred",
+          "x-rust-type": "Duration",
+          "x-unit": "seconds"
+        },
+        "tools": {
+          "additionalProperties": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.mcpservertoolconfig",
+            "x-rust-type": "McpServerToolConfig",
+            "x-wire-kind": "named_type"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, McpServerToolConfig>"
+        },
+        "url": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "required": [
+        "auth",
+        "enabled",
+        "environment_id"
+      ],
+      "title": "McpServerConfig",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.mcpserverconfig"
+    },
+    "schema_rust_mcpserverenvvar_d928148409": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "mcpserverenvvar",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.mcpserverenvvar"
+    },
+    "schema_rust_mcpserveroauthconfig_b60bb6daee": {
+      "additionalProperties": true,
+      "properties": {
+        "callback_port": {
+          "maximum": 65535,
+          "minimum": 0,
+          "type": "integer",
+          "x-rust-type": "u16"
+        },
+        "callback_url": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "client_id": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "title": "McpServerOAuthConfig",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.mcpserveroauthconfig"
+    },
+    "schema_rust_mcpservertoolconfig_39a85fb9eb": {
+      "additionalProperties": true,
+      "properties": {
+        "approval_mode": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.apptoolapproval",
+          "x-rust-type": "AppToolApproval",
+          "x-wire-kind": "named_type"
+        },
+        "output_token_limit": {
+          "minimum": 1,
+          "type": "integer",
+          "x-rust-type": "NonZeroUsize"
+        }
+      },
+      "title": "McpServerToolConfig",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.mcpservertoolconfig"
+    },
+    "schema_rust_message_4a381e4dfa": {
+      "additionalProperties": true,
+      "properties": {
+        "content": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.contentitem",
+            "x-rust-type": "ContentItem",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<ContentItem>"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "internal_chat_message_metadata_passthrough": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.internalchatmessagemetadatapassthrough",
+          "x-rust-type": "InternalChatMessageMetadataPassthrough",
+          "x-wire-kind": "named_type"
+        },
+        "phase": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.messagephase",
+          "x-rust-type": "MessagePhase",
+          "x-wire-kind": "named_type"
+        },
+        "role": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "required": [
+        "content",
+        "role"
+      ],
+      "title": "Message",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.message"
+    },
+    "schema_rust_messagephase_2ff9fffc86": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "messagephase",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.messagephase"
+    },
+    "schema_rust_rawmcpserverconfig_ae050f16d1": {
+      "additionalProperties": true,
+      "properties": {
+        "_name": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "args": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "auth": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.mcpserverauth",
+          "x-rust-type": "McpServerAuth",
+          "x-wire-kind": "named_type"
+        },
+        "bearer_token": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "bearer_token_env_var": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "command": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "cwd": {
+          "format": "path-or-uri",
+          "type": "string",
+          "x-rust-type": "LegacyAppPathString"
+        },
+        "default_tools_approval_mode": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.apptoolapproval",
+          "x-rust-type": "AppToolApproval",
+          "x-wire-kind": "named_type"
+        },
+        "disabled_tools": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "enabled": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "enabled_tools": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "env": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "env_http_headers": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "env_vars": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.mcpserverenvvar",
+            "x-rust-type": "McpServerEnvVar",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<McpServerEnvVar>"
+        },
+        "environment_id": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "http_headers": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "http_headers_helper": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "oauth": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.mcpserveroauthconfig",
+          "x-rust-type": "McpServerOAuthConfig",
+          "x-wire-kind": "named_type"
+        },
+        "oauth_resource": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "omit_tools_from": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.toolexposuresurface",
+            "x-rust-type": "ToolExposureSurface",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<ToolExposureSurface>"
+        },
+        "required": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "scopes": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "startup_timeout_ms": {
+          "minimum": 0,
+          "type": "integer",
+          "x-rust-type": "u64"
+        },
+        "startup_timeout_sec": {
+          "type": "number",
+          "x-rust-type": "f64"
+        },
+        "supports_parallel_tool_calls": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "tool_timeout_sec": {
+          "minimum": 0,
+          "type": "number",
+          "x-certainty": "inferred",
+          "x-rust-type": "Duration",
+          "x-unit": "seconds"
+        },
+        "tools": {
+          "additionalProperties": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.mcpservertoolconfig",
+            "x-rust-type": "McpServerToolConfig",
+            "x-wire-kind": "named_type"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, McpServerToolConfig>"
+        },
+        "url": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "title": "RawMcpServerConfig",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.rawmcpserverconfig"
+    },
+    "schema_rust_reasoning_cebf15fc50": {
+      "additionalProperties": true,
+      "properties": {
+        "content": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.reasoningitemcontent",
+            "x-rust-type": "ReasoningItemContent",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<ReasoningItemContent>"
+        },
+        "encrypted_content": {
+          "anyOf": [
+            {
+              "type": "string",
+              "x-rust-type": "String"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "internal_chat_message_metadata_passthrough": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.internalchatmessagemetadatapassthrough",
+          "x-rust-type": "InternalChatMessageMetadataPassthrough",
+          "x-wire-kind": "named_type"
+        },
+        "summary": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.reasoningitemreasoningsummary",
+            "x-rust-type": "ReasoningItemReasoningSummary",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<ReasoningItemReasoningSummary>"
+        }
+      },
+      "required": [
+        "encrypted_content",
+        "summary"
+      ],
+      "title": "Reasoning",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.reasoning"
+    },
+    "schema_rust_reasoningitemcontent_14c7f43a3d": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "reasoningitemcontent",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.reasoningitemcontent"
+    },
+    "schema_rust_reasoningitemreasoningsummary_c4718f592a": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "reasoningitemreasoningsummary",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.reasoningitemreasoningsummary"
+    },
+    "schema_rust_responsecreatewsrequest_ff685424ea": {
+      "additionalProperties": true,
+      "properties": {
+        "access_programs": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.accessprograms",
+          "x-rust-type": "AccessPrograms",
+          "x-wire-kind": "named_type"
+        },
+        "client_metadata": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "generate": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "include": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "input": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.responseitem",
+            "x-rust-type": "ResponseItem",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<ResponseItem>"
+        },
+        "instructions": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "model": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "parallel_tool_calls": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "previous_response_id": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "prompt_cache_key": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "reasoning": {
+          "anyOf": [
+            {
+              "x-certainty": "inferred",
+              "x-entity-ref": "schema.rust.reasoning",
+              "x-rust-type": "Reasoning",
+              "x-wire-kind": "named_type"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "service_tier": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "store": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "stream": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "stream_options": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.streamoptions",
+          "x-rust-type": "StreamOptions",
+          "x-wire-kind": "named_type"
+        },
+        "text": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.textcontrols",
+          "x-rust-type": "TextControls",
+          "x-wire-kind": "named_type"
+        },
+        "tool_choice": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "tools": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.responsesapitools",
+          "x-rust-type": "ResponsesApiTools",
+          "x-wire-kind": "named_type"
+        }
+      },
+      "required": [
+        "include",
+        "input",
+        "model",
+        "parallel_tool_calls",
+        "reasoning",
+        "store",
+        "stream",
+        "tool_choice"
+      ],
+      "title": "ResponseCreateWsRequest",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.responsecreatewsrequest"
+    },
+    "schema_rust_responseitem_33101e2040": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "ResponseItem",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.responseitem"
+    },
+    "schema_rust_responsesapirequest_89dfed0e80": {
+      "additionalProperties": true,
+      "properties": {
+        "access_programs": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.accessprograms",
+          "x-rust-type": "AccessPrograms",
+          "x-wire-kind": "named_type"
+        },
+        "client_metadata": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "include": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "input": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.responseitem",
+            "x-rust-type": "ResponseItem",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<ResponseItem>"
+        },
+        "instructions": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "model": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "parallel_tool_calls": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "prompt_cache_key": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "reasoning": {
+          "anyOf": [
+            {
+              "x-certainty": "inferred",
+              "x-entity-ref": "schema.rust.reasoning",
+              "x-rust-type": "Reasoning",
+              "x-wire-kind": "named_type"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "service_tier": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "store": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "stream": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "stream_options": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.streamoptions",
+          "x-rust-type": "StreamOptions",
+          "x-wire-kind": "named_type"
+        },
+        "text": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.textcontrols",
+          "x-rust-type": "TextControls",
+          "x-wire-kind": "named_type"
+        },
+        "tool_choice": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "tools": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.responsesapitools",
+          "x-rust-type": "ResponsesApiTools",
+          "x-wire-kind": "named_type"
+        }
+      },
+      "required": [
+        "include",
+        "input",
+        "model",
+        "parallel_tool_calls",
+        "reasoning",
+        "store",
+        "stream",
+        "tool_choice"
+      ],
+      "title": "ResponsesApiRequest",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.responsesapirequest"
+    },
+    "schema_rust_responsesapitools_263c636cb2": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "responsesapitools",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.responsesapitools"
+    },
+    "schema_rust_streamoptions_e58d043af6": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "streamoptions",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.streamoptions"
+    },
+    "schema_rust_textcontrols_1028e95d4d": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "textcontrols",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.textcontrols"
+    },
+    "schema_rust_threadsource_f8c4560752": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "threadsource",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.threadsource"
+    },
+    "schema_rust_toolexposuresurface_8cc5a1271a": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "toolexposuresurface",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.toolexposuresurface"
+    },
+    "schema_rust_toolsearchcall_afadd3cdc1": {
+      "additionalProperties": true,
+      "properties": {
+        "arguments": {
+          "x-certainty": "source_derived",
+          "x-json-type": "any",
+          "x-rust-type": "serde_json::Value"
+        },
+        "call_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "x-rust-type": "String"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "execution": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "status": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "required": [
+        "arguments",
+        "call_id",
+        "execution"
+      ],
+      "title": "ToolSearchCall",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.toolsearchcall"
+    },
+    "schema_rust_toolsearchoutput_c142b3ac05": {
+      "additionalProperties": true,
+      "properties": {
+        "call_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "x-rust-type": "String"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "execution": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "status": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "tools": {
+          "items": {
+            "x-certainty": "source_derived",
+            "x-json-type": "any",
+            "x-rust-type": "serde_json::Value"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<serde_json::Value>"
+        }
+      },
+      "required": [
+        "call_id",
+        "execution",
+        "status",
+        "tools"
+      ],
+      "title": "ToolSearchOutput",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.toolsearchoutput"
+    },
+    "schema_rust_turnmetadataworkspace_6e425c3d48": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "turnmetadataworkspace",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.turnmetadataworkspace"
+    },
+    "schema_rust_turntoolnamespacesinfo_ffb2c7eaee": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "turntoolnamespacesinfo",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.turntoolnamespacesinfo"
+    },
+    "schema_rust_websearchaction_275cc4fd92": {
+      "additionalProperties": true,
+      "properties": {},
+      "title": "websearchaction",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "inferred",
+      "x-codex-wire-audit-entity": "schema.rust.websearchaction"
+    },
+    "schema_rust_websearchcall_52025cdab7": {
+      "additionalProperties": true,
+      "properties": {
+        "action": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.websearchaction",
+          "x-rust-type": "WebSearchAction",
+          "x-wire-kind": "named_type"
+        },
+        "id": {
+          "type": "string",
+          "x-certainty": "source_derived",
+          "x-rust-type": "ResponseItemId",
+          "x-wire-kind": "responses_prefixed_id"
+        },
+        "status": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "title": "WebSearchCall",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.rust.websearchcall"
+    },
+    "schema_surface_mcp_client_request_be757065ed": {
+      "additionalProperties": true,
+      "properties": {
+        "args": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "auth": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.mcpserverauth",
+          "x-rust-type": "McpServerAuth",
+          "x-wire-kind": "named_type"
+        },
+        "bearer_token_env_var": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "command": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "cwd": {
+          "format": "path-or-uri",
+          "type": "string",
+          "x-rust-type": "LegacyAppPathString"
+        },
+        "default_tools_approval_mode": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.apptoolapproval",
+          "x-rust-type": "AppToolApproval",
+          "x-wire-kind": "named_type"
+        },
+        "disabled_tools": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "enabled": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "enabled_tools": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "env": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "env_http_headers": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "env_vars": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.mcpserverenvvar",
+            "x-rust-type": "McpServerEnvVar",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<McpServerEnvVar>"
+        },
+        "environment_id": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "http_headers": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "http_headers_helper": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "oauth": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.mcpserveroauthconfig",
+          "x-rust-type": "McpServerOAuthConfig",
+          "x-wire-kind": "named_type"
+        },
+        "oauth_resource": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "omit_tools_from": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.toolexposuresurface",
+            "x-rust-type": "ToolExposureSurface",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<ToolExposureSurface>"
+        },
+        "required": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "scopes": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "startup_timeout_sec": {
+          "minimum": 0,
+          "type": "number",
+          "x-certainty": "inferred",
+          "x-rust-type": "Duration",
+          "x-unit": "seconds"
+        },
+        "supports_parallel_tool_calls": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "tool_timeout_sec": {
+          "minimum": 0,
+          "type": "number",
+          "x-certainty": "inferred",
+          "x-rust-type": "Duration",
+          "x-unit": "seconds"
+        },
+        "tools": {
+          "additionalProperties": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.mcpservertoolconfig",
+            "x-rust-type": "McpServerToolConfig",
+            "x-wire-kind": "named_type"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, McpServerToolConfig>"
+        },
+        "url": {
+          "type": "string",
+          "x-rust-type": "String"
+        }
+      },
+      "required": [
+        "auth",
+        "enabled",
+        "environment_id"
+      ],
+      "title": "McpServerConfig",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.surface.mcp_client.request"
+    },
+    "schema_surface_responses_http_sse_request_261c2bd46a": {
+      "additionalProperties": true,
+      "properties": {
+        "access_programs": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.accessprograms",
+          "x-rust-type": "AccessPrograms",
+          "x-wire-kind": "named_type"
+        },
+        "client_metadata": {
+          "additionalProperties": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "object",
+          "x-certainty": "source_derived",
+          "x-rust-type": "HashMap<String, String>"
+        },
+        "include": {
+          "items": {
+            "type": "string",
+            "x-rust-type": "String"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<String>"
+        },
+        "input": {
+          "items": {
+            "x-certainty": "inferred",
+            "x-entity-ref": "schema.rust.responseitem",
+            "x-rust-type": "ResponseItem",
+            "x-wire-kind": "named_type"
+          },
+          "type": "array",
+          "x-certainty": "source_derived",
+          "x-rust-type": "Vec<ResponseItem>"
+        },
+        "instructions": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "model": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "parallel_tool_calls": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "prompt_cache_key": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "reasoning": {
+          "anyOf": [
+            {
+              "x-certainty": "inferred",
+              "x-entity-ref": "schema.rust.reasoning",
+              "x-rust-type": "Reasoning",
+              "x-wire-kind": "named_type"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "service_tier": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "store": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "stream": {
+          "type": "boolean",
+          "x-rust-type": "bool"
+        },
+        "stream_options": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.streamoptions",
+          "x-rust-type": "StreamOptions",
+          "x-wire-kind": "named_type"
+        },
+        "text": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.textcontrols",
+          "x-rust-type": "TextControls",
+          "x-wire-kind": "named_type"
+        },
+        "tool_choice": {
+          "type": "string",
+          "x-rust-type": "String"
+        },
+        "tools": {
+          "x-certainty": "inferred",
+          "x-entity-ref": "schema.rust.responsesapitools",
+          "x-rust-type": "ResponsesApiTools",
+          "x-wire-kind": "named_type"
+        }
+      },
+      "required": [
+        "include",
+        "input",
+        "model",
+        "parallel_tool_calls",
+        "reasoning",
+        "store",
+        "stream",
+        "tool_choice"
+      ],
+      "title": "ResponsesApiRequest",
+      "type": "object",
+      "x-codex-wire-audit-certainty": "source_derived",
+      "x-codex-wire-audit-entity": "schema.surface.responses_http_sse.request"
+    }
+  },
+  "$id": "urn:codex-wire-audit:protocol:c126b0d8ef87fbcde2df7b9c40f24aa91b855758:entity_schemas:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Normalized Codex wire schema entity bundle",
+  "x-codex-wire-audit-entity-id-map": {
+    "schema.codex.turn_metadata.full": "#/$defs/schema_codex_turn_metadata_full_ef1b3f91e4",
+    "schema.rust.accessprograms": "#/$defs/schema_rust_accessprograms_3916422366",
+    "schema.rust.additionaltools": "#/$defs/schema_rust_additionaltools_faf28e3f18",
+    "schema.rust.agentmessage": "#/$defs/schema_rust_agentmessage_0436951dd8",
+    "schema.rust.agentmessageinputcontent": "#/$defs/schema_rust_agentmessageinputcontent_fade1fb272",
+    "schema.rust.apptoolapproval": "#/$defs/schema_rust_apptoolapproval_1747997d24",
+    "schema.rust.compaction": "#/$defs/schema_rust_compaction_460e34c0e9",
+    "schema.rust.compactionturnmetadata": "#/$defs/schema_rust_compactionturnmetadata_11969ca7f0",
+    "schema.rust.configurationreasoning": "#/$defs/schema_rust_configurationreasoning_c6df8057b9",
+    "schema.rust.configurationupdate": "#/$defs/schema_rust_configurationupdate_3be9ee4a8f",
+    "schema.rust.contentitem": "#/$defs/schema_rust_contentitem_04026362b1",
+    "schema.rust.contextcompaction": "#/$defs/schema_rust_contextcompaction_76db7062d0",
+    "schema.rust.customtoolcall": "#/$defs/schema_rust_customtoolcall_9f63b35046",
+    "schema.rust.customtoolcalloutput": "#/$defs/schema_rust_customtoolcalloutput_9bcdaae730",
+    "schema.rust.functioncall": "#/$defs/schema_rust_functioncall_f1dfe42d0d",
+    "schema.rust.functioncalloutput": "#/$defs/schema_rust_functioncalloutput_be496530f7",
+    "schema.rust.functioncalloutputpayload": "#/$defs/schema_rust_functioncalloutputpayload_9326ff77c5",
+    "schema.rust.imagegenerationcall": "#/$defs/schema_rust_imagegenerationcall_d694eb848e",
+    "schema.rust.internalchatmessagemetadatapassthrough": "#/$defs/schema_rust_internalchatmessagemetadatapassthrough_3ea5f718b7",
+    "schema.rust.localshellaction": "#/$defs/schema_rust_localshellaction_5452d0d06b",
+    "schema.rust.localshellcall": "#/$defs/schema_rust_localshellcall_121169284b",
+    "schema.rust.localshellstatus": "#/$defs/schema_rust_localshellstatus_87bda632e1",
+    "schema.rust.mcpserverauth": "#/$defs/schema_rust_mcpserverauth_18b07adb98",
+    "schema.rust.mcpserverconfig": "#/$defs/schema_rust_mcpserverconfig_aaf3fcfc85",
+    "schema.rust.mcpserverenvvar": "#/$defs/schema_rust_mcpserverenvvar_d928148409",
+    "schema.rust.mcpserveroauthconfig": "#/$defs/schema_rust_mcpserveroauthconfig_b60bb6daee",
+    "schema.rust.mcpservertoolconfig": "#/$defs/schema_rust_mcpservertoolconfig_39a85fb9eb",
+    "schema.rust.message": "#/$defs/schema_rust_message_4a381e4dfa",
+    "schema.rust.messagephase": "#/$defs/schema_rust_messagephase_2ff9fffc86",
+    "schema.rust.rawmcpserverconfig": "#/$defs/schema_rust_rawmcpserverconfig_ae050f16d1",
+    "schema.rust.reasoning": "#/$defs/schema_rust_reasoning_cebf15fc50",
+    "schema.rust.reasoningitemcontent": "#/$defs/schema_rust_reasoningitemcontent_14c7f43a3d",
+    "schema.rust.reasoningitemreasoningsummary": "#/$defs/schema_rust_reasoningitemreasoningsummary_c4718f592a",
+    "schema.rust.responsecreatewsrequest": "#/$defs/schema_rust_responsecreatewsrequest_ff685424ea",
+    "schema.rust.responseitem": "#/$defs/schema_rust_responseitem_33101e2040",
+    "schema.rust.responsesapirequest": "#/$defs/schema_rust_responsesapirequest_89dfed0e80",
+    "schema.rust.responsesapitools": "#/$defs/schema_rust_responsesapitools_263c636cb2",
+    "schema.rust.streamoptions": "#/$defs/schema_rust_streamoptions_e58d043af6",
+    "schema.rust.textcontrols": "#/$defs/schema_rust_textcontrols_1028e95d4d",
+    "schema.rust.threadsource": "#/$defs/schema_rust_threadsource_f8c4560752",
+    "schema.rust.toolexposuresurface": "#/$defs/schema_rust_toolexposuresurface_8cc5a1271a",
+    "schema.rust.toolsearchcall": "#/$defs/schema_rust_toolsearchcall_afadd3cdc1",
+    "schema.rust.toolsearchoutput": "#/$defs/schema_rust_toolsearchoutput_c142b3ac05",
+    "schema.rust.turnmetadataworkspace": "#/$defs/schema_rust_turnmetadataworkspace_6e425c3d48",
+    "schema.rust.turntoolnamespacesinfo": "#/$defs/schema_rust_turntoolnamespacesinfo_ffb2c7eaee",
+    "schema.rust.websearchaction": "#/$defs/schema_rust_websearchaction_275cc4fd92",
+    "schema.rust.websearchcall": "#/$defs/schema_rust_websearchcall_52025cdab7",
+    "schema.surface.mcp_client.request": "#/$defs/schema_surface_mcp_client_request_be757065ed",
+    "schema.surface.responses_http_sse.request": "#/$defs/schema_surface_responses_http_sse_request_261c2bd46a"
+  },
+  "x-codex-wire-audit-entity-refs": [
+    "schema.rust.accessprograms",
+    "schema.rust.agentmessageinputcontent",
+    "schema.rust.apptoolapproval",
+    "schema.rust.compactionturnmetadata",
+    "schema.rust.configurationreasoning",
+    "schema.rust.contentitem",
+    "schema.rust.functioncalloutputpayload",
+    "schema.rust.internalchatmessagemetadatapassthrough",
+    "schema.rust.localshellaction",
+    "schema.rust.localshellstatus",
+    "schema.rust.mcpserverauth",
+    "schema.rust.mcpserverenvvar",
+    "schema.rust.mcpserveroauthconfig",
+    "schema.rust.mcpservertoolconfig",
+    "schema.rust.messagephase",
+    "schema.rust.reasoning",
+    "schema.rust.reasoningitemcontent",
+    "schema.rust.reasoningitemreasoningsummary",
+    "schema.rust.responseitem",
+    "schema.rust.responsesapitools",
+    "schema.rust.streamoptions",
+    "schema.rust.textcontrols",
+    "schema.rust.threadsource",
+    "schema.rust.toolexposuresurface",
+    "schema.rust.turnmetadataworkspace",
+    "schema.rust.turntoolnamespacesinfo",
+    "schema.rust.websearchaction"
+  ],
+  "x-codex-wire-audit-report-id": "urn:codex-wire-audit:openai_codex:c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-source-commit": "c126b0d8ef87fbcde2df7b9c40f24aa91b855758",
+  "x-codex-wire-audit-validation-coverage": "structural_with_report_entity_refs"
+}

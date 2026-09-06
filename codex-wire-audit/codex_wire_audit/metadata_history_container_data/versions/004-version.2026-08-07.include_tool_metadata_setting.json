@@ -1,0 +1,240 @@
+{
+  "catalog_sha256": "12f3521d0584123e3c9244c9cb0359eff613442db00b0bfeea11c93de1646aed",
+  "catalog_version": "1.0.0",
+  "format": "codex-wire-audit-metadata-history-version/v1",
+  "states": {
+    "key.config.tool_registry.include_tool_metadata": {
+      "assertions": {
+        "definition_present": true,
+        "runtime_use_present": true,
+        "schema_property_present": true
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Intermediate opt-in configuration name.",
+      "evidence_refs": [
+        "evidence.commit.c87a218b"
+      ],
+      "id": "state.cfg_include_metadata.active",
+      "key_ref": "key.config.tool_registry.include_tool_metadata",
+      "status": "active",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "key.config.tool_registry.include_tool_namespaces_info": {
+      "assertions": {
+        "definition_present": false,
+        "runtime_use_present": false,
+        "schema_property_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "renamed",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Renamed to include_tool_metadata.",
+      "evidence_refs": [
+        "evidence.commit.c87a218b"
+      ],
+      "id": "state.cfg_include_namespaces.renamed",
+      "key_ref": "key.config.tool_registry.include_tool_namespaces_info",
+      "status": "renamed",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "key.config.tool_registry.turn_metadata_includes_tool_info": {
+      "assertions": {
+        "definition_present": false,
+        "runtime_use_present": false,
+        "schema_property_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "absent",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "Current configuration name is not defined yet.",
+      "evidence_refs": [
+        "evidence.commit.c87a218b"
+      ],
+      "id": "state.cfg_turn_metadata_info.absent",
+      "key_ref": "key.config.tool_registry.turn_metadata_includes_tool_info",
+      "status": "absent",
+      "value_schema": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "key.turn_metadata.code_mode_tool_names": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "omitted",
+        "constant_names": [
+          "CODE_MODE_TOOL_NAMES_KEY"
+        ],
+        "mcp_container": "omitted",
+        "payload_container": "emitted_conditionally",
+        "reserved_extra_key": true,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": true
+      },
+      "condition": {
+        "op": "all",
+        "operands": [
+          {
+            "operator": "eq",
+            "path": "model.use_responses_lite",
+            "value": true
+          }
+        ]
+      },
+      "containers": {
+        "compatibility_header_json": "omitted",
+        "config_input": "reserved_filtered",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "emitted_conditionally",
+        "mcp_request_meta": "omitted",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "The canonical nested client-metadata payload keeps the map, but compatibility-header JSON omits it to remain bounded.",
+      "evidence_refs": [
+        "evidence.commit.5c36e869"
+      ],
+      "id": "state.code_mode.active_bounded_header",
+      "key_ref": "key.turn_metadata.code_mode_tool_names",
+      "status": "active_bounded",
+      "value_schema": {
+        "additionalProperties": {
+          "$ref": "urn:codex:ToolName"
+        },
+        "type": "object"
+      }
+    },
+    "key.turn_metadata.forked_from_ordinal_exclusive": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "constant_names": [],
+        "payload_container": "flattened_extra_string",
+        "reserved_extra_key": false
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "emitted_conditionally",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Before core ownership, this valid extra-metadata name could be flattened as a caller-supplied string.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65"
+      ],
+      "id": "state.fork_ordinal.legacy_extra",
+      "key_ref": "key.turn_metadata.forked_from_ordinal_exclusive",
+      "status": "legacy_input",
+      "value_schema": {
+        "type": "string"
+      }
+    },
+    "key.turn_metadata.tool_namespaces_info": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "compatibility_header_container": "absent",
+        "constant_names": [],
+        "mcp_container": "absent",
+        "payload_container": "absent",
+        "reserved_extra_key": false,
+        "top_level_client_metadata": "absent",
+        "wire_literal_present": false
+      },
+      "containers": {
+        "compatibility_header_json": "absent",
+        "config_input": "not_applicable",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "absent",
+        "nested_turn_metadata": "absent"
+      },
+      "description": "The replacement field does not yet exist.",
+      "evidence_refs": [
+        "evidence.commit.63fe5a6b"
+      ],
+      "id": "state.tool_namespaces.absent",
+      "key_ref": "key.turn_metadata.tool_namespaces_info",
+      "status": "absent",
+      "value_schema": null
+    },
+    "key.turn_metadata.window_number": {
+      "assertions": {
+        "backward_compatible_reserved": false,
+        "constant_names": [],
+        "payload_container": "flattened_extra_string",
+        "reserved_extra_key": false
+      },
+      "containers": {
+        "compatibility_header_json": "emitted_conditionally",
+        "config_input": "accepted",
+        "flat_client_metadata": "absent",
+        "internal_runtime": "absent",
+        "mcp_request_meta": "emitted_conditionally",
+        "nested_turn_metadata": "emitted_conditionally"
+      },
+      "description": "Before core ownership, this valid extra-metadata name could be flattened as a caller-supplied string.",
+      "evidence_refs": [
+        "evidence.commit.0d654e65"
+      ],
+      "id": "state.window_number.legacy_extra",
+      "key_ref": "key.turn_metadata.window_number",
+      "status": "legacy_input",
+      "value_schema": {
+        "type": "string"
+      }
+    }
+  },
+  "version": {
+    "commit_sha": "c87a218bd3e7ee0a0181109b3ff7bbc2156de13e",
+    "committed_at": "2026-08-07T07:35:37Z",
+    "event": "config_key_renamed",
+    "evidence": {
+      "commit_sha": "c87a218bd3e7ee0a0181109b3ff7bbc2156de13e",
+      "committed_at": "2026-08-07T07:35:37Z",
+      "id": "evidence.commit.c87a218b",
+      "source_paths": [
+        "codex-rs/features/src/feature_configs.rs",
+        "codex-rs/core/config.schema.json",
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "title": "Rename the tool registry metadata setting (#37400)",
+      "url": "https://github.com/openai/codex/commit/c87a218bd3e7ee0a0181109b3ff7bbc2156de13e"
+    },
+    "exact_snapshot": true,
+    "id": "version.2026-08-07.include_tool_metadata_setting",
+    "ordinal": 4,
+    "state_refs": {
+      "key.config.tool_registry.include_tool_metadata": "state.cfg_include_metadata.active",
+      "key.config.tool_registry.include_tool_namespaces_info": "state.cfg_include_namespaces.renamed",
+      "key.config.tool_registry.turn_metadata_includes_tool_info": "state.cfg_turn_metadata_info.absent",
+      "key.turn_metadata.code_mode_tool_names": "state.code_mode.active_bounded_header",
+      "key.turn_metadata.forked_from_ordinal_exclusive": "state.fork_ordinal.legacy_extra",
+      "key.turn_metadata.tool_namespaces_info": "state.tool_namespaces.absent",
+      "key.turn_metadata.window_number": "state.window_number.legacy_extra"
+    },
+    "title": "Rename the tool registry metadata setting (#37400)"
+  }
+}

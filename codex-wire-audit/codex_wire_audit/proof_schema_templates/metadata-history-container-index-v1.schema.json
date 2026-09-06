@@ -1,0 +1,88 @@
+{
+  "$id": "https://openai.example/codex-wire-audit/metadata-history-container-index-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "catalog_format": {
+      "const": "codex-wire-audit-metadata-key-history/v1"
+    },
+    "catalog_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "catalog_version": {
+      "type": "string"
+    },
+    "current_version_ref": {
+      "type": "string"
+    },
+    "format": {
+      "const": "codex-wire-audit-metadata-history-container/v1"
+    },
+    "integrity": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "canonical_payload_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "algorithm",
+        "canonical_payload_sha256"
+      ],
+      "type": "object"
+    },
+    "key_count": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "members": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "byte_length": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "path": {
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.json$",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "byte_length",
+          "sha256"
+        ],
+        "type": "object"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "version_count": {
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "format",
+    "catalog_format",
+    "catalog_version",
+    "catalog_sha256",
+    "current_version_ref",
+    "key_count",
+    "version_count",
+    "members",
+    "integrity"
+  ],
+  "title": "Codex metadata-history multi-JSON container index v1",
+  "type": "object"
+}

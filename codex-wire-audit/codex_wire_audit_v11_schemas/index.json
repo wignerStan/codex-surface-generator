@@ -1,0 +1,13 @@
+{
+  "base_id": "https://schemas.codex-wire-audit.invalid/v11/",
+  "documents": [
+    "diagnostic.schema.json",
+    "evolution-contract.schema.json",
+    "predicate.schema.json",
+    "semantic-diff.schema.json",
+    "source-registry.schema.json",
+    "source-snapshot.schema.json",
+    "turn-metadata-semantics.schema.json"
+  ],
+  "schema_version": "1.0.0"
+}

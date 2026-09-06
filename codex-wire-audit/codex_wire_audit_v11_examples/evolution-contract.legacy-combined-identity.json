@@ -1,0 +1,760 @@
+{
+  "$schema": "codex_wire_audit_v11_schemas/evolution-contract.schema.json",
+  "coverage_profile": "fixture",
+  "diagnostic_refs": [
+    "diag.legacy_combined_identity_gate_observed.1b4118268b59"
+  ],
+  "diagnostic_summary": {
+    "error": 0,
+    "info": 1,
+    "warning": 0
+  },
+  "extractors": {
+    "extractor.turn_metadata": {
+      "data": {
+        "construction_function": "CodexResponsesMetadata::turn_metadata_payload",
+        "field_groups": {
+          "compaction": [
+            "compaction"
+          ],
+          "execution_context": [
+            "auto_review_enabled",
+            "node_repl_auto_review_required",
+            "node_repl_disabled",
+            "sandbox",
+            "sandbox_mode",
+            "workspaces"
+          ],
+          "flattened_extra": [
+            "extra"
+          ],
+          "lineage": [
+            "forked_from_ordinal_exclusive",
+            "forked_from_thread_id",
+            "parent_thread_id",
+            "parent_turn_id",
+            "root_turn_id",
+            "subagent_kind",
+            "thread_source",
+            "turn_trigger"
+          ],
+          "request_identity": [
+            "context_window_id",
+            "installation_id",
+            "request_kind",
+            "window_id",
+            "window_number"
+          ],
+          "thread_identity": [
+            "agent_name",
+            "session_id",
+            "thread_id"
+          ],
+          "timing_and_history": [
+            "history_ingest_requested",
+            "turn_started_at_unix_ms"
+          ],
+          "tool_inventory": [
+            "tool_namespaces_info"
+          ],
+          "turn_identity": [
+            "turn_id"
+          ]
+        },
+        "field_order": [
+          "installation_id",
+          "session_id",
+          "thread_id",
+          "agent_name",
+          "turn_id",
+          "window_id",
+          "window_number",
+          "context_window_id",
+          "request_kind",
+          "forked_from_thread_id",
+          "forked_from_ordinal_exclusive",
+          "parent_thread_id",
+          "parent_turn_id",
+          "root_turn_id",
+          "subagent_kind",
+          "thread_source",
+          "turn_trigger",
+          "sandbox",
+          "sandbox_mode",
+          "auto_review_enabled",
+          "node_repl_auto_review_required",
+          "node_repl_disabled",
+          "workspaces",
+          "tool_namespaces_info",
+          "turn_started_at_unix_ms",
+          "history_ingest_requested",
+          "compaction",
+          "extra"
+        ],
+        "fields": {
+          "agent_name": {
+            "emission_fingerprint": "5b78edac99741a1450fdf63cefae80f382cc00babe09bc5d3d4ed364be1b5420",
+            "field_name": "agent_name",
+            "gate_refs": [
+              "turn_metadata.gate.has_turn_identity"
+            ],
+            "id": "turn_metadata.field.agent_name",
+            "identity_domain": "thread_identity",
+            "kind": "conditional_option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "name": "has_turn_identity",
+              "op": "var"
+            },
+            "semantic_fingerprint": "1bf2ba962d3d8f36f45c24276f7186f3d7f821ed354e0a46cab7e3658b814abc",
+            "source_expression": "has_turn_identity.then_some(self.agent_name.as_deref()).flatten()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:16",
+            "value_expression": "self.agent_name.as_deref()"
+          },
+          "auto_review_enabled": {
+            "emission_fingerprint": "9d3ea2211b17e91d3d270a7455b175f738a68f6ca4d37f3375fd28440aac7ff8",
+            "field_name": "auto_review_enabled",
+            "gate_refs": [],
+            "id": "turn_metadata.field.auto_review_enabled",
+            "identity_domain": "execution_context",
+            "kind": "value_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "5e5e2c4c426624a62f89a01c99cf6af286763bd34029b90dae6b1733ef6ce1ba",
+            "source_expression": "self.auto_review_enabled",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:32",
+            "value_expression": "self.auto_review_enabled"
+          },
+          "compaction": {
+            "emission_fingerprint": "fd9b8735b9a34d6ccdc24f56b96a0359b9fe3e8f846b8f1973a70d4f2d79bd15",
+            "field_name": "compaction",
+            "gate_refs": [],
+            "id": "turn_metadata.field.compaction",
+            "identity_domain": "compaction",
+            "kind": "derived_local",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "7a38716d5932b48c0bd921507c4949d03c8a69b32ea24121cc3ccfb5bf451497",
+            "source_expression": "compaction",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:39",
+            "value_expression": "compaction"
+          },
+          "context_window_id": {
+            "emission_fingerprint": "75c01492e0a31ed2866109298fef13a34a54493637d97d1ddbb70f6ce82ff11c",
+            "field_name": "context_window_id",
+            "gate_refs": [
+              "turn_metadata.gate.has_request_identity"
+            ],
+            "id": "turn_metadata.field.context_window_id",
+            "identity_domain": "request_identity",
+            "kind": "conditional_option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "name": "has_request_identity",
+              "op": "var"
+            },
+            "semantic_fingerprint": "01ffbcdd1d1d0badc9ef62526f1080761af9aa0438c7b8407abc0d9a0b3e864c",
+            "source_expression": "has_request_identity.then_some(self.context_window_id).flatten()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:20",
+            "value_expression": "self.context_window_id"
+          },
+          "extra": {
+            "emission_fingerprint": "dee2edcfb951c836673e37b49ea5d32e9e409e776507f78aa981642bdac2f7c2",
+            "field_name": "extra",
+            "gate_refs": [],
+            "id": "turn_metadata.field.extra",
+            "identity_domain": "flattened_extra",
+            "kind": "flattened_extra",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "0c18ecf17f7f60cf150c49b3225398c9e37fb7b4fc85b60009b429b22ff74cda",
+            "source_expression": "&self.extra",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:40",
+            "value_expression": "&self.extra"
+          },
+          "forked_from_ordinal_exclusive": {
+            "emission_fingerprint": "6d96359659e05c9513dbcad7965c30409ba10c08a04af26c3a8ef69da3316cc2",
+            "field_name": "forked_from_ordinal_exclusive",
+            "gate_refs": [],
+            "id": "turn_metadata.field.forked_from_ordinal_exclusive",
+            "identity_domain": "lineage",
+            "kind": "value_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "faa60bef0f5f74e1c1ad59f2d7ac8b414db7825476008fdd58e59070420e5ce8",
+            "source_expression": "self.forked_from_ordinal_exclusive",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:23",
+            "value_expression": "self.forked_from_ordinal_exclusive"
+          },
+          "forked_from_thread_id": {
+            "emission_fingerprint": "8569c8346f8161a84feddc621df9a5e93b922a28affa853f3be9948efb9a8f51",
+            "field_name": "forked_from_thread_id",
+            "gate_refs": [],
+            "id": "turn_metadata.field.forked_from_thread_id",
+            "identity_domain": "lineage",
+            "kind": "value_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "f946d2f724d2e243396062ba79008a48ed64813ced588fb8e2a77819bd071c41",
+            "source_expression": "self.forked_from_thread_id",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:22",
+            "value_expression": "self.forked_from_thread_id"
+          },
+          "history_ingest_requested": {
+            "emission_fingerprint": "271e6fa03ab909a95e01c1e29b793782dfa27af7f19f6e2634186058ccd68f92",
+            "field_name": "history_ingest_requested",
+            "gate_refs": [],
+            "id": "turn_metadata.field.history_ingest_requested",
+            "identity_domain": "timing_and_history",
+            "kind": "value_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "c3e073a1586bac2856cc5d45cfa6e33aab20949cda3a1105d7699abcbe8f998e",
+            "source_expression": "self.history_ingest_requested",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:38",
+            "value_expression": "self.history_ingest_requested"
+          },
+          "installation_id": {
+            "emission_fingerprint": "9162f4afa8ad8f8fee61c2b545f6a655e763e851e623baf0fd2038c05c8da7e7",
+            "field_name": "installation_id",
+            "gate_refs": [
+              "turn_metadata.gate.has_request_identity"
+            ],
+            "id": "turn_metadata.field.installation_id",
+            "identity_domain": "request_identity",
+            "kind": "conditional_value",
+            "machine_evaluable": true,
+            "predicate": {
+              "name": "has_request_identity",
+              "op": "var"
+            },
+            "semantic_fingerprint": "ebafbe8da6c22a0840e0f1c234b80bfc873bb8b9aa48cc631ec4269d38b99eef",
+            "source_expression": "has_request_identity.then_some(self.installation_id.as_str())",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:13",
+            "value_expression": "self.installation_id.as_str()"
+          },
+          "node_repl_auto_review_required": {
+            "emission_fingerprint": "1c468ce16c142b1d1b1f35cf43163cdf1d01dd517270827edf31d288a7e67ebc",
+            "field_name": "node_repl_auto_review_required",
+            "gate_refs": [],
+            "id": "turn_metadata.field.node_repl_auto_review_required",
+            "identity_domain": "execution_context",
+            "kind": "value_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "0f129d51fb650e07d89b462936f3f704be7c5fc732a775a4860a8b120579f508",
+            "source_expression": "self.node_repl_auto_review_required",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:33",
+            "value_expression": "self.node_repl_auto_review_required"
+          },
+          "node_repl_disabled": {
+            "emission_fingerprint": "7061e1ed09287ea4f2e11ad80ff416f804337a05cbdc35f8f8d6ff6812b0e984",
+            "field_name": "node_repl_disabled",
+            "gate_refs": [],
+            "id": "turn_metadata.field.node_repl_disabled",
+            "identity_domain": "execution_context",
+            "kind": "value_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "99ce93981d44aa535b5625e34cc3a014fc5467e2dfc96dc7bc05e43f41c84bba",
+            "source_expression": "self.node_repl_disabled",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:34",
+            "value_expression": "self.node_repl_disabled"
+          },
+          "parent_thread_id": {
+            "emission_fingerprint": "cc4ddac2341fdf9a89af6c77a77500fbc54cd8a5059d4036ddb1e05d96eb2ba9",
+            "field_name": "parent_thread_id",
+            "gate_refs": [],
+            "id": "turn_metadata.field.parent_thread_id",
+            "identity_domain": "lineage",
+            "kind": "value_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "26fcaecc374b72116cda6144a73422ccf656938fa932a9c157198c34ef140453",
+            "source_expression": "self.parent_thread_id",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:24",
+            "value_expression": "self.parent_thread_id"
+          },
+          "parent_turn_id": {
+            "emission_fingerprint": "5a774d4edfdb815bb88ac478d415b44a428eceaf9651b4d9414973a3a1ee5133",
+            "field_name": "parent_turn_id",
+            "gate_refs": [],
+            "id": "turn_metadata.field.parent_turn_id",
+            "identity_domain": "lineage",
+            "kind": "option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "exists",
+              "path": "self.parent_turn_id"
+            },
+            "semantic_fingerprint": "792adc896310ea935cc646f1d4f5b98bbd3f9b1c8a844458a5c8db5448bac2f8",
+            "source_expression": "self.parent_turn_id.as_deref()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:25",
+            "value_expression": "self.parent_turn_id.as_deref()"
+          },
+          "request_kind": {
+            "emission_fingerprint": "b66576bc27755f9b9f9e5ca171b4ad458a82cec6f5b5be499850d7cd12147087",
+            "field_name": "request_kind",
+            "gate_refs": [],
+            "id": "turn_metadata.field.request_kind",
+            "identity_domain": "request_identity",
+            "kind": "derived_local",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "1651686cafeb78f6719dcf88c73bf504f2a4e809960f160741216f1df5fb2b00",
+            "source_expression": "request_kind_value",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:21",
+            "value_expression": "request_kind_value"
+          },
+          "root_turn_id": {
+            "emission_fingerprint": "ad17cbb72504845485d031f39858238879cd26bea4c07c997c7b3c20d40a1c38",
+            "field_name": "root_turn_id",
+            "gate_refs": [],
+            "id": "turn_metadata.field.root_turn_id",
+            "identity_domain": "lineage",
+            "kind": "option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "exists",
+              "path": "self.root_turn_id"
+            },
+            "semantic_fingerprint": "916429efaf1e27f714e084c7a53e9aedf14e41b3054bab84ab8d26de910f5434",
+            "source_expression": "self.root_turn_id.as_deref()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:26",
+            "value_expression": "self.root_turn_id.as_deref()"
+          },
+          "sandbox": {
+            "emission_fingerprint": "d64c17d74282d304d5ae1345b27488279809b12ea82487618a78574a97148a05",
+            "field_name": "sandbox",
+            "gate_refs": [],
+            "id": "turn_metadata.field.sandbox",
+            "identity_domain": "execution_context",
+            "kind": "option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "exists",
+              "path": "self.sandbox"
+            },
+            "semantic_fingerprint": "fcf63489377b22707e2603eadbe8b36ec8abc2c03e3073ab47d1f30117c756cd",
+            "source_expression": "self.sandbox.as_deref()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:30",
+            "value_expression": "self.sandbox.as_deref()"
+          },
+          "sandbox_mode": {
+            "emission_fingerprint": "68572409549940eb791b8bb9dc1ce84ec712b55d701509f755d5834b124d5549",
+            "field_name": "sandbox_mode",
+            "gate_refs": [],
+            "id": "turn_metadata.field.sandbox_mode",
+            "identity_domain": "execution_context",
+            "kind": "option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "exists",
+              "path": "self.sandbox_mode"
+            },
+            "semantic_fingerprint": "053556462a26c1ba002b8942e71ebe37f2810c6d624332ffcca9d5a0735e6bdf",
+            "source_expression": "self.sandbox_mode.as_deref()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:31",
+            "value_expression": "self.sandbox_mode.as_deref()"
+          },
+          "session_id": {
+            "emission_fingerprint": "84b9ffa01d4d76ef1404d43cec7a149ae2d507f2cd8ef3bd96e8ebe881b3752c",
+            "field_name": "session_id",
+            "gate_refs": [
+              "turn_metadata.gate.has_turn_identity"
+            ],
+            "id": "turn_metadata.field.session_id",
+            "identity_domain": "thread_identity",
+            "kind": "conditional_value",
+            "machine_evaluable": true,
+            "predicate": {
+              "name": "has_turn_identity",
+              "op": "var"
+            },
+            "semantic_fingerprint": "03b5f923786319a712eae34f2c0e02f414a03ae63e64fbd604395f3ecc1950e2",
+            "source_expression": "has_turn_identity.then_some(self.session_id.as_str())",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:14",
+            "value_expression": "self.session_id.as_str()"
+          },
+          "subagent_kind": {
+            "emission_fingerprint": "1a224091ccfecb8700973d9421f9ea6d11abc6c051535a2de477fb48ad21bc86",
+            "field_name": "subagent_kind",
+            "gate_refs": [],
+            "id": "turn_metadata.field.subagent_kind",
+            "identity_domain": "lineage",
+            "kind": "option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "exists",
+              "path": "self.subagent_kind"
+            },
+            "semantic_fingerprint": "0bdc1d2b0386f35278e5a6f1cdf5fc6ff494afafff971091605febb82eef042b",
+            "source_expression": "self.subagent_kind.as_deref()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:27",
+            "value_expression": "self.subagent_kind.as_deref()"
+          },
+          "thread_id": {
+            "emission_fingerprint": "9453288ebafa7af9b5b9d922df6fa19acbd136a70f5b9557f7e3a9f1acdf097b",
+            "field_name": "thread_id",
+            "gate_refs": [
+              "turn_metadata.gate.has_turn_identity"
+            ],
+            "id": "turn_metadata.field.thread_id",
+            "identity_domain": "thread_identity",
+            "kind": "conditional_value",
+            "machine_evaluable": true,
+            "predicate": {
+              "name": "has_turn_identity",
+              "op": "var"
+            },
+            "semantic_fingerprint": "8fa3e0970828227b92d7505aef905a329c13b63fcefa5c5b922ba4f10ff165c5",
+            "source_expression": "has_turn_identity.then_some(self.thread_id.as_str())",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:15",
+            "value_expression": "self.thread_id.as_str()"
+          },
+          "thread_source": {
+            "emission_fingerprint": "7d2571153a7c36528d1a715039087e033126bf016ea3ed46f0dbd9dd51f9ba46",
+            "field_name": "thread_source",
+            "gate_refs": [],
+            "id": "turn_metadata.field.thread_source",
+            "identity_domain": "lineage",
+            "kind": "option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "exists",
+              "path": "self.thread_source"
+            },
+            "semantic_fingerprint": "807a4d04a4b9b91816ff968d8dfecee634e38e1e4141aec45c72d4474298df0e",
+            "source_expression": "self.thread_source.as_ref()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:28",
+            "value_expression": "self.thread_source.as_ref()"
+          },
+          "tool_namespaces_info": {
+            "emission_fingerprint": "dded26cb7b8334e873e8082bbe099a4d0aad8e3121b1a77646402de1c9d126b3",
+            "field_name": "tool_namespaces_info",
+            "gate_refs": [],
+            "id": "turn_metadata.field.tool_namespaces_info",
+            "identity_domain": "tool_inventory",
+            "kind": "option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "exists",
+              "path": "self.tool_namespaces_info"
+            },
+            "semantic_fingerprint": "d46aaf50ffc8dff350aea69e1d1e7eb472116356d4d8daf4303c1c2f0d75498f",
+            "source_expression": "self.tool_namespaces_info.as_ref()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:36",
+            "value_expression": "self.tool_namespaces_info.as_ref()"
+          },
+          "turn_id": {
+            "emission_fingerprint": "4d9382a7347c07e58ecb7981529f883f6f3c5272292ef7816b7fec9b6195a409",
+            "field_name": "turn_id",
+            "gate_refs": [
+              "turn_metadata.gate.has_turn_identity"
+            ],
+            "id": "turn_metadata.field.turn_id",
+            "identity_domain": "turn_identity",
+            "kind": "conditional_option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "name": "has_turn_identity",
+              "op": "var"
+            },
+            "semantic_fingerprint": "82361956892370020c20cd818c040faeba56ce4c40fb6c06f52a0fa15bc07fa3",
+            "source_expression": "has_turn_identity.then_some(self.turn_id.as_deref()).flatten()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:16",
+            "value_expression": "self.turn_id.as_deref()"
+          },
+          "turn_started_at_unix_ms": {
+            "emission_fingerprint": "f126c3a78cd1646afbe931c9aaee473ff9f65137cbdee37b7b9831a58947ad61",
+            "field_name": "turn_started_at_unix_ms",
+            "gate_refs": [],
+            "id": "turn_metadata.field.turn_started_at_unix_ms",
+            "identity_domain": "timing_and_history",
+            "kind": "value_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "const",
+              "value": true
+            },
+            "semantic_fingerprint": "de7d9f496b09cdd1f47a67e41be57e4fcd8461455a20f4543cb5c60c4a7d07cc",
+            "source_expression": "self.turn_started_at_unix_ms",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:37",
+            "value_expression": "self.turn_started_at_unix_ms"
+          },
+          "turn_trigger": {
+            "emission_fingerprint": "43af06c015c45cb6d232f5c3b4006c10e84826880fb9ba02162bce21cd2117a0",
+            "field_name": "turn_trigger",
+            "gate_refs": [],
+            "id": "turn_metadata.field.turn_trigger",
+            "identity_domain": "lineage",
+            "kind": "option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "op": "exists",
+              "path": "self.turn_trigger"
+            },
+            "semantic_fingerprint": "74590bfe319ee15aad1a41c3d6013873e465270faede42a3a430f329cbf38c54",
+            "source_expression": "self.turn_trigger.as_deref()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:29",
+            "value_expression": "self.turn_trigger.as_deref()"
+          },
+          "window_id": {
+            "emission_fingerprint": "bbc8a8bbf0c236b7a6eda05ca0d8c91c77871ee1258fb02d4d6a6f83ef3f2214",
+            "field_name": "window_id",
+            "gate_refs": [
+              "turn_metadata.gate.has_request_identity"
+            ],
+            "id": "turn_metadata.field.window_id",
+            "identity_domain": "request_identity",
+            "kind": "conditional_value",
+            "machine_evaluable": true,
+            "predicate": {
+              "name": "has_request_identity",
+              "op": "var"
+            },
+            "semantic_fingerprint": "cf51204661805b7fb9c953a5f79bceffe4fce944b62f1d4a61dada27d29eb51b",
+            "source_expression": "has_request_identity.then_some(self.window_id.as_str())",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:18",
+            "value_expression": "self.window_id.as_str()"
+          },
+          "window_number": {
+            "emission_fingerprint": "f4790d6e276c7230a567cb530e3793d2cbd9c8c318e25e96629551e89ecc8791",
+            "field_name": "window_number",
+            "gate_refs": [
+              "turn_metadata.gate.has_request_identity"
+            ],
+            "id": "turn_metadata.field.window_number",
+            "identity_domain": "request_identity",
+            "kind": "conditional_option_passthrough",
+            "machine_evaluable": true,
+            "predicate": {
+              "name": "has_request_identity",
+              "op": "var"
+            },
+            "semantic_fingerprint": "bc05d4aa1a19f60798507e19d3825c94712f295b76abc295b219578ed79adbb3",
+            "source_expression": "has_request_identity.then_some(self.window_number).flatten()",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:19",
+            "value_expression": "self.window_number"
+          },
+          "workspaces": {
+            "emission_fingerprint": "664ed9505cf961fac15b9465014eeb990c171601e611a38a9d3bcc5f69b7cde8",
+            "field_name": "workspaces",
+            "gate_refs": [],
+            "id": "turn_metadata.field.workspaces",
+            "identity_domain": "execution_context",
+            "kind": "non_empty_projection",
+            "machine_evaluable": true,
+            "predicate": {
+              "arg": {
+                "op": "is_empty",
+                "path": "self.workspaces"
+              },
+              "op": "not"
+            },
+            "semantic_fingerprint": "f9b07e17d3aa8d5836dd1dd17937d704cb278c1cd06ac2a785eb6f576022007c",
+            "source_expression": "non_empty_workspaces(&self.workspaces)",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:35",
+            "value_expression": "non_empty_workspaces(&self.workspaces)"
+          }
+        },
+        "gates": {
+          "has_request_identity": {
+            "id": "turn_metadata.gate.has_request_identity",
+            "name": "has_request_identity",
+            "predicate": {
+              "args": [
+                {
+                  "op": "exists",
+                  "path": "request_kind"
+                },
+                {
+                  "argument": "request_kind",
+                  "function": "CodexResponsesRequestKind::has_turn_identity",
+                  "op": "call_predicate"
+                }
+              ],
+              "op": "all"
+            },
+            "semantic_fingerprint": "8644366271e0c1ed272fd9a296b4026854fde1f9afe7ad1f8a675eb38414122f",
+            "source_expression": "request_kind.is_some_and(CodexResponsesRequestKind::has_turn_identity)",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:10"
+          },
+          "has_turn_identity": {
+            "id": "turn_metadata.gate.has_turn_identity",
+            "name": "has_turn_identity",
+            "predicate": {
+              "args": [
+                {
+                  "arg": {
+                    "op": "exists",
+                    "path": "request_kind"
+                  },
+                  "op": "not"
+                },
+                {
+                  "argument": "request_kind",
+                  "function": "CodexResponsesRequestKind::has_turn_identity",
+                  "op": "call_predicate"
+                }
+              ],
+              "op": "any"
+            },
+            "semantic_fingerprint": "d9854728f7fd14dd3011fc291897d5378f5e2118013e73cf4f1eb7492021bfa6",
+            "source_expression": "request_kind.is_none_or(CodexResponsesRequestKind::has_turn_identity)",
+            "source_ref": "codex-rs/core/src/responses_metadata.rs:8"
+          }
+        },
+        "local_bindings": {
+          "has_request_identity": "request_kind.is_some_and(CodexResponsesRequestKind::has_turn_identity)",
+          "has_turn_identity": "request_kind.is_none_or(CodexResponsesRequestKind::has_turn_identity)",
+          "request_kind": "self.request_kind"
+        },
+        "semantic_complete": true,
+        "semantic_digest": "bd00fddf7982322439844c20564b34e23b61f585446df39723e5e8a72388e9a2",
+        "source_path": "codex-rs/core/src/responses_metadata.rs",
+        "source_sha256": "dbf0cc924348dd07c26565e388ffafc29f52dbb16f504f04d4b80ae00bd33c1f"
+      },
+      "extractor_id": "extractor.turn_metadata",
+      "schema_version": "1.0.0",
+      "semantic_complete": true,
+      "source_spec_ids": [
+        "source_spec.base.metadata"
+      ]
+    }
+  },
+  "generator_version": "11.0.0",
+  "integrity": {
+    "algorithm": "sha256",
+    "canonical_ir_sha256": "7997bef17078dd2b1f5953cd8a789effa82e55ca878224b81746ab2eff0658d1",
+    "canonicalization": "codex-wire-audit-canonical-json-v2"
+  },
+  "migration": {
+    "canonical_ir_extractors": [
+      "extractor.turn_metadata"
+    ],
+    "extension_contract": "new source-aware semantic extractors register independently and emit canonical IR fragments; the compatibility adapter is not edited for new semantics",
+    "legacy_adapter": "frozen v10 extraction/report renderer",
+    "legacy_machine_reconstruction_remaining": true,
+    "stage": "hybrid_canonical_ir"
+  },
+  "schema_version": "1.0.0",
+  "source_registry": {
+    "counts": {
+      "base": 1,
+      "extra": 0,
+      "optional": 0,
+      "required": 1,
+      "surface": 0,
+      "total": 1
+    },
+    "schema_version": "1.0.0",
+    "sources": {
+      "source_spec.base.metadata": {
+        "expected_symbols": [
+          "CodexResponsesMetadata",
+          "CodexTurnMetadataPayload",
+          "turn_metadata_payload"
+        ],
+        "extractor_ids": [
+          "extractor.turn_metadata"
+        ],
+        "group": "base",
+        "id": "source_spec.base.metadata",
+        "legacy_key": "metadata",
+        "path_candidates": [
+          "codex-rs/core/src/responses_metadata.rs"
+        ],
+        "required": true,
+        "roles": [
+          "responses_metadata",
+          "turn_metadata_semantics"
+        ]
+      }
+    }
+  },
+  "source_revision": {
+    "commit_date": null,
+    "commit_message": "deterministic maintainability fixture",
+    "dirty": null,
+    "repository": "openai/codex",
+    "requested_ref": "responses_metadata_combined_identity.rs",
+    "resolved_commit_sha": null,
+    "source_mode": "fixture",
+    "source_revision_id": "sha256:f9be076c0a3f9598073ffa6991b9d5960b4f8346e8a8fbc0d6b7893af0e8da51",
+    "source_set_sha256": "f9be076c0a3f9598073ffa6991b9d5960b4f8346e8a8fbc0d6b7893af0e8da51"
+  },
+  "source_snapshot": {
+    "counts": {
+      "available": 1,
+      "unavailable": 0
+    },
+    "files": {
+      "source_spec.base.metadata": {
+        "byte_identity": "exact",
+        "byte_length": 2500,
+        "encoding": "utf-8",
+        "git_blob_sha": "52e9a5a897868904687e38b9e03423774880dc6d",
+        "group": "base",
+        "legacy_key": "metadata",
+        "line_count": 43,
+        "path": "codex-rs/core/src/responses_metadata.rs",
+        "path_candidate_index": 0,
+        "repository_blob_sha": null,
+        "sha256": "dbf0cc924348dd07c26565e388ffafc29f52dbb16f504f04d4b80ae00bd33c1f",
+        "spec_id": "source_spec.base.metadata"
+      }
+    },
+    "revision": {
+      "commit_date": null,
+      "commit_message": "deterministic maintainability fixture",
+      "dirty": null,
+      "repository": "openai/codex",
+      "requested_ref": "responses_metadata_combined_identity.rs",
+      "resolved_commit_sha": null,
+      "source_mode": "fixture",
+      "source_revision_id": "sha256:f9be076c0a3f9598073ffa6991b9d5960b4f8346e8a8fbc0d6b7893af0e8da51",
+      "source_set_sha256": "f9be076c0a3f9598073ffa6991b9d5960b4f8346e8a8fbc0d6b7893af0e8da51"
+    },
+    "unavailable_specs": {}
+  },
+  "status": {
+    "current_main_conformance": "not_compared",
+    "overall": "complete",
+    "runtime_observation": "not_run",
+    "schema_resolution": "pending_report_upgrade",
+    "semantic_classification": "complete",
+    "source_inventory": "complete",
+    "syntax_extraction": "complete"
+  }
+}
