@@ -1,11 +1,9 @@
 name: apply-v19-config-surface
 
-# One-shot migration from the imported v18 tree to the verified v19 config surface.
 on:
   push:
     branches: [main]
-    paths:
-      - ".github/workflows/bootstrap-v19.yml"
+    paths: [".github/workflows/bootstrap-v19.yml"]
   workflow_dispatch:
 
 permissions:
@@ -32,62 +30,50 @@ jobs:
           cache: pip
           cache-dependency-path: toolchain/ci/constraints.txt
 
-      - name: Apply the closed v19 change set and reviewed schema-policy correction
+      - name: Apply hash-bound v19 source changes
         shell: bash
         run: |
           set -euo pipefail
 
           sha256sum --check .github/v19-config-surface.parts.sha256
           cat .github/v19-config-surface.patch.xz.b64.part-* \
-            | base64 --decode \
-            > "$RUNNER_TEMP/v19-config-surface.patch.xz"
-          xz --test "$RUNNER_TEMP/v19-config-surface.patch.xz"
-          xz --decompress --stdout "$RUNNER_TEMP/v19-config-surface.patch.xz" \
-            > "$RUNNER_TEMP/v19-config-surface.patch"
+            | base64 --decode > "$RUNNER_TEMP/base.patch.xz"
+          xz --test "$RUNNER_TEMP/base.patch.xz"
+          xz --decompress --stdout "$RUNNER_TEMP/base.patch.xz" \
+            > "$RUNNER_TEMP/base.patch"
 
-          # Root README advanced after the closed patch was assembled. Preserve
-          # the newer Desktop/Code Mode architecture entrypoints; the final v19
-          # documentation update is applied after this source migration.
           if ! git cat-file -e HEAD:toolchain/README.md 2>/dev/null; then
             printf '%s\n' \
               '# Codex wire audit' \
               '' \
               'The active release line is **v18 / package 11.0.0**.' \
               '' \
-              'See [`README_CODEX_WIRE_AUDIT_V18.md`](README_CODEX_WIRE_AUDIT_V18.md) for release, verification, safety, and reproducibility instructions. Historical v11–v17 documentation is retained for migration and audit lineage.' \
+              'See [`README_CODEX_WIRE_AUDIT_V18.md`](README_CODEX_WIRE_AUDIT_V18.md) for release, verification, safety, and reproducibility instructions.' \
               > toolchain/README.md
             git add toolchain/README.md
           fi
           git apply --check --index --whitespace=error \
-            --exclude=README.md \
-            "$RUNNER_TEMP/v19-config-surface.patch"
+            --exclude=README.md "$RUNNER_TEMP/base.patch"
           git apply --index --whitespace=error \
-            --exclude=README.md \
-            "$RUNNER_TEMP/v19-config-surface.patch"
+            --exclude=README.md "$RUNNER_TEMP/base.patch"
 
           sha256sum --check .github/v19-config-surface-code.patch.xz.parts.sha256
           cat .github/v19-config-surface-code.patch.xz.b64.part-* \
-            | base64 --decode \
-            > "$RUNNER_TEMP/v19-config-surface-code.patch.xz"
+            | base64 --decode > "$RUNNER_TEMP/fix.patch.xz"
           printf '%s  %s\n' \
             8b7921de08f06b16f85719b879ecb0bf9a0fa94768723d2b1afc5d40851ee7aa \
-            "$RUNNER_TEMP/v19-config-surface-code.patch.xz" \
-            | sha256sum --check -
-          xz --test "$RUNNER_TEMP/v19-config-surface-code.patch.xz"
-          xz --decompress --stdout "$RUNNER_TEMP/v19-config-surface-code.patch.xz" \
-            > "$RUNNER_TEMP/v19-config-surface-code.patch"
+            "$RUNNER_TEMP/fix.patch.xz" | sha256sum --check -
+          xz --test "$RUNNER_TEMP/fix.patch.xz"
+          xz --decompress --stdout "$RUNNER_TEMP/fix.patch.xz" \
+            > "$RUNNER_TEMP/fix.patch"
           printf '%s  %s\n' \
             8125bda041511a48bb545248b16047ae3154784ba7bf77dce1bcb37f3358f4ab \
-            "$RUNNER_TEMP/v19-config-surface-code.patch" \
-            | sha256sum --check -
-          git apply --check --index --whitespace=error \
-            "$RUNNER_TEMP/v19-config-surface-code.patch"
-          git apply --index --whitespace=error \
-            "$RUNNER_TEMP/v19-config-surface-code.patch"
+            "$RUNNER_TEMP/fix.patch" | sha256sum --check -
+          git apply --check --index --whitespace=error "$RUNNER_TEMP/fix.patch"
+          git apply --index --whitespace=error "$RUNNER_TEMP/fix.patch"
 
-          python - <<'PYPROJECT_EOF'
+          python - <<'PY'
           from pathlib import Path
-
           path = Path("toolchain/pyproject.toml")
           text = path.read_text(encoding="utf-8")
           old = 'test = ["coverage>=7.6,<8", "packaging>=24,<26", "pytest>=8,<10"]'
@@ -95,7 +81,7 @@ jobs:
           if text.count(old) != 1:
               raise SystemExit("expected one v19 test dependency declaration")
           path.write_text(text.replace(old, new), encoding="utf-8")
-          PYPROJECT_EOF
+          PY
           git add toolchain/pyproject.toml
 
           git rm \
@@ -106,16 +92,19 @@ jobs:
             .github/v19-config-surface-code.patch.sha256 \
             .github/v19-config-surface-code.patch.xz.b64.part-* \
             .github/v19-config-surface-code.patch.xz.parts.sha256 \
-            .github/v19-config-surface-followup.patch \
-            .github/workflows/debug-v19-patch.yml \
-            .github/workflows/bootstrap-v19.yml
+            .github/v19-config-surface-followup.patch
+
+          # The Actions token can publish source but cannot create/update workflow
+          # files. Keep the generated workflow in the worktree for evidence, but
+          # omit it from this commit; the GitHub connection installs it afterward.
+          git rm --cached --ignore-unmatch .github/workflows/config-surface.yml
           git diff --cached --check
 
-      - name: Install constrained test dependencies
+      - name: Install constrained dependencies
         working-directory: toolchain
         run: python -m pip install --constraint ci/constraints.txt -e '.[test]'
 
-      - name: Regenerate owned assets and run package proof
+      - name: Regenerate assets and verify package
         working-directory: toolchain
         run: |
           set -euo pipefail
@@ -140,7 +129,7 @@ jobs:
           path: codex-source
           fetch-depth: 1
 
-      - name: Generate and verify the pinned configuration surface
+      - name: Generate and verify pinned configuration surface
         shell: bash
         run: |
           set -euo pipefail
@@ -151,33 +140,16 @@ jobs:
             --schema-output toolchain/ci-out/bootstrap-config-surface/config-schema.json \
             --graph-output toolchain/ci-out/bootstrap-config-surface/config-surface-graph.json
 
-      - name: Commit the verified v19 implementation
+      - name: Commit verified source
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "codex-surface-generator[bot]"
           git config user.email "codex-surface-generator[bot]@users.noreply.github.com"
-          git status --short
           git commit -m "feat: connect config schema to the canonical surface graph"
           git push origin HEAD:main
 
-      - name: Capture staged implementation on failure
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p toolchain/ci-out/bootstrap-source
-          git diff --cached --binary --full-index \
-            > toolchain/ci-out/bootstrap-source/v19-applied.patch
-          git diff --cached --name-status \
-            > toolchain/ci-out/bootstrap-source/v19-name-status.txt
-          tar --exclude='toolchain/ci-out' \
-              --exclude='toolchain/.pytest_cache' \
-              --exclude='toolchain/*.egg-info' \
-              -czf toolchain/ci-out/bootstrap-source/v19-staged-source.tar.gz \
-              toolchain .github/workflows/config-surface.yml
-
-      - name: Upload bootstrap verification evidence
+      - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
@@ -185,6 +157,6 @@ jobs:
           path: |
             toolchain/ci-out/bootstrap-package
             toolchain/ci-out/bootstrap-config-surface
-            toolchain/ci-out/bootstrap-source
+            .github/workflows/config-surface.yml
           if-no-files-found: warn
           retention-days: 30
