@@ -1,5 +1,6 @@
 name: apply-v19-config-surface
 
+# Explicit rollout trigger for the verified v19 config-surface change set.
 on:
   push:
     branches: [main]
