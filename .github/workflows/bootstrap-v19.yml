@@ -1,12 +1,10 @@
 name: apply-v19-config-surface
 
-# Explicit rollout trigger for the verified v19 config-surface change set.
+# One-shot migration from the imported v18 tree to the verified v19 config surface.
 on:
   push:
     branches: [main]
     paths:
-      - ".github/v19-config-surface.patch.xz.b64.part-*"
-      - ".github/v19-config-surface.parts.sha256"
       - ".github/workflows/bootstrap-v19.yml"
   workflow_dispatch:
 
@@ -34,10 +32,11 @@ jobs:
           cache: pip
           cache-dependency-path: toolchain/ci/constraints.txt
 
-      - name: Reassemble and apply the closed v19 change set
+      - name: Apply the closed v19 change set and reviewed schema-policy correction
         shell: bash
         run: |
           set -euo pipefail
+
           sha256sum --check .github/v19-config-surface.parts.sha256
           cat .github/v19-config-surface.patch.xz.b64.part-* \
             | base64 --decode \
@@ -45,12 +44,10 @@ jobs:
           xz --test "$RUNNER_TEMP/v19-config-surface.patch.xz"
           xz --decompress --stdout "$RUNNER_TEMP/v19-config-surface.patch.xz" \
             > "$RUNNER_TEMP/v19-config-surface.patch"
-          git apply --stat "$RUNNER_TEMP/v19-config-surface.patch"
-          # README.md advanced after this closed patch was assembled. Preserve
-          # that newer architecture split and refresh the root entrypoint after
-          # the schema implementation lands instead of reverting it here.
-          # The repository import also omitted toolchain/README.md; stage its
-          # exact v18 preimage so the patch can update it atomically.
+
+          # Root README advanced after the closed patch was assembled. Preserve
+          # the newer Desktop/Code Mode architecture entrypoints; the final v19
+          # documentation update is applied after this source migration.
           if ! git cat-file -e HEAD:toolchain/README.md 2>/dev/null; then
             printf '%s\n' \
               '# Codex wire audit' \
@@ -67,6 +64,18 @@ jobs:
           git apply --index --whitespace=error \
             --exclude=README.md \
             "$RUNNER_TEMP/v19-config-surface.patch"
+
+          cat .github/v19-config-surface-code.patch.b64.part-* \
+            | base64 --decode \
+            > "$RUNNER_TEMP/v19-config-surface-code.patch"
+          expected=$(cut -d' ' -f1 .github/v19-config-surface-code.patch.sha256)
+          actual=$(sha256sum "$RUNNER_TEMP/v19-config-surface-code.patch" | cut -d' ' -f1)
+          test "$actual" = "$expected"
+          git apply --check --index --whitespace=error \
+            "$RUNNER_TEMP/v19-config-surface-code.patch"
+          git apply --index --whitespace=error \
+            "$RUNNER_TEMP/v19-config-surface-code.patch"
+
           python - <<'PYPROJECT_EOF'
           from pathlib import Path
 
@@ -79,28 +88,37 @@ jobs:
           path.write_text(text.replace(old, new), encoding="utf-8")
           PYPROJECT_EOF
           git add toolchain/pyproject.toml
+
           git rm \
             .github/v19-config-surface.patch.xz \
             .github/v19-config-surface.patch.xz.b64.part-* \
             .github/v19-config-surface.parts.sha256 \
+            .github/v19-config-surface-code.patch.b64.part-* \
+            .github/v19-config-surface-code.patch.sha256 \
+            .github/v19-config-surface-followup.patch \
             .github/workflows/bootstrap-v19.yml
           git diff --cached --check
-          git diff --cached --stat
 
       - name: Install constrained test dependencies
         working-directory: toolchain
         run: python -m pip install --constraint ci/constraints.txt -e '.[test]'
 
-      - name: Run package, schema, asset, and maintainability checks
+      - name: Regenerate owned assets and run package proof
         working-directory: toolchain
         run: |
           set -euo pipefail
+          make legacy-assets metrics
+          git add \
+            codex_wire_audit_v11_examples \
+            codex_wire_audit_v19_maintainability_metrics.json \
+            CODEX_WIRE_AUDIT_V19_METRICS.md
           python -m pytest -q
           make check-assets
           python tools/maintainability_metrics.py --check
           mkdir -p ci-out/bootstrap-package
           python -m codex_wire_audit.release_contract \
             --output ci-out/bootstrap-package/source-capability-probe.json
+          git diff --cached --check
 
       - name: Check out pinned Codex source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
