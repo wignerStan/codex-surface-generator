@@ -4,6 +4,8 @@ Research snapshot: **2026-09-06**.
 
 This note records the architecture of the **unified ChatGPT Desktop app's Codex surface**. It is intentionally narrower than a general Codex runtime architecture document.
 
+Tool-mode semantics are documented separately in [`CODE_MODE_TOOL_ARCHITECTURE.md`](CODE_MODE_TOOL_ARCHITECTURE.md). In particular, keep model-level `ToolMode::CodeModeOnly` separate from per-tool `ToolExposure::CodeModeOnly`.
+
 Keep three evidence classes separate:
 
 - **Public Codex source** — implementation visible in `openai/codex`.
@@ -380,25 +382,51 @@ codex_apps
 
 Configuration behavior of `codex_apps` must not be projected onto Desktop `codex_app`. For example, public Codex use of `chatgpt_base_url` in `codex_apps` is not evidence that Desktop-host `codex_app.read_thread` uses that same base URL for ordinary ChatGPT conversations.
 
-## 13. Tool exposure: why Desktop adds `omit_tools_from=["deferred"]`
+## 13. Desktop tool exposure and `omit_tools_from=["deferred"]`
 
-Public Codex distinguishes model-facing tool surfaces:
+Tool exposure is model-mode-sensitive. The full rules live in [`CODE_MODE_TOOL_ARCHITECTURE.md`](CODE_MODE_TOOL_ARCHITECTURE.md).
+
+Public Codex has three independent model-facing surfaces:
 
 ```text
-Direct    = included in the initial model-visible tool list
-Deferred  = discovered later through tool_search
-CodeMode  = available as nested Code Mode tools
+Direct    = initial model-visible tool surface
+Deferred  = deferred discovery/search surface
+CodeMode  = nested Code Mode surface
 ```
 
-When Desktop launches `codex_app` with:
+Desktop has been observed launching `codex_app` with:
 
 ```text
 omit_tools_from = ["deferred"]
 ```
 
-those tools are explicitly removed from the deferred/tool-search surface. If Direct remains enabled, the intent is eager model exposure rather than lazy discovery through `tool_search`.
+That removes `codex_app` from the deferred/lazy-discovery surface. What remains depends on the model's `ToolMode`.
 
-Because this field is absent from the raw shipped `desktop-mcp.json`, it is a Desktop runtime/configuration merge rather than part of the plugin's static manifest.
+### Direct-mode model
+
+If Direct remains enabled, `codex_app` can be exposed eagerly as ordinary model tools.
+
+### Model-advertised `code_mode_only`
+
+For a model whose catalog advertises:
+
+```json
+{"tool_mode":"code_mode_only"}
+```
+
+Codex should not be described as exposing every Code-Mode-capable `codex_app` tool as a separate top-level function. Direct + CodeMode exposure instead makes those tools part of the **eager nested Code Mode tool world**: their detailed declarations can be included in `exec` rather than hidden behind deferred `ALL_TOOLS` discovery.
+
+So, under CodeModeOnly:
+
+```text
+omit deferred
+    = do not lazy-discover codex_app via the deferred surface
+    = make codex_app eager in nested Code Mode, assuming CodeMode remains allowed
+```
+
+This is different from `direct_only_tool_namespaces`, which removes CodeMode as well and produces a model-only direct control-plane tool.
+
+Because `omit_tools_from` is absent from the raw shipped `desktop-mcp.json`, the Desktop runtime/configuration layer is still responsible for adding this policy before app-server starts.
 
 ## 14. Desktop app-server ownership and writer conflicts
 
@@ -478,6 +506,14 @@ transport
 storage/backend
 process owner/lifetime
 public vs shipped vs private evidence
+```
+
+For tool presentation/execution, additionally record:
+
+```text
+model ToolMode
+per-tool ToolExposure
+Direct / Deferred / CodeMode surfaces
 ```
 
 That prevents similarly named tools or thread IDs from being mistaken for the same architecture.
