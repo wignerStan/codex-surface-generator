@@ -1,67 +1,71 @@
 # Codex Surface Generator
 
-Schema and wire-contract report generator for the OpenAI Codex CLI. It
-parses the CLI's Rust sources at a pinned upstream commit and emits
-validated, machine-readable schema bundles covering the full product
-surface: HTTP/WebSocket request-response endpoints, endpoint addressing,
-header taxonomy, turn metadata, common settings and feature schemas,
-model matrices, and coverage profiles — produced by a reproducible,
-attested release pipeline.
+Schema and wire-contract generator for the OpenAI Codex CLI. It parses Codex
+Rust sources at a pinned upstream revision and emits validated,
+machine-readable contracts for HTTP/WebSocket traffic, endpoint addressing,
+headers, turn metadata, tools, authentication, context management,
+configuration shape, and the relationships between those surfaces.
 
-
-- Active release line: **v18 / package 11.0.0**
+- Active source line: **v19 / package 12.0.0**
 - Reviewed protocol baseline: `openai/codex@6af345407d9c2a568da9d01b6c4b81a9e61495c0`
 - Layout:
-  - [`toolchain/`](toolchain/) — package source (v18 pipeline)
-  - [`release/`](release/) — release artifacts: wheel, sdist, attestation,
-    release spec, artifact inventory, validation log, checksums
-  - [`DESKTOP_ARCHITECTURE.md`](DESKTOP_ARCHITECTURE.md) — ChatGPT Desktop /
-    Codex Desktop process topology, `codex_app` MCP bridge, native-pipe wire
-    protocol, tool ownership, and public/shipped/private boundaries
-  - [`CODE_MODE_TOOL_ARCHITECTURE.md`](CODE_MODE_TOOL_ARCHITECTURE.md) — model
-    `ToolMode`, per-tool `ToolExposure`, Code Mode `exec`, deferred discovery,
-    `ALL_TOOLS`, and the distinction from `cua_repl` / `node_repl`
-  - [`CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md`](CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md) —
-    `chatgpt_base_url`, `RemotePlugin`, `Apps`, `codex_apps`, generic remote MCP,
-    and the distinction from Desktop `codex_app`
+  - [`toolchain/`](toolchain/) — generator, schemas, profiles, tests, and release pipeline
+  - [`release/`](release/) — published artifacts and attestations
+  - [`toolchain/CONFIG_SURFACE_ARCHITECTURE.md`](toolchain/CONFIG_SURFACE_ARCHITECTURE.md) — how generated config shape, feature identity, schema-projection policy, and runtime effects form one graph
+  - [`DESKTOP_ARCHITECTURE.md`](DESKTOP_ARCHITECTURE.md) — Desktop process topology and bridge ownership
+  - [`CODE_MODE_TOOL_ARCHITECTURE.md`](CODE_MODE_TOOL_ARCHITECTURE.md) — tool exposure and Code Mode ownership
+  - [`CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md`](CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md) — ChatGPT-hosted service planes and their boundaries
   - [`NOTES.md`](NOTES.md) — maintenance notes
 
-## Install
+The architecture notes explain design, evidence ownership, and boundaries. They
+intentionally do not copy the current setting catalog. Use generated JSON for
+exact keys, types, defaults, constraints, source identity, and effect links.
+
+## Install for development
 
 ```bash
-python -m pip install release/codex_wire_audit-11.0.0-py3-none-any.whl
+python -m pip install --constraint toolchain/ci/constraints.txt \
+  -e './toolchain[test]'
 ```
 
-## Usage
+## Generate the full report
 
 ```bash
 codex-wire-audit --json \
   --repo-root /path/to/codex \
-  --output report.json
+  --coverage-profile hybrid_v19 \
+  --output report.json \
+  --emit-config-schema config-schema.json \
+  --emit-surface-graph config-surface-graph.json
 ```
 
-Or against GitHub directly (token via `GITHUB_TOKEN`):
+Run the focused config/schema integration against a checkout with:
 
 ```bash
-codex-wire-audit --json --ref main --output report.json
+python toolchain/tools/check_config_surface.py \
+  --codex-root /path/to/codex \
+  --output config-surface-result.json \
+  --schema-output config-schema.json \
+  --graph-output config-surface-graph.json
 ```
+
+## Machine-readable outputs
+
+- `report.json` contains extractor facts, diagnostics, coverage, and source provenance.
+- `config-schema.json` is the normalized, path-addressable configuration catalog.
+- `config-surface-graph.json` connects config paths and feature policy to previously modeled protocol surfaces.
+
+Human documentation may lag upstream changes. A successful pinned generation
+must not: CI validates the package, generated schema, graph references, and the
+reviewed Codex revision, while a scheduled current-main run remains a separate
+drift canary.
 
 ## Release pipeline
 
-Build, validate, assemble, and publish one closed release:
-
 ```bash
-python -m pip install --constraint toolchain/ci/constraints.txt \
-  -e toolchain/
-python toolchain/tools/release_pipeline.py release --output-dir release_v18
+python toolchain/tools/release_pipeline.py release --output-dir release_v19
+python toolchain/tools/release_pipeline.py verify --release-dir release_v19
 ```
 
-`verify` re-installs the released wheel, re-runs its capability probe,
-extracts and tests the sdist, and compares rebuilt bytes:
-
-```bash
-python toolchain/tools/release_pipeline.py verify --release-dir release_v18
-```
-
-See [`toolchain/README_CODEX_WIRE_AUDIT_V18.md`](toolchain/README_CODEX_WIRE_AUDIT_V18.md)
-for the full release contract.
+See [`toolchain/README_CODEX_WIRE_AUDIT_V19.md`](toolchain/README_CODEX_WIRE_AUDIT_V19.md)
+for the operational and proof boundaries.

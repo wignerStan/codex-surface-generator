@@ -50,5 +50,6 @@ include codex_wire_audit/release_spec.schema.json
 
 include CODEX_WIRE_AUDIT_V19_RELEASE_NOTES.md
 include README_CODEX_WIRE_AUDIT_V19.md
+include CONFIG_SURFACE_ARCHITECTURE.md
 include codex_wire_audit_v19_maintainability_metrics.json
 include CODEX_WIRE_AUDIT_V19_METRICS.md
