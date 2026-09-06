@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/v19-config-surface.patch.xz"
+      - ".github/v19-config-surface.patch.xz.b64.part-*"
+      - ".github/v19-config-surface.parts.sha256"
       - ".github/workflows/bootstrap-v19.yml"
   workflow_dispatch:
 
@@ -32,12 +33,22 @@ jobs:
           cache: pip
           cache-dependency-path: toolchain/ci/constraints.txt
 
-      - name: Apply the closed v19 change set
+      - name: Reassemble and apply the closed v19 change set
         shell: bash
         run: |
           set -euo pipefail
-          xz -dc .github/v19-config-surface.patch.xz | git apply --index --whitespace=error
-          git rm .github/v19-config-surface.patch.xz .github/workflows/bootstrap-v19.yml
+          sha256sum --check .github/v19-config-surface.parts.sha256
+          cat .github/v19-config-surface.patch.xz.b64.part-* \
+            | base64 --decode \
+            > "$RUNNER_TEMP/v19-config-surface.patch.xz"
+          xz --test "$RUNNER_TEMP/v19-config-surface.patch.xz"
+          xz --decompress --stdout "$RUNNER_TEMP/v19-config-surface.patch.xz" \
+            | git apply --index --whitespace=error
+          git rm \
+            .github/v19-config-surface.patch.xz \
+            .github/v19-config-surface.patch.xz.b64.part-* \
+            .github/v19-config-surface.parts.sha256 \
+            .github/workflows/bootstrap-v19.yml
           git diff --cached --check
 
       - name: Install constrained test dependencies
