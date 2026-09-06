@@ -21,6 +21,9 @@ attested release pipeline.
   - [`CODE_MODE_TOOL_ARCHITECTURE.md`](CODE_MODE_TOOL_ARCHITECTURE.md) — model
     `ToolMode`, per-tool `ToolExposure`, Code Mode `exec`, deferred discovery,
     `ALL_TOOLS`, and the distinction from `cua_repl` / `node_repl`
+  - [`CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md`](CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md) —
+    `chatgpt_base_url`, `RemotePlugin`, `Apps`, `codex_apps`, generic remote MCP,
+    and the distinction from Desktop `codex_app`
   - [`NOTES.md`](NOTES.md) — maintenance notes
 
 ## Install
