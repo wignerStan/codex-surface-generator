@@ -65,9 +65,13 @@ jobs:
             --exclude=README.md \
             "$RUNNER_TEMP/v19-config-surface.patch"
 
-          cat .github/v19-config-surface-code.patch.b64.part-* \
-            | base64 --decode \
-            > "$RUNNER_TEMP/v19-config-surface-code.patch"
+          # part-00 was transported with a duplicated 228-byte tail. The first
+          # 8,000 bytes are the hash-bound source fragment; reconstruct exactly
+          # from that prefix plus the remaining verified fragments.
+          {
+            head -c 8000 .github/v19-config-surface-code.patch.b64.part-00
+            cat .github/v19-config-surface-code.patch.b64.part-0[1-5]
+          } | base64 --decode > "$RUNNER_TEMP/v19-config-surface-code.patch"
           expected=$(cut -d' ' -f1 .github/v19-config-surface-code.patch.sha256)
           actual=$(sha256sum "$RUNNER_TEMP/v19-config-surface-code.patch" | cut -d' ' -f1)
           test "$actual" = "$expected"
