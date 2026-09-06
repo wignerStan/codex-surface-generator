@@ -43,8 +43,14 @@ jobs:
             | base64 --decode \
             > "$RUNNER_TEMP/v19-config-surface.patch.xz"
           xz --test "$RUNNER_TEMP/v19-config-surface.patch.xz"
-          # The repository import omitted this source-package README. Stage the
-          # exact v18 preimage so the closed patch can add/update it atomically.
+          xz --decompress --stdout "$RUNNER_TEMP/v19-config-surface.patch.xz" \
+            > "$RUNNER_TEMP/v19-config-surface.patch"
+          git apply --stat "$RUNNER_TEMP/v19-config-surface.patch"
+          # README.md advanced after this closed patch was assembled. Preserve
+          # that newer architecture split and refresh the root entrypoint after
+          # the schema implementation lands instead of reverting it here.
+          # The repository import also omitted toolchain/README.md; stage its
+          # exact v18 preimage so the patch can update it atomically.
           if ! git cat-file -e HEAD:toolchain/README.md 2>/dev/null; then
             printf '%s\n' \
               '# Codex wire audit' \
@@ -55,8 +61,12 @@ jobs:
               > toolchain/README.md
             git add toolchain/README.md
           fi
-          xz --decompress --stdout "$RUNNER_TEMP/v19-config-surface.patch.xz" \
-            | git apply --index --whitespace=error
+          git apply --check --index --whitespace=error \
+            --exclude=README.md \
+            "$RUNNER_TEMP/v19-config-surface.patch"
+          git apply --index --whitespace=error \
+            --exclude=README.md \
+            "$RUNNER_TEMP/v19-config-surface.patch"
           python - <<'PYPROJECT_EOF'
           from pathlib import Path
 
@@ -75,6 +85,7 @@ jobs:
             .github/v19-config-surface.parts.sha256 \
             .github/workflows/bootstrap-v19.yml
           git diff --cached --check
+          git diff --cached --stat
 
       - name: Install constrained test dependencies
         working-directory: toolchain
