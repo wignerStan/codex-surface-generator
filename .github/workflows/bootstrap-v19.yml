@@ -48,7 +48,7 @@ jobs:
               '' \
               'The active release line is **v18 / package 11.0.0**.' \
               '' \
-              'See [`README_CODEX_WIRE_AUDIT_V18.md`](README_CODEX_WIRE_AUDIT_V18.md) for release, verification, safety, and reproducibility instructions.' \
+              'See [`README_CODEX_WIRE_AUDIT_V18.md`](README_CODEX_WIRE_AUDIT_V18.md) for release, verification, safety, and reproducibility instructions. Historical v11–v17 documentation is retained for migration and audit lineage.' \
               > toolchain/README.md
             git add toolchain/README.md
           fi
