@@ -65,16 +65,21 @@ jobs:
             --exclude=README.md \
             "$RUNNER_TEMP/v19-config-surface.patch"
 
-          # part-00 was transported with a duplicated 228-byte tail. The first
-          # 8,000 bytes are the hash-bound source fragment; reconstruct exactly
-          # from that prefix plus the remaining verified fragments.
-          {
-            head -c 8000 .github/v19-config-surface-code.patch.b64.part-00
-            cat .github/v19-config-surface-code.patch.b64.part-0[1-5]
-          } | base64 --decode > "$RUNNER_TEMP/v19-config-surface-code.patch"
-          expected=$(cut -d' ' -f1 .github/v19-config-surface-code.patch.sha256)
-          actual=$(sha256sum "$RUNNER_TEMP/v19-config-surface-code.patch" | cut -d' ' -f1)
-          test "$actual" = "$expected"
+          sha256sum --check .github/v19-config-surface-code.patch.xz.parts.sha256
+          cat .github/v19-config-surface-code.patch.xz.b64.part-* \
+            | base64 --decode \
+            > "$RUNNER_TEMP/v19-config-surface-code.patch.xz"
+          printf '%s  %s\n' \
+            8b7921de08f06b16f85719b879ecb0bf9a0fa94768723d2b1afc5d40851ee7aa \
+            "$RUNNER_TEMP/v19-config-surface-code.patch.xz" \
+            | sha256sum --check -
+          xz --test "$RUNNER_TEMP/v19-config-surface-code.patch.xz"
+          xz --decompress --stdout "$RUNNER_TEMP/v19-config-surface-code.patch.xz" \
+            > "$RUNNER_TEMP/v19-config-surface-code.patch"
+          printf '%s  %s\n' \
+            8125bda041511a48bb545248b16047ae3154784ba7bf77dce1bcb37f3358f4ab \
+            "$RUNNER_TEMP/v19-config-surface-code.patch" \
+            | sha256sum --check -
           git apply --check --index --whitespace=error \
             "$RUNNER_TEMP/v19-config-surface-code.patch"
           git apply --index --whitespace=error \
@@ -99,7 +104,10 @@ jobs:
             .github/v19-config-surface.parts.sha256 \
             .github/v19-config-surface-code.patch.b64.part-* \
             .github/v19-config-surface-code.patch.sha256 \
+            .github/v19-config-surface-code.patch.xz.b64.part-* \
+            .github/v19-config-surface-code.patch.xz.parts.sha256 \
             .github/v19-config-surface-followup.patch \
+            .github/workflows/debug-v19-patch.yml \
             .github/workflows/bootstrap-v19.yml
           git diff --cached --check
 
