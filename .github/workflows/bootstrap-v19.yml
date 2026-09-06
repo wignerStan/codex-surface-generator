@@ -56,6 +56,18 @@ jobs:
           fi
           xz --decompress --stdout "$RUNNER_TEMP/v19-config-surface.patch.xz" \
             | git apply --index --whitespace=error
+          python - <<'PYPROJECT_EOF'
+          from pathlib import Path
+
+          path = Path("toolchain/pyproject.toml")
+          text = path.read_text(encoding="utf-8")
+          old = 'test = ["coverage>=7.6,<8", "packaging>=24,<26", "pytest>=8,<10"]'
+          new = 'test = ["coverage>=7.6,<8", "packaging>=24,<26", "pytest>=8,<10", "setuptools>=82,<83"]'
+          if text.count(old) != 1:
+              raise SystemExit("expected one v19 test dependency declaration")
+          path.write_text(text.replace(old, new), encoding="utf-8")
+          PYPROJECT_EOF
+          git add toolchain/pyproject.toml
           git rm \
             .github/v19-config-surface.patch.xz \
             .github/v19-config-surface.patch.xz.b64.part-* \
