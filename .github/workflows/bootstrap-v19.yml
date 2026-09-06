@@ -1,0 +1,96 @@
+name: apply-v19-config-surface
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/v19-config-surface.patch.xz"
+      - ".github/workflows/bootstrap-v19.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-v19-config-surface
+  cancel-in-progress: false
+
+jobs:
+  apply-test-and-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: toolchain/ci/constraints.txt
+
+      - name: Apply the closed v19 change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          xz -dc .github/v19-config-surface.patch.xz | git apply --index --whitespace=error
+          git rm .github/v19-config-surface.patch.xz .github/workflows/bootstrap-v19.yml
+          git diff --cached --check
+
+      - name: Install constrained test dependencies
+        working-directory: toolchain
+        run: python -m pip install --constraint ci/constraints.txt -e '.[test]'
+
+      - name: Run package, schema, asset, and maintainability checks
+        working-directory: toolchain
+        run: |
+          set -euo pipefail
+          python -m pytest -q
+          make check-assets
+          python tools/maintainability_metrics.py --check
+          mkdir -p ci-out/bootstrap-package
+          python -m codex_wire_audit.release_contract \
+            --output ci-out/bootstrap-package/source-capability-probe.json
+
+      - name: Check out pinned Codex source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: openai/codex
+          ref: 6af345407d9c2a568da9d01b6c4b81a9e61495c0
+          path: codex-source
+          fetch-depth: 1
+
+      - name: Generate and verify the pinned configuration surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p toolchain/ci-out/bootstrap-config-surface
+          python toolchain/tools/check_config_surface.py \
+            --codex-root codex-source \
+            --output toolchain/ci-out/bootstrap-config-surface/integration.json \
+            --schema-output toolchain/ci-out/bootstrap-config-surface/config-schema.json \
+            --graph-output toolchain/ci-out/bootstrap-config-surface/config-surface-graph.json
+
+      - name: Commit the verified v19 implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "codex-surface-generator[bot]"
+          git config user.email "codex-surface-generator[bot]@users.noreply.github.com"
+          git status --short
+          git commit -m "feat: connect config schema to the canonical surface graph"
+          git push origin HEAD:main
+
+      - name: Upload bootstrap verification evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: v19-config-surface-bootstrap-evidence
+          path: |
+            toolchain/ci-out/bootstrap-package
+            toolchain/ci-out/bootstrap-config-surface
+          if-no-files-found: warn
+          retention-days: 30
