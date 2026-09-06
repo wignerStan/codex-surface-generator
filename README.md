@@ -1,4 +1,8 @@
-# API Surface Audit — Codex CLI wire-contract toolchain
+# API Surface Audit
+
+Schema-capture and contract-drift toolchain for the OpenAI Codex CLI
+HTTP/WebSocket API surface: machine-readable wire-contract reports,
+coverage profiles, and a reproducible, attested release pipeline.
 
 Schema-capture and contract-drift toolchain for the OpenAI **Codex CLI**
 HTTP / WebSocket API surface. It parses the CLI's Rust sources at a pinned
@@ -10,7 +14,7 @@ attested release pipeline.
 - Active release line: **v18 / package 11.0.0**
 - Reviewed protocol baseline: `openai/codex@6af345407d9c2a568da9d01b6c4b81a9e61495c0`
 - Layout:
-  - [`api-surface-audit/`](api-surface-audit/) — package source (v18 pipeline)
+  - [`toolchain/`](toolchain/) — package source (v18 pipeline)
   - [`release/`](release/) — release artifacts: wheel, sdist, attestation,
     release spec, artifact inventory, validation log, checksums
   - [`NOTES.md`](NOTES.md) — maintenance notes
@@ -40,17 +44,17 @@ codex-wire-audit --json --ref main --output report.json
 Build, validate, assemble, and publish one closed release:
 
 ```bash
-python -m pip install --constraint api-surface-audit/ci/constraints.txt \
-  -e api-surface-audit/
-python api-surface-audit/tools/release_pipeline.py release --output-dir release_v18
+python -m pip install --constraint toolchain/ci/constraints.txt \
+  -e toolchain/
+python toolchain/tools/release_pipeline.py release --output-dir release_v18
 ```
 
 `verify` re-installs the released wheel, re-runs its capability probe,
 extracts and tests the sdist, and compares rebuilt bytes:
 
 ```bash
-python api-surface-audit/tools/release_pipeline.py verify --release-dir release_v18
+python toolchain/tools/release_pipeline.py verify --release-dir release_v18
 ```
 
-See [`api-surface-audit/README_CODEX_WIRE_AUDIT_V18.md`](api-surface-audit/README_CODEX_WIRE_AUDIT_V18.md)
+See [`toolchain/README_CODEX_WIRE_AUDIT_V18.md`](toolchain/README_CODEX_WIRE_AUDIT_V18.md)
 for the full release contract.
