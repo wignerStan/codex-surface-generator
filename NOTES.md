@@ -2,11 +2,11 @@
 
 ## Purpose
 
-The toolchain answers one question repeatedly and reproducibly: *what is the
-current wire contract of the Codex CLI* — which endpoints exist, which
-headers each transport carries, which metadata schemas the payloads use, and
-which surfaces changed since the last audit. Everything in this repository is
-a documentation-and-verification toolchain; it performs no traffic of its own
+The generator answers one question repeatedly and reproducibly: *what is
+the current surface of the Codex CLI* — which endpoints exist, which headers
+each transport carries, which metadata/settings/feature schemas the payloads
+use, and which surfaces changed since the last generation. Everything in this repository is
+a schema-generation and verification toolchain; it performs no traffic of its own
 beyond reading public repository sources.
 
 ## Ownership

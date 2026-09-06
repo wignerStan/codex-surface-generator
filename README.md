@@ -1,15 +1,13 @@
-# API Surface Audit
+# Codex Surface Generator
 
-Schema-capture and contract-drift toolchain for the OpenAI Codex CLI
-HTTP/WebSocket API surface: machine-readable wire-contract reports,
-coverage profiles, and a reproducible, attested release pipeline.
-
-Schema-capture and contract-drift toolchain for the OpenAI **Codex CLI**
-HTTP / WebSocket API surface. It parses the CLI's Rust sources at a pinned
-upstream commit and emits a machine-readable, schema-validated report of the
-wire contract: request/response surfaces, endpoint addressing, header
-taxonomy, metadata schemas, and protocol coverage — plus a reproducible,
+Schema and wire-contract report generator for the OpenAI Codex CLI. It
+parses the CLI's Rust sources at a pinned upstream commit and emits
+validated, machine-readable schema bundles covering the full product
+surface: HTTP/WebSocket request-response endpoints, endpoint addressing,
+header taxonomy, turn metadata, common settings and feature schemas,
+model matrices, and coverage profiles — produced by a reproducible,
 attested release pipeline.
+
 
 - Active release line: **v18 / package 11.0.0**
 - Reviewed protocol baseline: `openai/codex@6af345407d9c2a568da9d01b6c4b81a9e61495c0`
