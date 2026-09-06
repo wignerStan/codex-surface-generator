@@ -42,6 +42,18 @@ jobs:
             | base64 --decode \
             > "$RUNNER_TEMP/v19-config-surface.patch.xz"
           xz --test "$RUNNER_TEMP/v19-config-surface.patch.xz"
+          # The repository import omitted this source-package README. Stage the
+          # exact v18 preimage so the closed patch can add/update it atomically.
+          if ! git cat-file -e HEAD:toolchain/README.md 2>/dev/null; then
+            cat > toolchain/README.md <<'README_EOF'
+# Codex wire audit
+
+The active release line is **v18 / package 11.0.0**.
+
+See [`README_CODEX_WIRE_AUDIT_V18.md`](README_CODEX_WIRE_AUDIT_V18.md) for release, verification, safety, and reproducibility instructions. Historical v11–v17 documentation is retained for migration and audit lineage.
+README_EOF
+            git add toolchain/README.md
+          fi
           xz --decompress --stdout "$RUNNER_TEMP/v19-config-surface.patch.xz" \
             | git apply --index --whitespace=error
           git rm \
