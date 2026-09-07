@@ -17,17 +17,11 @@ that starts a fresh window without model/server summarization.
 
 ## Important routing distinction
 
-`openai_base_url` is the top-level override for the built-in `openai` model
-provider.  The History/Notes extension clones `config.model_provider`, and its
-backend resolves both `api_provider()` and `api_auth()` from that provider.
-
-`chatgpt_base_url` is a separate ChatGPT-side backend base URL.  It is not the
-source of History/Notes transport in the current public client implementation.
-
-Official `features.context_management.experimental_mode` activation still rejects
-provider credentials such as `env_key`, `experimental_bearer_token`, custom
-provider `auth`, and AWS auth; account eligibility and request transport are modeled
-as separate facts.
+Routing, eligibility, and durable-state semantics for History/Notes are
+defined in the upstream Codex sources (`codex-rs/ext/history-notes/`,
+`codex-rs/codex-api/src/endpoint/`, `features/src/feature_configs.rs`) and are
+not restated here — the generated report and coverage profiles are the
+authoritative machine view.
 
 ## Durable state model
 
