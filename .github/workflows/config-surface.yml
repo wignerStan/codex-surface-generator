@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - "toolchain/**"
+      - "*.md"
       - ".github/workflows/config-surface.yml"
   pull_request:
     paths:
       - "toolchain/**"
+      - "*.md"
       - ".github/workflows/config-surface.yml"
   workflow_dispatch:
   schedule:
@@ -31,6 +33,126 @@ jobs:
           python-version: "3.13"
           cache: pip
           cache-dependency-path: toolchain/ci/constraints.txt
+      - name: Validate architecture documentation links and evidence pins
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.parse import unquote
+          import re
+          import tomllib
+
+          root = Path.cwd()
+          active_docs = [
+              root / "README.md",
+              root / "NOTES.md",
+              root / "ARCHITECTURE_DOCS_REVIEW.md",
+              root / "SESSION_THREAD_TURN_LIFECYCLE_SLIDES.md",
+              root / "FORK_PAGINATION_AND_AGENT_TOPOLOGY_SLIDES.md",
+              root / "DESKTOP_ARCHITECTURE.md",
+              root / "CODE_MODE_TOOL_ARCHITECTURE.md",
+              root / "CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md",
+              root / "PROMPT_ASSEMBLY_AND_CONFIG.md",
+              root / "toolchain" / "CONFIG_SURFACE_ARCHITECTURE.md",
+              root / "toolchain" / "README_CODEX_WIRE_AUDIT_V19.md",
+          ]
+
+          errors: list[str] = []
+          for doc in active_docs:
+              if not doc.is_file():
+                  errors.append(f"missing active document: {doc.relative_to(root)}")
+
+          link_checked_docs = [
+              root / "README.md",
+              root / "NOTES.md",
+              root / "ARCHITECTURE_DOCS_REVIEW.md",
+              root / "SESSION_THREAD_TURN_LIFECYCLE_SLIDES.md",
+              root / "FORK_PAGINATION_AND_AGENT_TOPOLOGY_SLIDES.md",
+              root / "toolchain" / "CONFIG_SURFACE_ARCHITECTURE.md",
+              root / "toolchain" / "README_CODEX_WIRE_AUDIT_V19.md",
+          ]
+          for doc in link_checked_docs:
+              if not doc.is_file():
+                  continue
+              text = doc.read_text(encoding="utf-8")
+              for match in re.finditer(r"\[[^\]]*\]\(([^)]+)\)", text):
+                  raw_target = match.group(1).strip().split(maxsplit=1)[0]
+                  if (
+                      not raw_target
+                      or raw_target.startswith(("#", "http://", "https://", "mailto:"))
+                  ):
+                      continue
+                  target = unquote(raw_target.split("#", 1)[0])
+                  if not target:
+                      continue
+                  resolved = (doc.parent / target).resolve()
+                  try:
+                      resolved.relative_to(root.resolve())
+                  except ValueError:
+                      errors.append(
+                          f"{doc.relative_to(root)} links outside repository: {raw_target}"
+                      )
+                      continue
+                  if not resolved.exists():
+                      errors.append(
+                          f"{doc.relative_to(root)} has missing local link: {raw_target}"
+                      )
+
+          readme = (root / "README.md").read_text(encoding="utf-8")
+          required_readme_text = [
+              "Active source/tooling line: **v19 / package 12.0.0**",
+              "Checked-in published release snapshot: **v18 / package 11.0.0**",
+              "ARCHITECTURE_DOCS_REVIEW.md",
+              "SESSION_THREAD_TURN_LIFECYCLE_SLIDES.md",
+              "FORK_PAGINATION_AND_AGENT_TOPOLOGY_SLIDES.md",
+          ]
+          for needle in required_readme_text:
+              if needle not in readme:
+                  errors.append(f"README is missing required architecture/release marker: {needle}")
+
+          audit = (root / "ARCHITECTURE_DOCS_REVIEW.md").read_text(encoding="utf-8")
+          for commit in [
+              "6af345407d9c2a568da9d01b6c4b81a9e61495c0",
+              "52e12e0cb506e7bb2c9e406fc84d922e274a0e40",
+              "455318c2020d75ae7d66d6ccf19defda97edec34",
+          ]:
+              if commit not in audit:
+                  errors.append(f"architecture review is missing source identity: {commit}")
+
+          topology_pin = "455318c2020d75ae7d66d6ccf19defda97edec34"
+          for name in [
+              "SESSION_THREAD_TURN_LIFECYCLE_SLIDES.md",
+              "FORK_PAGINATION_AND_AGENT_TOPOLOGY_SLIDES.md",
+          ]:
+              if topology_pin not in (root / name).read_text(encoding="utf-8"):
+                  errors.append(f"{name} is missing its reviewed public-source pin")
+
+          existing_snapshot = "52e12e0cb506e7bb2c9e406fc84d922e274a0e40"
+          for name in [
+              "PROMPT_ASSEMBLY_AND_CONFIG.md",
+              "CODE_MODE_TOOL_ARCHITECTURE.md",
+              "CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md",
+          ]:
+              if existing_snapshot not in (root / name).read_text(encoding="utf-8"):
+                  errors.append(f"{name} is missing its existing public-source snapshot")
+
+          project = tomllib.loads(
+              (root / "toolchain" / "pyproject.toml").read_text(encoding="utf-8")
+          )
+          if project["project"]["version"] != "12.0.0":
+              errors.append("toolchain package version is no longer 12.0.0; update docs review")
+
+          release_names = {path.name for path in (root / "release").iterdir()}
+          if "codex_wire_audit-11.0.0-py3-none-any.whl" not in release_names:
+              errors.append("expected checked-in v18 wheel is missing; update release description")
+          if any(name.startswith("codex_wire_audit-12.0.0") for name in release_names):
+              errors.append(
+                  "v19 artifacts are now checked in; update README/review and this assertion"
+              )
+
+          if errors:
+              raise SystemExit("\n".join(f"- {error}" for error in errors))
+          print(f"architecture docs: {len(active_docs)} active documents validated")
+          PY
       - name: Install constrained package and test dependencies
         working-directory: toolchain
         run: python -m pip install --constraint ci/constraints.txt -e '.[test]'
