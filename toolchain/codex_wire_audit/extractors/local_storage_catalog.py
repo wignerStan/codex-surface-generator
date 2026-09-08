@@ -34,27 +34,17 @@ def _artifact(
     }
 
 
-def build_local_storage_contract(
-    *,
-    source_revision: Mapping[str, Any],
+def _build_artifacts(
     constants: Mapping[str, str],
     databases: Mapping[str, str],
     evidence: Mapping[str, Mapping[str, Any]],
-    semantic_complete: bool,
-    missing_database_constants: list[str],
-) -> dict[str, Any]:
+) -> dict[str, dict[str, Any]]:
     sessions = constants["sessions"]
-    archived = constants["archived_sessions"]
-    compressed_suffix = constants["compressed_suffix"]
-    snapshots = constants["snapshots"]
-    locks = constants["locks"]
-    coordination_lock = constants["coordination_lock"]
     dated = {"pattern": "YYYY/MM/DD", "source": "rollout creation local timestamp"}
     uuid_dated = {
         "pattern": "YYYY/MM/DD",
         "source": "timestamp embedded in the thread UUID",
     }
-
     artifacts = {
         "active_rollout": _artifact(
             "codex_home",
@@ -73,7 +63,7 @@ def build_local_storage_contract(
         ),
         "archived_rollout_root": _artifact(
             "codex_home",
-            f"{archived}/{{rollout_filename}}",
+            f"{constants['archived_sessions']}/{{rollout_filename}}",
             "thread_id encoded in rollout_filename",
             "archived rollout",
             "moved by the archive lifecycle",
@@ -82,7 +72,7 @@ def build_local_storage_contract(
         ),
         "shell_snapshot": _artifact(
             "codex_home",
-            f"{snapshots}/{{thread_id}}.{{nonce}}.{{sh|ps1}}",
+            f"{constants['snapshots']}/{{thread_id}}.{{nonce}}.{{sh|ps1}}",
             "thread_id passed as session_id to ShellSnapshot",
             "shell environment script",
             "atomic rename; stale files expire",
@@ -91,7 +81,7 @@ def build_local_storage_contract(
         ),
         "shell_snapshot_temp": _artifact(
             "codex_home",
-            f"{snapshots}/{{thread_id}}.tmp-{{nonce}}",
+            f"{constants['snapshots']}/{{thread_id}}.tmp-{{nonce}}",
             "thread_id",
             "temporary shell snapshot",
             "renamed atomically or removed on failure",
@@ -100,7 +90,7 @@ def build_local_storage_contract(
         ),
         "thread_writer_lock": _artifact(
             "codex_home",
-            f"{locks}/{{thread_id}}.lock",
+            f"{constants['locks']}/{{thread_id}}.lock",
             "thread_id",
             "filesystem advisory lock",
             "created for one active writer and removed on guard drop",
@@ -109,7 +99,7 @@ def build_local_storage_contract(
         ),
         "writer_coordination_lock": _artifact(
             "codex_home",
-            f"{locks}/{coordination_lock}",
+            f"{constants['locks']}/{constants['coordination_lock']}",
             "global local thread store",
             "filesystem advisory lock",
             "persistent coordination file",
@@ -154,8 +144,13 @@ def build_local_storage_contract(
             purposes[database_id],
             evidence["state_sqlite"],
         )
+    return artifacts
 
-    identities = {
+
+def _build_identities(
+    evidence: Mapping[str, Mapping[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    return {
         "session_id": {
             "type": "SessionId",
             "role": "shared by a root thread and its subagents",
@@ -189,8 +184,14 @@ def build_local_storage_contract(
             "evidence": evidence["thread_types"],
         },
     }
+
+
+def _build_filename_grammar(
+    compressed_suffix: str,
+    evidence: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
     timestamp = "YYYY-MM-DDTHH-MM-SS"
-    filename_grammar = {
+    return {
         "timestamp": {
             "pattern": timestamp,
             "source_time": "local time when a new rollout path is precomputed",
@@ -221,7 +222,13 @@ def build_local_storage_contract(
         },
         "evidence": evidence["rollout_file_name"],
     }
-    pointer_model = {
+
+
+def _build_pointer_model(
+    databases: Mapping[str, str],
+    evidence: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    return {
         "database": databases.get("state"),
         "logical_key": "threads.id = thread_id",
         "physical_pointer": "threads.rollout_path",
@@ -237,7 +244,13 @@ def build_local_storage_contract(
         },
         "evidence": evidence["state_threads"],
     }
-    operations = {
+
+
+def _build_operations(
+    sessions: str,
+    evidence: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    return {
         "create": {
             "thread_id": "provided before persistence opens",
             "rollout_id": "defaults to thread_id",
@@ -266,7 +279,10 @@ def build_local_storage_contract(
             "evidence": evidence["thread_revert"],
         },
     }
-    invariant_statements = {
+
+
+def _build_invariants() -> list[dict[str, str]]:
+    statements = {
         "identity.session_thread_rollout_distinct": (
             "session_id, thread_id, and rollout_id are distinct identity domains"
         ),
@@ -290,45 +306,65 @@ def build_local_storage_contract(
             "sqlite_home is configurable and must not be assumed equal to codex_home"
         ),
     }
-    invariants = [
+    return [
         {"id": f"local_storage.{key}", "statement": value}
-        for key, value in invariant_statements.items()
+        for key, value in statements.items()
     ]
+
+
+def _scope() -> dict[str, Any]:
+    return {
+        "name": "Codex local thread/session persistence layout",
+        "codex_home_default_display": "~/.codex",
+        "roots": {
+            "codex_home": "rollouts and adjacent thread artifacts",
+            "sqlite_home": "runtime SQLite databases; independently configurable",
+        },
+        "included": [
+            "active and archived rollout layout",
+            "rollout filename and compression grammar",
+            "SQLite logical-to-physical pointer model",
+            "paginated revert replacement semantics",
+            "thread-keyed snapshots, writer locks, and visualizations",
+            "runtime SQLite filenames",
+        ],
+        "excluded": [
+            "credentials and configuration",
+            "unrelated caches and telemetry",
+            "complete SQLite table schemas",
+        ],
+    }
+
+
+def build_local_storage_contract(
+    *,
+    source_revision: Mapping[str, Any],
+    constants: Mapping[str, str],
+    databases: Mapping[str, str],
+    evidence: Mapping[str, Mapping[str, Any]],
+    semantic_complete: bool,
+    missing_database_constants: list[str],
+) -> dict[str, Any]:
+    artifacts = _build_artifacts(constants, databases, evidence)
+    identities = _build_identities(evidence)
+    invariants = _build_invariants()
     data: dict[str, Any] = {
         "$schema": SCHEMA_ID,
         "source_revision": dict(source_revision),
-        "scope": {
-            "name": "Codex local thread/session persistence layout",
-            "codex_home_default_display": "~/.codex",
-            "roots": {
-                "codex_home": "rollouts and adjacent thread artifacts",
-                "sqlite_home": "runtime SQLite databases; independently configurable",
-            },
-            "included": [
-                "active and archived rollout layout",
-                "rollout filename and compression grammar",
-                "SQLite logical-to-physical pointer model",
-                "paginated revert replacement semantics",
-                "thread-keyed snapshots, writer locks, and visualizations",
-                "runtime SQLite filenames",
-            ],
-            "excluded": [
-                "credentials and configuration",
-                "unrelated caches and telemetry",
-                "complete SQLite table schemas",
-            ],
-        },
+        "scope": _scope(),
         "identities": identities,
-        "filename_grammar": filename_grammar,
+        "filename_grammar": _build_filename_grammar(
+            constants["compressed_suffix"], evidence
+        ),
         "artifacts": artifacts,
-        "pointer_model": pointer_model,
-        "operations": operations,
+        "pointer_model": _build_pointer_model(databases, evidence),
+        "operations": _build_operations(constants["sessions"], evidence),
         "invariants": invariants,
         "evidence": {key: dict(value) for key, value in evidence.items()},
         "coverage": {
             "source_count": len(evidence),
             "artifact_count": len(artifacts),
-            "sqlite_database_count": len(purposes.keys() & databases.keys()),
+            "sqlite_database_count": len(databases),
             "identity_count": len(identities),
             "invariant_count": len(invariants),
             "missing_sources": [],
