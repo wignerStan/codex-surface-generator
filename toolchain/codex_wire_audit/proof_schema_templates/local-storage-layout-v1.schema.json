@@ -23,6 +23,9 @@
     "$schema": {
       "const": "https://schemas.codex-wire-audit.invalid/local-storage-layout-v1.schema.json"
     },
+    "authoritative": {"const": true},
+    "extractor_id": {"const": "extractor.local_storage"},
+    "schema_version": {"const": "1.0.0"},
     "source_revision": {"type": "object"},
     "scope": {
       "type": "object",
