@@ -15,6 +15,7 @@ from .diagnostics import Diagnostic, DiagnosticCollector
 from .evolution import (
     apply_turn_metadata_overlay,
     apply_config_surface_overlay,
+    apply_local_storage_overlay,
     build_evolution_contract,
     finalize_evolution_contract,
 )
@@ -398,6 +399,9 @@ def generate_report(
     config_result = extractor_results.get("extractor.config_effects")
     if config_result:
         apply_config_surface_overlay(report, config_result)
+    local_storage_result = extractor_results.get("extractor.local_storage")
+    if local_storage_result:
+        apply_local_storage_overlay(report, local_storage_result)
 
     resolver = SchemaIdentityResolver.from_report(report)
     contract_module = legacy.contract
@@ -464,6 +468,12 @@ def generate_report(
             "extractor.config_effects": {
                 "backend": "generated_json_schema_plus_feature_registry_surface_graph",
                 "machine_evaluable": config_result.semantic_complete if config_result else False,
+            },
+            "extractor.local_storage": {
+                "backend": "source_linked_local_storage_layout_classifier",
+                "machine_evaluable": (
+                    local_storage_result.semantic_complete if local_storage_result else False
+                ),
             },
         }
         parser["legacy_fallback_boundary"] = "all non-migrated v10 sections"

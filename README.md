@@ -4,7 +4,8 @@ Schema and wire-contract generator for the OpenAI Codex CLI. It parses Codex
 Rust sources at a pinned upstream revision and emits validated,
 machine-readable contracts for HTTP/WebSocket traffic, endpoint addressing,
 headers, turn metadata, tools, authentication, context management,
-configuration shape, and the relationships between those surfaces.
+configuration shape, local thread storage, rollout identity/layout, and the
+relationships between those surfaces.
 
 - Active source/tooling line: **v19 / package 12.0.0**
 - Reviewed generator baseline: `openai/codex@6af345407d9c2a568da9d01b6c4b81a9e61495c0`
@@ -16,6 +17,7 @@ configuration shape, and the relationships between those surfaces.
   - [`toolchain/CONFIG_SURFACE_ARCHITECTURE.md`](toolchain/CONFIG_SURFACE_ARCHITECTURE.md) — how generated config shape, feature identity, schema-projection policy, and runtime effects form one graph
   - [`SESSION_THREAD_TURN_LIFECYCLE_SLIDES.md`](SESSION_THREAD_TURN_LIFECYCLE_SLIDES.md) — slide-format model of session-tree identity, live threads, turns, items, settings, and persistence
   - [`FORK_PAGINATION_AND_AGENT_TOPOLOGY_SLIDES.md`](FORK_PAGINATION_AND_AGENT_TOPOLOGY_SLIDES.md) — slide-format model of fork lineage, pagination, root/subagent control, and residency
+  - [`LOCAL_STORAGE_AND_ROLLOUT_LAYOUT.md`](LOCAL_STORAGE_AND_ROLLOUT_LAYOUT.md) — concrete `CODEX_HOME`/SQLite layout, `session_id`/`thread_id`/`rollout_id` identity, lifecycle cutovers, and sidecars
   - [`DESKTOP_ARCHITECTURE.md`](DESKTOP_ARCHITECTURE.md) — Desktop process topology and bridge ownership
   - [`CODE_MODE_TOOL_ARCHITECTURE.md`](CODE_MODE_TOOL_ARCHITECTURE.md) — tool exposure and Code Mode ownership
   - [`CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md`](CHATGPT_HOSTED_SERVICES_ARCHITECTURE.md) — ChatGPT-hosted service planes and their boundaries
@@ -67,15 +69,18 @@ python toolchain/tools/check_config_surface.py \
 ## Machine-readable outputs
 
 - `report.json` contains extractor facts, diagnostics, coverage, and source provenance.
+- `report.local_storage_schema` is the authoritative local storage/layout view;
+  the same data remains available at
+  `report.evolution_contract.extractors["extractor.local_storage"].data`.
 - `config-schema.json` is the normalized, path-addressable configuration catalog.
 - `config-surface-graph.json` connects config paths and feature policy to previously modeled protocol surfaces.
 - upstream app-server protocol JSON schemas remain the field-level authority for
   session, thread, turn, item, fork, and pagination RPC shapes.
 
 Human documentation may lag upstream changes. A successful pinned generation
-must not: CI validates the package, generated schema, graph references, and the
-reviewed Codex revision, while a scheduled current-main run remains a separate
-drift canary.
+must not: CI validates the package, generated schema, graph references, local
+storage semantics, and the reviewed Codex revision, while a scheduled
+current-main run remains a separate drift canary.
 
 ## Published artifacts versus source
 

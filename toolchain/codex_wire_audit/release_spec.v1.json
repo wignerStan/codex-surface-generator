@@ -138,6 +138,30 @@
         "coverage_profiles.v3.json"
       ],
       "status": "active_package"
+    },
+    {
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "id": "local_storage",
+      "profile_assertions": {
+        "codex_wire_full": {
+          "required_extractors_contains": [
+            "extractor.local_storage"
+          ]
+        },
+        "local_storage_only": {
+          "required_extractors_contains": [
+            "extractor.local_storage"
+          ]
+        }
+      },
+      "required_resources": [
+        "extractors/local_storage.py",
+        "proof_schema_templates/local-storage-semantics-v1.schema.json",
+        "coverage_profiles.v3.json"
+      ],
+      "status": "active_package"
     }
   ],
   "format": "codex-wire-audit-release-spec/v1",

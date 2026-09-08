@@ -1,6 +1,7 @@
 # Architecture documentation review
 
 Review date: **2026-09-06**
+Local-storage schema addendum reviewed: **2026-09-07**
 
 This file records what was checked, which source identity supports each class of
 claim, and which boundaries remain outside public-source proof. It is a review
@@ -11,6 +12,9 @@ ledger, not a replacement for the machine-readable contracts.
 ```text
 Repository head before this review
   wignerStan/codex-surface-generator@eac015ed0036b626444f839584b0744d9fb58fc8
+
+Local-storage addendum base
+  wignerStan/codex-surface-generator@7cb31940dba93466414d4736ed7416f29c4a63d8
 
 Verified implementation ancestor
   5c18e40ebe475fee547f8bc422fe9b56e3caa039
@@ -40,6 +44,9 @@ That comparison supports retaining the existing `52e12e...` snapshot labels.
 It does not justify silently relabeling those notes as generated from
 `455318c...`.
 
+The local-storage addendum is independently pinned to the generator integration
+baseline. It does not inherit the later architecture-snapshot label.
+
 ## Evidence classes
 
 | Class | What it can support | What it cannot support by itself |
@@ -62,6 +69,7 @@ It does not justify silently relabeling those notes as generated from
 | [`DESKTOP_ARCHITECTURE.md`](DESKTOP_ARCHITECTURE.md) | Mixed public source, shipped-bundle evidence, and direct observation | Evidence classes are explicitly separated. Private Desktop host internals are not promoted to public-source facts. |
 | [`SESSION_THREAD_TURN_LIFECYCLE_SLIDES.md`](SESSION_THREAD_TURN_LIFECYCLE_SLIDES.md) | Public source at `455318c...` | Conceptual lifecycle model; exact RPC fields belong to generated app-server schemas. |
 | [`FORK_PAGINATION_AND_AGENT_TOPOLOGY_SLIDES.md`](FORK_PAGINATION_AND_AGENT_TOPOLOGY_SLIDES.md) | Public source at `455318c...` | Conceptual topology/persistence model; implementation details are snapshot-bound. |
+| [`LOCAL_STORAGE_AND_ROLLOUT_LAYOUT.md`](LOCAL_STORAGE_AND_ROLLOUT_LAYOUT.md) | Generator baseline plus `extractor.local_storage` | Concrete public-source local paths, identities, databases, lifecycle cutovers, and sidecars. Desktop-private and remote stores remain out of scope. |
 
 ## Findings corrected in this review
 
@@ -78,6 +86,14 @@ In current public core source, a `Session` is the loaded runtime for one
 concrete thread. Its `session_id` is the identity shared by the root thread and
 its descendant agent threads. A turn is one execution interval inside one
 thread. The new lifecycle slides keep those identities separate.
+
+### A logical thread and a physical rollout revision are different identities
+
+An ordinary rollout uses one UUID for both `thread_id` and `rollout_id`. A
+replacement rollout keeps the stable `thread_id` before an underscore and adds
+a new `rollout_id` after it. Revert preserves the logical thread and session,
+then compare-and-swaps the SQLite `rollout_path`; it does not create a second
+thread row keyed by the replacement rollout ID.
 
 ### Parentage and history lineage are different graphs
 
@@ -97,8 +113,9 @@ can deliberately exclude turns and return bootstrap/backward cursors.
 
 The review checked repository commit ancestry, active documentation links,
 source pins, the published release directory, the generated package version,
-and the public-source anchors behind the new lifecycle/topology notes. It also
-compared the existing architecture snapshot with current upstream `main`.
+and the public-source anchors behind the lifecycle, topology, and local-storage
+notes. It also compared the existing architecture snapshot with current
+upstream `main`.
 
 It does **not** claim that prose can never drift. The maintenance rule remains:
 
@@ -108,7 +125,7 @@ machine-readable artifacts define exact current fields for their source pin
 CI proves reproducibility and detects selected classes of drift
 ```
 
-## Public-source anchors for the new slide notes
+## Public-source anchors for the lifecycle and topology notes
 
 ```text
 codex-rs/protocol/src/session_id.rs
@@ -122,3 +139,7 @@ codex-rs/app-server-protocol/src/protocol/v2/thread_data.rs
 codex-rs/app-server-protocol/src/protocol/v2/turn.rs
 codex-rs/app-server/src/request_processors/thread_processor.rs
 ```
+
+The local-storage note carries its complete source-anchor list and exact pinned
+commit in the document itself; the generated extractor records the selected
+path, SHA-256, and Git blob identity for every source it consumes.

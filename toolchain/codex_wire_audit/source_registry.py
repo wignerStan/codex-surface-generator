@@ -206,6 +206,9 @@ def from_legacy_maps(
             }:
                 roles.append("config_surface_support")
                 extractors = tuple(sorted(set((*extractors, "extractor.config_effects"))))
+            if group == SourceGroup.EXTRA and key == "config_toml":
+                roles.append("local_storage_configuration")
+                extractors = tuple(sorted(set((*extractors, "extractor.local_storage"))))
             specs.append(
                 SourceSpec(
                     id=_spec_id(group, key),
@@ -228,6 +231,27 @@ def from_legacy_maps(
         ("source_spec.extra.compact_token_budget", "compact_token_budget", "codex-rs/core/src/compact_token_budget.rs", ("skips model/server summarization", "start_new_context_window")),
         ("source_spec.extra.context_management_tests", "context_management_tests", "codex-rs/core/tests/suite/token_budget.rs", ("experimental_context_requires", "supports_experimental_context")),
         ("source_spec.extra.history_notes_tests", "history_notes_tests", "codex-rs/ext/history-notes/tests/history_notes_extension.rs", ("Recent notes (up to 5, most-recent first)", "thread_hint")),
+    )
+    local_storage_specs = (
+        ("source_spec.extra.local_storage_home_dir", "local_storage_home_dir", "codex-rs/utils/home-dir/src/lib.rs", ("find_codex_home", "CODEX_HOME", ".codex")),
+        ("source_spec.extra.local_storage_thread_types", "local_storage_thread_types", "codex-rs/thread-store/src/types.rs", ("CreateThreadParams", "session_id", "thread_id", "RevertThreadParams")),
+        ("source_spec.extra.local_storage_rollout_lib", "local_storage_rollout_lib", "codex-rs/rollout/src/lib.rs", ("SESSIONS_SUBDIR", "ARCHIVED_SESSIONS_SUBDIR")),
+        ("source_spec.extra.local_storage_rollout_filename", "local_storage_rollout_filename", "codex-rs/rollout/src/rollout_file_name.rs", ("RolloutFileName", "rollout_id", "split_once('_')")),
+        ("source_spec.extra.local_storage_rollout_recorder", "local_storage_rollout_recorder", "codex-rs/rollout/src/recorder.rs", ("RolloutRecorderParams", "with_session_id", "with_rollout_id")),
+        ("source_spec.extra.local_storage_rollout_compression", "local_storage_rollout_compression", "codex-rs/rollout/src/compression.rs", ("COMPRESSED_SUFFIX", "open_rollout_line_reader", "plain_rollout_path")),
+        ("source_spec.extra.local_storage_session_index", "local_storage_session_index", "codex-rs/rollout/src/session_index.rs", ("SESSION_INDEX_FILE", "SessionIndexEntry", "append_thread_name")),
+        ("source_spec.extra.local_storage_revert_thread", "local_storage_revert_thread", "codex-rs/thread-store/src/local/revert_thread.rs", ("replace_rollout_path_if_current", "with_rollout_id", "history_base")),
+        ("source_spec.extra.local_storage_paginated_fork", "local_storage_paginated_fork", "codex-rs/thread-store/src/local/paginated_fork.rs", ("HistoryPosition", "end_ordinal_exclusive", "end_byte_offset")),
+        ("source_spec.extra.local_storage_archive_thread", "local_storage_archive_thread", "codex-rs/thread-store/src/local/archive_thread.rs", ("ARCHIVED_SESSIONS_SUBDIR", "mark_archived", "rename")),
+        ("source_spec.extra.local_storage_unarchive_thread", "local_storage_unarchive_thread", "codex-rs/thread-store/src/local/unarchive_thread.rs", ("rollout_date_parts", "mark_unarchived", "SESSIONS_SUBDIR")),
+        ("source_spec.extra.local_storage_delete_thread", "local_storage_delete_thread", "codex-rs/thread-store/src/local/delete_thread.rs", ("RolloutReferenceIndex", "remove_thread_name_entries", "delete_rollout_file")),
+        ("source_spec.extra.local_storage_writer_lock", "local_storage_writer_lock", "codex-rs/thread-store/src/local/writer_lock.rs", ("WRITER_LOCK_DIR", "COORDINATION_LOCK_FILE", "try_lock")),
+        ("source_spec.extra.local_storage_state_sqlite", "local_storage_state_sqlite", "codex-rs/state/src/sqlite.rs", ("RUNTIME_DBS", "STATE_DB_FILENAME", "THREAD_HISTORY_DB_FILENAME")),
+        ("source_spec.extra.local_storage_state_threads", "local_storage_state_threads", "codex-rs/state/src/runtime/threads.rs", ("replace_rollout_path_if_current", "UPDATE threads SET rollout_path")),
+        ("source_spec.extra.local_storage_threads_migration", "local_storage_threads_migration", "codex-rs/state/migrations/0001_threads.sql", ("CREATE TABLE threads", "id TEXT PRIMARY KEY", "rollout_path TEXT NOT NULL")),
+        ("source_spec.extra.local_storage_history_materialization", "local_storage_history_materialization", "codex-rs/thread-store/src/local/thread_history_materialization.rs", ("materialize_to_sqlite", "next_byte_offset", "next_ordinal")),
+        ("source_spec.extra.local_storage_shell_snapshot", "local_storage_shell_snapshot", "codex-rs/core/src/shell_snapshot.rs", ("SNAPSHOT_DIR", "SNAPSHOT_RETENTION", "session_id")),
+        ("source_spec.extra.local_storage_visualization", "local_storage_visualization", "codex-rs/tui/src/inline_visualization.rs", ("visualizations", "visualization-viewers", "thread_id")),
     )
     specs.append(SourceSpec(
         id="source_spec.extra.generated_config_schema",
@@ -262,5 +286,19 @@ def from_legacy_maps(
             roles=("context_management",),
             expected_symbols=tuple(symbols),
             extractor_ids=("extractor.context_management",),
+        ))
+    existing_ids = {spec.id for spec in specs}
+    for spec_id, legacy_key, path, symbols in local_storage_specs:
+        if spec_id in existing_ids:
+            continue
+        specs.append(SourceSpec(
+            id=spec_id,
+            legacy_key=legacy_key,
+            group=SourceGroup.EXTRA,
+            path_candidates=(path,),
+            required=False,
+            roles=("local_storage",),
+            expected_symbols=tuple(symbols),
+            extractor_ids=("extractor.local_storage",),
         ))
     return SourceRegistry(specs)

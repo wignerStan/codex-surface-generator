@@ -217,6 +217,22 @@ def apply_config_surface_overlay(
         )
 
 
+def apply_local_storage_overlay(
+    report: MutableMapping[str, Any],
+    local_storage_result: ExtractorResult,
+) -> None:
+    """Expose canonical local-storage semantics at the report root."""
+    data = local_storage_result.data
+    if not data:
+        return
+    report["local_storage_schema"] = {
+        "authoritative": True,
+        "extractor_id": local_storage_result.extractor_id,
+        "schema_version": local_storage_result.schema_version,
+        **copy.deepcopy(data),
+    }
+
+
 def _dimension_state(condition: bool, *, false_state: str = "partial") -> str:
     return "complete" if condition else false_state
 
