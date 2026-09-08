@@ -206,6 +206,16 @@ def test_local_storage_is_registered_and_linked_from_full_schema() -> None:
     assert "extractor.local_storage" in results
     assert "extractor.local_storage" in contract["extractors"]
     assert report["local_storage_layout"]["authoritative"] is True
+    schema_path = (
+        Path(__file__).parents[1]
+        / "codex_wire_audit"
+        / "proof_schema_templates"
+        / "local-storage-layout-v1.schema.json"
+    )
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    assert list(
+        Draft202012Validator(schema).iter_errors(report["local_storage_layout"])
+    ) == []
     assert report["full_wire_schema"]["sections"]["local_storage_layout"] == {
         "$ref": "#/local_storage_layout",
         "scope": "local thread/session persistence and adjacent artifacts",
