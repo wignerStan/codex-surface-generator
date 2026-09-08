@@ -1,0 +1,265 @@
+{
+  "$id": "https://schemas.codex-wire-audit.invalid/local-storage-layout-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex local thread/session storage layout",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "source_revision",
+    "scope",
+    "identities",
+    "filename_grammar",
+    "artifacts",
+    "pointer_model",
+    "operations",
+    "invariants",
+    "evidence",
+    "coverage",
+    "semantic_complete",
+    "semantic_digest"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "https://schemas.codex-wire-audit.invalid/local-storage-layout-v1.schema.json"
+    },
+    "source_revision": {"type": "object"},
+    "scope": {
+      "type": "object",
+      "required": ["name", "codex_home_default_display", "roots", "included", "excluded"],
+      "properties": {
+        "name": {"const": "Codex local thread/session persistence layout"},
+        "codex_home_default_display": {"const": "~/.codex"},
+        "roots": {
+          "type": "object",
+          "required": ["codex_home", "sqlite_home"],
+          "properties": {
+            "codex_home": {"type": "string"},
+            "sqlite_home": {"type": "string"}
+          }
+        },
+        "included": {"type": "array", "items": {"type": "string"}, "minItems": 6},
+        "excluded": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+      }
+    },
+    "identities": {
+      "type": "object",
+      "required": ["session_id", "thread_id", "rollout_id", "forked_from_id"],
+      "properties": {
+        "session_id": {"$ref": "#/$defs/identity"},
+        "thread_id": {"$ref": "#/$defs/identity"},
+        "rollout_id": {"$ref": "#/$defs/identity"},
+        "forked_from_id": {"$ref": "#/$defs/identity"}
+      }
+    },
+    "filename_grammar": {
+      "type": "object",
+      "required": ["timestamp", "ordinary_rollout", "replacement_rollout", "compressed_representation", "evidence"],
+      "properties": {
+        "timestamp": {
+          "type": "object",
+          "required": ["pattern", "source_time", "parser_interpretation"],
+          "properties": {
+            "pattern": {"const": "YYYY-MM-DDTHH-MM-SS"},
+            "source_time": {"type": "string"},
+            "parser_interpretation": {"type": "string"}
+          }
+        },
+        "ordinary_rollout": {
+          "type": "object",
+          "required": ["pattern", "identity_equation"],
+          "properties": {
+            "pattern": {"const": "rollout-{YYYY-MM-DDTHH-MM-SS}-{thread_id}.jsonl"},
+            "identity_equation": {"const": "rollout_id == thread_id"}
+          }
+        },
+        "replacement_rollout": {
+          "type": "object",
+          "required": ["pattern", "identity_equation", "underscore_semantics"],
+          "properties": {
+            "pattern": {"const": "rollout-{YYYY-MM-DDTHH-MM-SS}-{thread_id}_{rollout_id}.jsonl"},
+            "identity_equation": {"const": "rollout_id != thread_id"},
+            "underscore_semantics": {"type": "string", "pattern": "not fork lineage"}
+          }
+        },
+        "compressed_representation": {
+          "type": "object",
+          "required": ["suffix", "ordinary_pattern", "replacement_pattern", "reader_semantics"],
+          "properties": {
+            "suffix": {"const": ".zst"},
+            "ordinary_pattern": {"type": "string", "pattern": "\\.jsonl\\.zst$"},
+            "replacement_pattern": {"type": "string", "pattern": "\\.jsonl\\.zst$"},
+            "reader_semantics": {"type": "string"}
+          }
+        },
+        "evidence": {"type": "object"}
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "minProperties": 14,
+      "required": [
+        "active_rollout",
+        "archived_rollout_root",
+        "shell_snapshot",
+        "shell_snapshot_temp",
+        "thread_writer_lock",
+        "writer_coordination_lock",
+        "visualization_thread_dir",
+        "visualization_viewer_cache",
+        "sqlite_state",
+        "sqlite_thread_history",
+        "sqlite_logs",
+        "sqlite_goals",
+        "sqlite_memories",
+        "sqlite_queue"
+      ],
+      "additionalProperties": {"$ref": "#/$defs/artifact"}
+    },
+    "pointer_model": {
+      "type": "object",
+      "required": ["database", "logical_key", "physical_pointer", "lookup", "replacement_cutover", "evidence"],
+      "properties": {
+        "database": {"type": "string", "pattern": "^state_[0-9]+\\.sqlite$"},
+        "logical_key": {"const": "threads.id = thread_id"},
+        "physical_pointer": {"const": "threads.rollout_path"},
+        "lookup": {"type": "string"},
+        "replacement_cutover": {
+          "type": "object",
+          "required": ["operation", "predicate", "update", "logical_metadata"],
+          "properties": {
+            "operation": {"const": "compare-and-swap"},
+            "predicate": {"type": "string"},
+            "update": {"const": "threads.rollout_path = replacement_path"},
+            "logical_metadata": {"type": "string"}
+          }
+        },
+        "evidence": {"type": "object"}
+      }
+    },
+    "operations": {
+      "type": "object",
+      "required": ["create", "resume", "revert_paginated_thread"],
+      "properties": {
+        "create": {"type": "object"},
+        "resume": {"type": "object"},
+        "revert_paginated_thread": {
+          "type": "object",
+          "required": [
+            "thread_id",
+            "session_id",
+            "rollout_id",
+            "forked_from_id",
+            "old_rollouts",
+            "replacement",
+            "write_order",
+            "compare_and_swap_failure",
+            "evidence"
+          ],
+          "properties": {
+            "thread_id": {"const": "preserved"},
+            "session_id": {"const": "preserved verbatim"},
+            "rollout_id": {"const": "new distinct identity"},
+            "forked_from_id": {"const": "preserved"},
+            "old_rollouts": {"const": "retained intact"},
+            "replacement": {"type": "string"},
+            "write_order": {"type": "array", "items": {"type": "string"}, "minItems": 3, "maxItems": 3},
+            "compare_and_swap_failure": {"type": "string"},
+            "evidence": {"type": "object"}
+          }
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["id", "statement"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^local_storage\\."},
+          "statement": {"type": "string"}
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "minProperties": 12,
+      "additionalProperties": {"$ref": "#/$defs/evidence"}
+    },
+    "coverage": {
+      "type": "object",
+      "required": [
+        "source_count",
+        "artifact_count",
+        "sqlite_database_count",
+        "identity_count",
+        "invariant_count",
+        "missing_sources",
+        "missing_database_constants",
+        "scope_complete"
+      ],
+      "properties": {
+        "source_count": {"type": "integer", "minimum": 12},
+        "artifact_count": {"type": "integer", "minimum": 14},
+        "sqlite_database_count": {"const": 6},
+        "identity_count": {"const": 4},
+        "invariant_count": {"type": "integer", "minimum": 8},
+        "missing_sources": {"type": "array", "items": {"type": "string"}},
+        "missing_database_constants": {"type": "array", "items": {"type": "string"}},
+        "scope_complete": {"type": "boolean"}
+      }
+    },
+    "semantic_complete": {"type": "boolean"},
+    "semantic_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "identity": {
+      "type": "object",
+      "required": ["type", "role", "filename_component", "revert_behavior", "evidence"],
+      "properties": {
+        "type": {"type": "string"},
+        "role": {"type": "string"},
+        "filename_component": {},
+        "revert_behavior": {"type": "string"},
+        "ordinary_behavior": {"type": "string"},
+        "adjacent_artifact_key": {"type": "boolean"},
+        "evidence": {"type": "object"}
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["root", "relative_pattern", "identity_key", "kind", "mutability", "purpose", "evidence"],
+      "properties": {
+        "root": {"enum": ["codex_home", "sqlite_home"]},
+        "relative_pattern": {"type": "string"},
+        "identity_key": {"type": "string"},
+        "kind": {"type": "string"},
+        "mutability": {"type": "string"},
+        "purpose": {"type": "string"},
+        "date_partition": {
+          "type": "object",
+          "required": ["pattern", "source"],
+          "properties": {
+            "pattern": {"const": "YYYY/MM/DD"},
+            "source": {"type": "string"}
+          }
+        },
+        "notes": {"type": "array", "items": {"type": "string"}},
+        "evidence": {"$ref": "#/$defs/evidence"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["available", "symbols"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "source_spec_id": {"type": "string"},
+        "source_path": {"type": "string"},
+        "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "symbols": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}
