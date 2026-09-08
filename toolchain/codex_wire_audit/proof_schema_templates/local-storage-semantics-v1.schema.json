@@ -1,0 +1,512 @@
+{
+  "$id": "https://schemas.codex-wire-audit.invalid/v19/local-storage-semantics-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex local thread-storage and rollout-layout semantics",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "source_revision",
+    "scope",
+    "roots",
+    "identity_domains",
+    "rollouts",
+    "databases",
+    "transitions",
+    "sidecars",
+    "invariants",
+    "coverage",
+    "evidence",
+    "semantic_complete",
+    "semantic_digest"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "https://schemas.codex-wire-audit.invalid/v19/local-storage-semantics-v1.schema.json"
+    },
+    "source_revision": {
+      "type": "object",
+      "required": [
+        "source_mode",
+        "repository",
+        "requested_ref",
+        "resolved_commit_sha",
+        "source_set_sha256",
+        "source_revision_id",
+        "dirty",
+        "commit_date",
+        "commit_message"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "required": ["id", "authority", "includes", "excludes"],
+      "properties": {
+        "id": {"const": "codex_thread_rollout_local_storage"},
+        "authority": {"const": "pinned_public_codex_source"},
+        "includes": {
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 5,
+          "uniqueItems": true
+        },
+        "excludes": {
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 3,
+          "uniqueItems": true
+        }
+      }
+    },
+    "roots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["codex_home", "sqlite_home"],
+      "properties": {
+        "codex_home": {
+          "type": "object",
+          "required": [
+            "symbol",
+            "environment_variable",
+            "default",
+            "resolution",
+            "contains"
+          ],
+          "properties": {
+            "symbol": {"const": "CODEX_HOME"},
+            "environment_variable": {"const": "CODEX_HOME"},
+            "default": {"const": "~/.codex"},
+            "resolution": {"type": "string"},
+            "contains": {
+              "type": "array",
+              "items": {"type": "string"},
+              "contains": {"const": "visualizations"},
+              "minItems": 7,
+              "uniqueItems": true
+            }
+          }
+        },
+        "sqlite_home": {
+          "type": "object",
+          "required": [
+            "symbol",
+            "config_key",
+            "environment_variable",
+            "fallback",
+            "contains",
+            "may_equal_codex_home"
+          ],
+          "properties": {
+            "symbol": {"const": "SQLITE_HOME"},
+            "config_key": {"const": "sqlite_home"},
+            "environment_variable": {"const": "CODEX_SQLITE_HOME"},
+            "fallback": {"const": "$CODEX_HOME"},
+            "contains": {
+              "type": "array",
+              "items": {"type": "string", "pattern": "\\.sqlite$"},
+              "minItems": 6,
+              "maxItems": 6,
+              "uniqueItems": true
+            },
+            "may_equal_codex_home": {"const": true}
+          }
+        }
+      }
+    },
+    "identity_domains": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_id", "thread_id", "rollout_id"],
+      "properties": {
+        "session_id": {
+          "type": "object",
+          "required": [
+            "rust_type",
+            "meaning",
+            "rollout_metadata_field",
+            "filename_component",
+            "sqlite_threads_primary_key"
+          ],
+          "properties": {
+            "rust_type": {"const": "SessionId"},
+            "meaning": {"type": "string"},
+            "rollout_metadata_field": {"const": "session_meta.payload.session_id"},
+            "filename_component": {"const": false},
+            "sqlite_threads_primary_key": {"const": false}
+          }
+        },
+        "thread_id": {
+          "type": "object",
+          "required": [
+            "rust_type",
+            "meaning",
+            "rollout_metadata_field",
+            "filename_component",
+            "sqlite_threads_primary_key",
+            "sidecar_key"
+          ],
+          "properties": {
+            "rust_type": {"const": "ThreadId"},
+            "meaning": {"type": "string"},
+            "rollout_metadata_field": {"const": "session_meta.payload.id"},
+            "filename_component": {"const": "first UUID"},
+            "sqlite_threads_primary_key": {"const": "threads.id"},
+            "sidecar_key": {"const": true}
+          }
+        },
+        "rollout_id": {
+          "type": "object",
+          "required": [
+            "rust_type",
+            "meaning",
+            "rollout_metadata_field",
+            "filename_component",
+            "ordinary_equals_thread_id",
+            "sqlite_threads_primary_key"
+          ],
+          "properties": {
+            "rust_type": {"const": "RolloutId"},
+            "meaning": {"type": "string"},
+            "rollout_metadata_field": {"type": "null"},
+            "filename_component": {"type": "string"},
+            "ordinary_equals_thread_id": {"const": true},
+            "sqlite_threads_primary_key": {"const": false}
+          }
+        }
+      }
+    },
+    "rollouts": {
+      "type": "object",
+      "required": [
+        "canonical_role",
+        "active",
+        "archived",
+        "filename_grammar",
+        "physical_representations",
+        "session_meta",
+        "name_index",
+        "paginated_lineage"
+      ],
+      "properties": {
+        "canonical_role": {"const": "durable replay history"},
+        "active": {
+          "type": "object",
+          "required": ["root", "path_template", "partition_clock"],
+          "properties": {
+            "root": {"pattern": "^\\$CODEX_HOME/"},
+            "path_template": {
+              "type": "string",
+              "pattern": "^\\$CODEX_HOME/.+/YYYY/MM/DD/<rollout_filename>$"
+            },
+            "partition_clock": {"const": "local time at rollout creation"}
+          }
+        },
+        "archived": {
+          "type": "object",
+          "required": ["root", "path_template", "partition", "preserves_basename"],
+          "properties": {
+            "root": {"pattern": "^\\$CODEX_HOME/"},
+            "path_template": {"type": "string"},
+            "partition": {"const": "flat"},
+            "preserves_basename": {"const": true}
+          }
+        },
+        "filename_grammar": {
+          "type": "object",
+          "required": [
+            "ordinary",
+            "replacement",
+            "parse_rule",
+            "ordinary_identity_relation",
+            "replacement_identity_relation",
+            "underscore_meaning"
+          ],
+          "properties": {
+            "ordinary": {
+              "const": "rollout-<YYYY-MM-DDTHH-MM-SS>-<thread_id>.jsonl[.zst]"
+            },
+            "replacement": {
+              "const": "rollout-<YYYY-MM-DDTHH-MM-SS>-<thread_id>_<rollout_id>.jsonl[.zst]"
+            },
+            "parse_rule": {"type": "string"},
+            "ordinary_identity_relation": {"const": "thread_id == rollout_id"},
+            "replacement_identity_relation": {"const": "thread_id != rollout_id"},
+            "underscore_meaning": {"const": "distinct rollout revision, not a fork edge"}
+          }
+        },
+        "physical_representations": {
+          "type": "object",
+          "required": [
+            "plain",
+            "compressed",
+            "canonical_identity_name",
+            "readers_are_representation_transparent"
+          ],
+          "properties": {
+            "plain": {"const": ".jsonl"},
+            "compressed": {"const": ".jsonl.zst"},
+            "canonical_identity_name": {"const": "plain .jsonl filename"},
+            "readers_are_representation_transparent": {"const": true}
+          }
+        },
+        "session_meta": {
+          "type": "object",
+          "required": [
+            "record_position",
+            "thread_id_field",
+            "session_id_field",
+            "history_base_field",
+            "forked_from_id_field",
+            "parent_thread_id_field"
+          ],
+          "properties": {
+            "record_position": {"const": "first rollout record"},
+            "thread_id_field": {"const": "payload.id"},
+            "session_id_field": {"const": "payload.session_id"},
+            "history_base_field": {"const": "payload.history_base"},
+            "forked_from_id_field": {"const": "payload.forked_from_id"},
+            "parent_thread_id_field": {"const": "payload.parent_thread_id"}
+          }
+        },
+        "name_index": {"type": "object"},
+        "paginated_lineage": {"type": "object"}
+      }
+    },
+    "databases": {
+      "type": "object",
+      "required": ["root", "files", "connection_policy", "state_thread_pointer", "authority_model"],
+      "properties": {
+        "root": {"const": "$SQLITE_HOME"},
+        "files": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "constant", "filename", "path_template", "purpose"],
+            "properties": {
+              "id": {
+                "enum": ["state", "logs", "goals", "memories", "queue", "thread_history"]
+              },
+              "constant": {"type": "string", "pattern": "^[A-Z_]+_DB_FILENAME$"},
+              "filename": {"type": "string", "pattern": "^[a-z_]+_[0-9]+\\.sqlite$"},
+              "path_template": {"type": "string", "pattern": "^\\$SQLITE_HOME/.+\\.sqlite$"},
+              "purpose": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "connection_policy": {
+          "type": "object",
+          "required": [
+            "journal_mode",
+            "synchronous",
+            "auto_vacuum",
+            "busy_timeout_seconds",
+            "max_write_connections"
+          ],
+          "properties": {
+            "journal_mode": {"const": "WAL"},
+            "synchronous": {"const": "NORMAL"},
+            "auto_vacuum": {"const": "INCREMENTAL"},
+            "busy_timeout_seconds": {"type": "integer", "minimum": 0},
+            "max_write_connections": {"type": "integer", "minimum": 1}
+          }
+        },
+        "state_thread_pointer": {
+          "type": "object",
+          "required": [
+            "database_id",
+            "table",
+            "logical_key_column",
+            "logical_key_domain",
+            "current_rollout_path_column",
+            "session_id_column_present_in_initial_table",
+            "session_id_authority",
+            "rollout_id_row_created_for_replacement",
+            "compare_and_swap_sql",
+            "mutation_scope_on_revert"
+          ],
+          "properties": {
+            "database_id": {"const": "state"},
+            "table": {"const": "threads"},
+            "logical_key_column": {"const": "id"},
+            "logical_key_domain": {"const": "thread_id"},
+            "current_rollout_path_column": {"const": "rollout_path"},
+            "session_id_column_present_in_initial_table": {"const": false},
+            "session_id_authority": {"const": "rollout session_meta payload"},
+            "rollout_id_row_created_for_replacement": {"const": false},
+            "compare_and_swap_sql": {
+              "const": "UPDATE threads SET rollout_path = ? WHERE id = ? AND rollout_path = ?"
+            },
+            "mutation_scope_on_revert": {"const": "physical rollout_path only"}
+          }
+        },
+        "authority_model": {"type": "object"}
+      }
+    },
+    "transitions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["create", "resume", "revert", "fork", "archive", "unarchive", "delete"],
+      "properties": {
+        "create": {"type": "object"},
+        "resume": {
+          "type": "object",
+          "required": [
+            "logical_thread",
+            "session_id",
+            "rollout_id",
+            "storage_action",
+            "creates_replacement_rollout"
+          ],
+          "properties": {
+            "logical_thread": {"const": "same thread_id"},
+            "session_id": {"const": "preserved"},
+            "rollout_id": {"const": "same current rollout revision"},
+            "storage_action": {"type": "string"},
+            "creates_replacement_rollout": {"const": false}
+          }
+        },
+        "revert": {
+          "type": "object",
+          "required": [
+            "precondition",
+            "logical_thread",
+            "session_id",
+            "rollout_id",
+            "filename_form",
+            "forked_from_id",
+            "parent_thread_id",
+            "old_rollouts",
+            "cutover",
+            "creates_thread_row_for_rollout_id",
+            "on_compare_and_swap_conflict"
+          ],
+          "properties": {
+            "precondition": {"type": "string"},
+            "logical_thread": {"const": "same thread_id"},
+            "session_id": {"const": "preserved verbatim from source_meta.session_id"},
+            "rollout_id": {"const": "new UUID"},
+            "filename_form": {"const": "replacement"},
+            "forked_from_id": {"const": "preserved"},
+            "parent_thread_id": {"const": "preserved"},
+            "old_rollouts": {"type": "string"},
+            "cutover": {"const": "compare-and-swap threads.rollout_path"},
+            "creates_thread_row_for_rollout_id": {"const": false},
+            "on_compare_and_swap_conflict": {"type": "string"}
+          }
+        },
+        "fork": {
+          "type": "object",
+          "required": [
+            "logical_thread",
+            "session_id",
+            "forked_from_id",
+            "rollout_id",
+            "paginated_storage",
+            "equivalent_to_revert"
+          ],
+          "properties": {
+            "logical_thread": {"const": "new thread_id"},
+            "session_id": {"type": "string"},
+            "forked_from_id": {"const": "source thread_id"},
+            "rollout_id": {"type": "string"},
+            "paginated_storage": {"type": "string"},
+            "equivalent_to_revert": {"const": false}
+          }
+        },
+        "archive": {"type": "object"},
+        "unarchive": {"type": "object"},
+        "delete": {"type": "object"}
+      }
+    },
+    "sidecars": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["writer_lock", "shell_snapshot", "visualization", "visualization_viewer"],
+      "properties": {
+        "writer_lock": {
+          "type": "object",
+          "required": ["path_template", "coordination_path", "key_domain", "purpose", "durability_role"],
+          "properties": {
+            "path_template": {"type": "string", "pattern": "<thread_id>\\.lock$"},
+            "coordination_path": {"type": "string", "pattern": "\\.coordination\\.lock$"},
+            "key_domain": {"const": "thread_id"},
+            "purpose": {"type": "string"},
+            "durability_role": {"const": "coordination only"}
+          }
+        },
+        "shell_snapshot": {
+          "type": "object",
+          "required": [
+            "path_template",
+            "key_domain",
+            "source_parameter_name",
+            "source_parameter_type",
+            "retention_seconds",
+            "purpose",
+            "durability_role"
+          ],
+          "properties": {
+            "path_template": {"type": "string"},
+            "key_domain": {"const": "thread_id"},
+            "source_parameter_name": {"const": "session_id"},
+            "source_parameter_type": {"const": "ThreadId"},
+            "retention_seconds": {"type": "integer", "minimum": 1},
+            "purpose": {"type": "string"},
+            "durability_role": {"const": "ephemeral sidecar"}
+          }
+        },
+        "visualization": {"type": "object"},
+        "visualization_viewer": {"type": "object"}
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^local_storage\\."},
+          "statement": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "required": [
+        "required_source_specs",
+        "available_source_keys",
+        "missing_source_keys",
+        "marker_checks",
+        "database_count",
+        "sidecar_count",
+        "transition_count"
+      ],
+      "properties": {
+        "required_source_specs": {"type": "array", "items": {"type": "string"}, "minItems": 20, "uniqueItems": true},
+        "available_source_keys": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "missing_source_keys": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "marker_checks": {"type": "array", "items": {"type": "object"}, "minItems": 20},
+        "database_count": {"const": 6},
+        "sidecar_count": {"const": 4},
+        "transition_count": {"const": 7}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["sources", "claim_source_keys"],
+      "properties": {
+        "sources": {"type": "array", "items": {"type": "object"}},
+        "claim_source_keys": {"type": "object"}
+      }
+    },
+    "semantic_complete": {"type": "boolean"},
+    "semantic_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

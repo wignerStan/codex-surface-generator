@@ -205,7 +205,7 @@
     },
     {
       "allow_legacy_reconstruction": false,
-      "description": "Repository-wide canonical wire proof. Legacy reconstruction cannot satisfy it, and historical metadata transitions are part of the proof surface.",
+      "description": "Repository-wide canonical wire and local-storage proof. Legacy reconstruction cannot satisfy it, and historical metadata transitions and runtime conformance are part of the proof surface.",
       "id": "codex_wire_full",
       "required_dimensions": [
         "schema",
@@ -223,6 +223,7 @@
         "extractor.response_events",
         "extractor.redirect_headers",
         "extractor.config_effects",
+        "extractor.local_storage",
         "extractor.app_server_rpc",
         "extractor.context_management"
       ],
@@ -246,7 +247,7 @@
         "history_notes_retrieval",
         "config_schema_surface_graph"
       ],
-      "version": "3.0.0"
+      "version": "4.0.0"
     },
     {
       "allow_legacy_reconstruction": true,
@@ -303,6 +304,22 @@
       "required_runtime_scenarios": [
         "config_schema_surface_graph"
       ],
+      "version": "1.0.0"
+    },
+    {
+      "allow_legacy_reconstruction": true,
+      "description": "Focused Codex local thread-storage, rollout identity, SQLite pointer, lifecycle, and sidecar layout proof.",
+      "id": "local_storage_only",
+      "required_dimensions": [
+        "schema",
+        "profile",
+        "provenance"
+      ],
+      "required_extractors": [
+        "extractor.local_storage"
+      ],
+      "required_history_keys": [],
+      "required_runtime_scenarios": [],
       "version": "1.0.0"
     },
     {
