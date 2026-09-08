@@ -229,6 +229,80 @@ def from_legacy_maps(
         ("source_spec.extra.context_management_tests", "context_management_tests", "codex-rs/core/tests/suite/token_budget.rs", ("experimental_context_requires", "supports_experimental_context")),
         ("source_spec.extra.history_notes_tests", "history_notes_tests", "codex-rs/ext/history-notes/tests/history_notes_extension.rs", ("Recent notes (up to 5, most-recent first)", "thread_hint")),
     )
+    local_storage_specs = (
+        (
+            "source_spec.extra.thread_store_types",
+            "thread_store_types",
+            "codex-rs/thread-store/src/types.rs",
+            ("CreateThreadParams", "session_id", "thread_id", "forked_from_id"),
+        ),
+        (
+            "source_spec.extra.rollout_file_name",
+            "rollout_file_name",
+            "codex-rs/rollout/src/rollout_file_name.rs",
+            ("RolloutFileName", "split_once('_')", "rollout-{timestamp}-{}_{}.jsonl"),
+        ),
+        (
+            "source_spec.extra.rollout_recorder",
+            "rollout_recorder",
+            "codex-rs/rollout/src/recorder.rs",
+            ("precompute_new_rollout_path", "with_rollout_id", "SESSIONS_SUBDIR"),
+        ),
+        (
+            "source_spec.extra.rollout_layout_constants",
+            "rollout_layout_constants",
+            "codex-rs/rollout/src/lib.rs",
+            ("SESSIONS_SUBDIR", "ARCHIVED_SESSIONS_SUBDIR"),
+        ),
+        (
+            "source_spec.extra.rollout_compression",
+            "rollout_compression",
+            "codex-rs/rollout/src/compression.rs",
+            ("COMPRESSED_SUFFIX", "open_rollout_line_reader", "RolloutFile"),
+        ),
+        (
+            "source_spec.extra.thread_revert",
+            "thread_revert",
+            "codex-rs/thread-store/src/local/revert_thread.rs",
+            ("revert", "create_replacement_recorder", "replace_rollout_path_if_current"),
+        ),
+        (
+            "source_spec.extra.thread_archive",
+            "thread_archive",
+            "codex-rs/thread-store/src/local/archive_thread.rs",
+            ("archive_thread_with_paths", "ARCHIVED_SESSIONS_SUBDIR", "mark_archived"),
+        ),
+        (
+            "source_spec.extra.thread_writer_lock",
+            "thread_writer_lock",
+            "codex-rs/thread-store/src/local/writer_lock.rs",
+            ("WriterLockCoordinator", "WRITER_LOCK_DIR", "COORDINATION_LOCK_FILE"),
+        ),
+        (
+            "source_spec.extra.state_sqlite",
+            "state_sqlite",
+            "codex-rs/state/src/sqlite.rs",
+            ("STATE_DB_FILENAME", "THREAD_HISTORY_DB_FILENAME", "SqliteConfig"),
+        ),
+        (
+            "source_spec.extra.state_threads",
+            "state_threads",
+            "codex-rs/state/src/runtime/threads.rs",
+            ("find_rollout_path_by_id", "replace_rollout_path_if_current", "UPDATE threads"),
+        ),
+        (
+            "source_spec.extra.shell_snapshot",
+            "shell_snapshot",
+            "codex-rs/core/src/shell_snapshot.rs",
+            ("ShellSnapshot", "SNAPSHOT_DIR", "SNAPSHOT_RETENTION"),
+        ),
+        (
+            "source_spec.extra.inline_visualization",
+            "inline_visualization",
+            "codex-rs/tui/src/inline_visualization.rs",
+            ("InlineVisualizationContext", "visualizations", "visualization-viewers"),
+        ),
+    )
     specs.append(SourceSpec(
         id="source_spec.extra.generated_config_schema",
         legacy_key="generated_config_schema",
@@ -262,5 +336,19 @@ def from_legacy_maps(
             roles=("context_management",),
             expected_symbols=tuple(symbols),
             extractor_ids=("extractor.context_management",),
+        ))
+    existing_ids = {spec.id for spec in specs}
+    for spec_id, legacy_key, path, symbols in local_storage_specs:
+        if spec_id in existing_ids:
+            continue
+        specs.append(SourceSpec(
+            id=spec_id,
+            legacy_key=legacy_key,
+            group=SourceGroup.EXTRA,
+            path_candidates=(path,),
+            required=False,
+            roles=("local_storage_layout", "thread_persistence"),
+            expected_symbols=tuple(symbols),
+            extractor_ids=("extractor.local_storage",),
         ))
     return SourceRegistry(specs)

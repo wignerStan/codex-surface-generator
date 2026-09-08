@@ -10,6 +10,7 @@ from . import EVOLUTION_CONTRACT_VERSION, GENERATOR_VERSION
 from .canonical import canonical_json_bytes
 from .diagnostics import DiagnosticCollector
 from .extractors import ExtractorResult, create_extractors
+from .extractors.local_storage import apply_local_storage_overlay
 from .models import SourceSnapshot
 from .source_registry import SourceRegistry
 from .surface_graph import compose_surface_graph
@@ -186,7 +187,6 @@ def apply_turn_metadata_overlay(
     }
 
 
-
 def apply_config_surface_overlay(
     report: MutableMapping[str, Any],
     config_result: ExtractorResult,
@@ -271,6 +271,10 @@ def build_evolution_contract(
             semantic_complete=config_result.semantic_complete and graph_complete,
             source_spec_ids=config_result.source_spec_ids,
         )
+
+    local_storage_result = results.get("extractor.local_storage")
+    if local_storage_result is not None and isinstance(legacy_report, MutableMapping):
+        apply_local_storage_overlay(legacy_report, local_storage_result)
 
     required_ids = {spec.id for spec in registry.specs if spec.required}
     required_available = required_ids <= set(snapshot.files)

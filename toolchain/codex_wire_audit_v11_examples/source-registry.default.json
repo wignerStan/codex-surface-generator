@@ -1,11 +1,11 @@
 {
   "counts": {
     "base": 16,
-    "extra": 45,
-    "optional": 71,
+    "extra": 57,
+    "optional": 83,
     "required": 16,
     "surface": 26,
-    "total": 87
+    "total": 99
   },
   "schema_version": "1.0.0",
   "sources": {
@@ -595,6 +595,27 @@
         "legacy_extra"
       ]
     },
+    "source_spec.extra.inline_visualization": {
+      "expected_symbols": [
+        "InlineVisualizationContext",
+        "visualizations",
+        "visualization-viewers"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.inline_visualization",
+      "legacy_key": "inline_visualization",
+      "path_candidates": [
+        "codex-rs/tui/src/inline_visualization.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
     "source_spec.extra.mcp_binding": {
       "expected_symbols": [],
       "extractor_ids": [],
@@ -879,6 +900,89 @@
         "legacy_extra"
       ]
     },
+    "source_spec.extra.rollout_compression": {
+      "expected_symbols": [
+        "COMPRESSED_SUFFIX",
+        "open_rollout_line_reader",
+        "RolloutFile"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.rollout_compression",
+      "legacy_key": "rollout_compression",
+      "path_candidates": [
+        "codex-rs/rollout/src/compression.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
+    "source_spec.extra.rollout_file_name": {
+      "expected_symbols": [
+        "RolloutFileName",
+        "split_once('_')",
+        "rollout-{timestamp}-{}_{}.jsonl"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.rollout_file_name",
+      "legacy_key": "rollout_file_name",
+      "path_candidates": [
+        "codex-rs/rollout/src/rollout_file_name.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
+    "source_spec.extra.rollout_layout_constants": {
+      "expected_symbols": [
+        "SESSIONS_SUBDIR",
+        "ARCHIVED_SESSIONS_SUBDIR"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.rollout_layout_constants",
+      "legacy_key": "rollout_layout_constants",
+      "path_candidates": [
+        "codex-rs/rollout/src/lib.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
+    "source_spec.extra.rollout_recorder": {
+      "expected_symbols": [
+        "precompute_new_rollout_path",
+        "with_rollout_id",
+        "SESSIONS_SUBDIR"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.rollout_recorder",
+      "legacy_key": "rollout_recorder",
+      "path_candidates": [
+        "codex-rs/rollout/src/recorder.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
     "source_spec.extra.route_aware_redirect": {
       "expected_symbols": [],
       "extractor_ids": [],
@@ -891,6 +995,154 @@
       "required": false,
       "roles": [
         "legacy_extra"
+      ]
+    },
+    "source_spec.extra.shell_snapshot": {
+      "expected_symbols": [
+        "ShellSnapshot",
+        "SNAPSHOT_DIR",
+        "SNAPSHOT_RETENTION"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.shell_snapshot",
+      "legacy_key": "shell_snapshot",
+      "path_candidates": [
+        "codex-rs/core/src/shell_snapshot.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
+    "source_spec.extra.state_sqlite": {
+      "expected_symbols": [
+        "STATE_DB_FILENAME",
+        "THREAD_HISTORY_DB_FILENAME",
+        "SqliteConfig"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.state_sqlite",
+      "legacy_key": "state_sqlite",
+      "path_candidates": [
+        "codex-rs/state/src/sqlite.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
+    "source_spec.extra.state_threads": {
+      "expected_symbols": [
+        "find_rollout_path_by_id",
+        "replace_rollout_path_if_current",
+        "UPDATE threads"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.state_threads",
+      "legacy_key": "state_threads",
+      "path_candidates": [
+        "codex-rs/state/src/runtime/threads.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
+    "source_spec.extra.thread_archive": {
+      "expected_symbols": [
+        "archive_thread_with_paths",
+        "ARCHIVED_SESSIONS_SUBDIR",
+        "mark_archived"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.thread_archive",
+      "legacy_key": "thread_archive",
+      "path_candidates": [
+        "codex-rs/thread-store/src/local/archive_thread.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
+    "source_spec.extra.thread_revert": {
+      "expected_symbols": [
+        "revert",
+        "create_replacement_recorder",
+        "replace_rollout_path_if_current"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.thread_revert",
+      "legacy_key": "thread_revert",
+      "path_candidates": [
+        "codex-rs/thread-store/src/local/revert_thread.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
+    "source_spec.extra.thread_store_types": {
+      "expected_symbols": [
+        "CreateThreadParams",
+        "session_id",
+        "thread_id",
+        "forked_from_id"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.thread_store_types",
+      "legacy_key": "thread_store_types",
+      "path_candidates": [
+        "codex-rs/thread-store/src/types.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
+      ]
+    },
+    "source_spec.extra.thread_writer_lock": {
+      "expected_symbols": [
+        "WriterLockCoordinator",
+        "WRITER_LOCK_DIR",
+        "COORDINATION_LOCK_FILE"
+      ],
+      "extractor_ids": [
+        "extractor.local_storage"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.thread_writer_lock",
+      "legacy_key": "thread_writer_lock",
+      "path_candidates": [
+        "codex-rs/thread-store/src/local/writer_lock.rs"
+      ],
+      "required": false,
+      "roles": [
+        "local_storage_layout",
+        "thread_persistence"
       ]
     },
     "source_spec.extra.tool_namespaces_info": {
