@@ -22,10 +22,10 @@ jobs:
       - name: Install constrained package and test dependencies
         working-directory: toolchain
         run: python -m pip install --constraint ci/constraints.txt -e '.[test]'
-      - name: Regenerate deterministic assets
+      - name: Regenerate affected deterministic assets
         working-directory: toolchain
         run: |
-          make assets
+          make legacy-assets metrics
           mkdir -p ci-out/generated
           cp -R codex_wire_audit_v11_schemas ci-out/generated/
           cp -R codex_wire_audit_v11_examples ci-out/generated/
