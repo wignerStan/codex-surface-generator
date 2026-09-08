@@ -6,7 +6,7 @@ on:
       - ".github/workflows/refresh-generated-assets.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   generate:
@@ -24,17 +24,19 @@ jobs:
         run: python -m pip install --constraint ci/constraints.txt -e '.[test]'
       - name: Regenerate affected deterministic assets
         working-directory: toolchain
+        run: make legacy-assets metrics
+      - name: Commit regenerated assets
         run: |
-          make legacy-assets metrics
-          mkdir -p ci-out/generated
-          cp -R codex_wire_audit_v11_schemas ci-out/generated/
-          cp -R codex_wire_audit_v11_examples ci-out/generated/
-          cp codex_wire_audit_v19_maintainability_metrics.json ci-out/generated/
-          cp CODEX_WIRE_AUDIT_V19_METRICS.md ci-out/generated/
-      - name: Upload regenerated assets
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: regenerated-deterministic-assets
-          path: toolchain/ci-out/generated
-          if-no-files-found: error
-          retention-days: 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            toolchain/codex_wire_audit_v11_examples/source-registry.default.json \
+            toolchain/codex_wire_audit_v11_examples/manifest.json \
+            toolchain/codex_wire_audit_v19_maintainability_metrics.json \
+            toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md
+          if git diff --cached --quiet; then
+            echo "Generated assets are already current."
+          else
+            git commit -m "Regenerate source registry and metrics assets"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
