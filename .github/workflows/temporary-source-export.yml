@@ -1,0 +1,20 @@
+name: temporary-source-export
+
+on:
+  push:
+    branches:
+      - codex-bootstrap-source-export-20260908
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: repository-source
+          path: .
+          retention-days: 1
