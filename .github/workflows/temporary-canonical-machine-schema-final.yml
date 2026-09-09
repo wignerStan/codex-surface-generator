@@ -1,0 +1,1272 @@
+name: temporary-canonical-machine-schema-final
+
+on:
+  push:
+    branches:
+      - codex-bootstrap-canonical-machine-schema-20260909
+
+permissions:
+  actions: write
+  contents: write
+
+concurrency:
+  group: temporary-canonical-machine-schema
+  cancel-in-progress: false
+
+jobs:
+  validate-and-publish:
+    if: github.event.head_commit.message == 'chore: stage canonical machine-readable schema final'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      EXPECTED_MAIN_SHA: 437f01742fa88ff346a39bec8eb50779622041be
+      BOOTSTRAP_BRANCH: codex-bootstrap-canonical-machine-schema-20260909
+      PINNED_CODEX_SHA: 6af345407d9c2a568da9d01b6c4b81a9e61495c0
+    steps:
+      - name: Check out final repair branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: toolchain/ci/constraints.txt
+
+      - name: Guard publication base
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          test "$(git rev-parse origin/main)" = "$EXPECTED_MAIN_SHA"
+          git merge-base --is-ancestor "$EXPECTED_MAIN_SHA" HEAD
+
+      - name: Replay bootstrap and install modular canonical implementation
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import ast
+          import os
+          import subprocess
+          import sys
+          import textwrap
+          from pathlib import Path
+
+          root = Path.cwd()
+          predecessor = root / '.github/workflows/temporary-canonical-machine-schema-fix-2.yml'
+          lines = predecessor.read_text(encoding='utf-8').splitlines()
+          start = next(
+              index
+              for index, line in enumerate(lines)
+              if line.lstrip() == "python - <<'PY'"
+          )
+          indent = lines[start][:-len(lines[start].lstrip())]
+          end = next(
+              index
+              for index in range(start + 1, len(lines))
+              if lines[index] == indent + 'PY'
+          )
+          replay = '\n'.join(
+              line[len(indent):] if line.startswith(indent) else line
+              for line in lines[start + 1:end]
+          ) + '\n'
+          namespace: dict[str, object] = {'__name__': '__main__'}
+          exec(compile(replay, str(predecessor), 'exec'), namespace, namespace)
+
+          files: dict[str, str] = {
+              'toolchain/codex_wire_audit/system_contract.py': r'''
+          """Canonical composition for ``codex-system-contract/v1``."""
+
+          from __future__ import annotations
+
+          import copy
+          import hashlib
+          import json
+          from collections.abc import Iterable, Mapping, Sequence
+          from typing import Any
+
+          SCHEMA_ID = "codex-system-contract/v1"
+          SCHEMA_URI = "urn:codex-system-contract:v1"
+          DOMAINS = (
+              "configuration",
+              "resolution",
+              "environment",
+              "lifecycle",
+              "turn",
+              "local_storage",
+          )
+          COLLECTIONS = ("entities", "relations", "rules", "claims", "evidence")
+          REF_FIELDS = {
+              "entities": "entity_refs",
+              "relations": "relation_refs",
+              "rules": "rule_refs",
+              "claims": "claim_refs",
+              "evidence": "evidence_refs",
+          }
+          ID_PATTERN = r"^[a-z][a-z0-9_.:/-]{2,127}$"
+          REFERENCE_LIST_FIELDS = (*REF_FIELDS.values(), "subject_refs")
+
+
+          class ContractValidationError(ValueError):
+              """Raised when a contract violates canonical invariants."""
+
+              def __init__(self, errors: Sequence[str]):
+                  self.errors = tuple(errors)
+                  super().__init__("invalid codex system contract:\n- " + "\n- ".join(errors))
+
+
+          def canonical_json(value: Any) -> str:
+              """Return the deterministic RFC-8259 JSON encoding of *value*."""
+
+              return json.dumps(
+                  value,
+                  ensure_ascii=False,
+                  allow_nan=False,
+                  sort_keys=True,
+                  separators=(",", ":"),
+              )
+
+
+          def canonical_sha256(value: Any) -> str:
+              """Hash the deterministic JSON encoding of *value*."""
+
+              return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
+
+
+          def _record_id(collection: str, record: Mapping[str, Any]) -> str:
+              key = "fragment_id" if collection == "fragments" else "id"
+              value = record.get(key)
+              return value if isinstance(value, str) else ""
+
+
+          def _normalise(document: Mapping[str, Any]) -> dict[str, Any]:
+              result = copy.deepcopy(dict(document))
+              for collection in (*COLLECTIONS, "fragments"):
+                  records = result.get(collection)
+                  if not isinstance(records, list):
+                      continue
+                  for record in records:
+                      if not isinstance(record, dict):
+                          continue
+                      for field in REFERENCE_LIST_FIELDS:
+                          refs = record.get(field)
+                          if isinstance(refs, list) and all(isinstance(item, str) for item in refs):
+                              record[field] = sorted(set(refs))
+                  records.sort(key=lambda item: _record_id(collection, item) if isinstance(item, Mapping) else "")
+              views = result.get("compatibility_views")
+              if isinstance(views, list):
+                  views.sort(key=lambda item: item.get("name", "") if isinstance(item, Mapping) else "")
+              coverage = result.get("coverage")
+              if isinstance(coverage, dict):
+                  for field in ("required_domains", "present_domains"):
+                      domains = coverage.get(field)
+                      if isinstance(domains, list):
+                          coverage[field] = [domain for domain in DOMAINS if domain in domains]
+              return result
+
+
+          def _digest_projection(document: Mapping[str, Any]) -> dict[str, Any]:
+              keys = (
+                  "schema",
+                  "contract_id",
+                  "source_revision",
+                  "generator",
+                  "coverage",
+                  "fragments",
+                  "entities",
+                  "relations",
+                  "rules",
+                  "claims",
+                  "evidence",
+              )
+              return {key: copy.deepcopy(document.get(key)) for key in keys}
+
+
+          def _defined_domains(document: Mapping[str, Any]) -> set[str]:
+              domains: set[str] = set()
+              for collection in (*COLLECTIONS, "fragments"):
+                  records = document.get(collection)
+                  if not isinstance(records, list):
+                      continue
+                  for record in records:
+                      if isinstance(record, Mapping):
+                          domain = record.get("domain")
+                          if isinstance(domain, str):
+                              domains.add(domain)
+              return domains
+
+
+          def validate_contract(document: Mapping[str, Any], *, require_sealed: bool = True) -> None:
+              """Validate structure, closure, coverage, digest, and secret safety."""
+
+              from .system_contract_validation import validate_contract as implementation
+
+              implementation(document, require_sealed=require_sealed)
+
+
+          def schema_document() -> dict[str, Any]:
+              """Return the Draft 2020-12 schema as an ordinary JSON value."""
+
+              from .system_contract_schema import schema_document as implementation
+
+              return implementation()
+
+
+          def seal_contract(document: Mapping[str, Any]) -> dict[str, Any]:
+              """Normalise, digest-bind, and validate a contract."""
+
+              result = _normalise(document)
+              present = _defined_domains(result)
+              result["coverage"] = {
+                  "required_domains": list(DOMAINS),
+                  "present_domains": [domain for domain in DOMAINS if domain in present],
+              }
+              digest = canonical_sha256(_digest_projection(result))
+              result["canonical_sha256"] = digest
+              views = result.setdefault("compatibility_views", [])
+              if not isinstance(views, list):
+                  raise ContractValidationError(("compatibility_views must be an array",))
+              for view in views:
+                  if isinstance(view, dict):
+                      view["source_contract_sha256"] = digest
+                      view["representation_sha256"] = canonical_sha256(view.get("representation"))
+              result = _normalise(result)
+              validate_contract(result)
+              return result
+
+
+          def _prepare_record(record: dict[str, Any], collection: str, domain: str) -> None:
+              record.setdefault("domain", domain)
+              if collection in ("entities", "relations"):
+                  record.setdefault("attributes", {})
+                  record.setdefault("evidence_refs", [])
+              elif collection in ("rules", "claims"):
+                  record.setdefault("subject_refs", [])
+                  record.setdefault("evidence_refs", [])
+              else:
+                  record.setdefault("subject_refs", [])
+                  record.setdefault("attributes", {})
+
+
+          def _consume_fragment(fragment: dict[str, Any]) -> tuple[dict[str, Any], dict[str, list[dict[str, Any]]]]:
+              domain = fragment.get("domain")
+              if domain not in DOMAINS:
+                  raise ContractValidationError((f"fragment domain is not canonical: {domain!r}",))
+              fragment_id = fragment.get("fragment_id", f"fragment.{domain}")
+              records_by_collection: dict[str, list[dict[str, Any]]] = {}
+              for collection in COLLECTIONS:
+                  raw_records = fragment.pop(collection, [])
+                  if not isinstance(raw_records, list) or not all(isinstance(item, dict) for item in raw_records):
+                      raise ContractValidationError((f"{fragment_id}.{collection} must contain objects",))
+                  records = [copy.deepcopy(item) for item in raw_records]
+                  for record in records:
+                      _prepare_record(record, collection, domain)
+                  records_by_collection[collection] = records
+              for field in REF_FIELDS.values():
+                  fragment.pop(field, None)
+              allowed = {"fragment_id", "domain"}
+              extras = sorted(set(fragment) - allowed)
+              if extras:
+                  raise ContractValidationError((f"{fragment_id} has unknown fields: {', '.join(extras)}",))
+              fragment["fragment_id"] = fragment_id
+              for collection, records in records_by_collection.items():
+                  fragment[REF_FIELDS[collection]] = [record["id"] for record in records]
+              return fragment, records_by_collection
+
+
+          def compose_contract(
+              fragments: Iterable[Mapping[str, Any]],
+              *,
+              contract_id: str,
+              source_revision: str,
+              generator: str = "codex-wire-audit",
+              compatibility_views: Iterable[Mapping[str, Any]] = (),
+          ) -> dict[str, Any]:
+              """Compose six canonical fragments into one semantic authority."""
+
+              document: dict[str, Any] = {
+                  "schema": SCHEMA_ID,
+                  "contract_id": contract_id,
+                  "source_revision": source_revision,
+                  "generator": generator,
+                  "coverage": {"required_domains": list(DOMAINS), "present_domains": []},
+                  "fragments": [],
+                  "entities": [],
+                  "relations": [],
+                  "rules": [],
+                  "claims": [],
+                  "evidence": [],
+                  "compatibility_views": [copy.deepcopy(dict(view)) for view in compatibility_views],
+              }
+              for raw_fragment in fragments:
+                  fragment, grouped_records = _consume_fragment(copy.deepcopy(dict(raw_fragment)))
+                  document["fragments"].append(fragment)
+                  for collection, records in grouped_records.items():
+                      document[collection].extend(records)
+              return seal_contract(document)
+
+
+          def fragment_from_legacy_report(
+              domain: str,
+              report: Any,
+              *,
+              source_id: str,
+              locator: str,
+          ) -> dict[str, Any]:
+              """Bridge a legacy report by identity without embedding its body."""
+
+              if domain not in DOMAINS:
+                  raise ContractValidationError((f"unknown domain {domain!r}",))
+              digest = canonical_sha256(report)
+              entity_id = f"entity.{domain}.legacy-report"
+              evidence_id = f"evidence.{domain}.legacy-report"
+              keys = sorted(report) if isinstance(report, Mapping) else []
+              sized = isinstance(report, (Mapping, Sequence)) and not isinstance(report, str)
+              return {
+                  "fragment_id": f"fragment.{domain}",
+                  "domain": domain,
+                  "entities": [
+                      {
+                          "id": entity_id,
+                          "kind": "legacy_report_snapshot",
+                          "attributes": {
+                              "report_sha256": digest,
+                              "top_level_keys": keys,
+                              "record_count": len(report) if sized else 1,
+                          },
+                          "evidence_refs": [evidence_id],
+                      }
+                  ],
+                  "relations": [],
+                  "rules": [],
+                  "claims": [
+                      {
+                          "id": f"claim.{domain}.legacy-report-derived",
+                          "kind": "compatibility",
+                          "statement": "The legacy report is evidence for, not authority over, the canonical contract.",
+                          "subject_refs": [entity_id],
+                          "evidence_refs": [evidence_id],
+                      }
+                  ],
+                  "evidence": [
+                      {
+                          "id": evidence_id,
+                          "source": {"source_id": source_id, "locator": locator, "sha256": digest},
+                          "subject_refs": [entity_id],
+                          "attributes": {"embedded": False},
+                      }
+                  ],
+              }
+
+
+          def example_fragments() -> list[dict[str, Any]]:
+              """Return a compact example fragment for every canonical domain."""
+
+              from .system_contract_examples import example_fragments as implementation
+
+              return implementation()
+
+
+          def example_contract(source_revision: str = "example") -> dict[str, Any]:
+              """Return a sealed example with two digest-bound compatibility views."""
+
+              views = [
+                  {
+                      "name": "config_surface",
+                      "authoritative": False,
+                      "representation": {
+                          "root": "entity.configuration.config_root",
+                          "effective": "entity.resolution.effective_config",
+                      },
+                  },
+                  {
+                      "name": "local_storage_layout",
+                      "authoritative": False,
+                      "representation": {
+                          "turn": "entity.turn.turn",
+                          "rollout": "entity.local_storage.rollout",
+                      },
+                  },
+              ]
+              return compose_contract(
+                  example_fragments(),
+                  contract_id="contract.codex.connected-system",
+                  source_revision=source_revision,
+                  compatibility_views=views,
+              )
+          ''',
+              'toolchain/codex_wire_audit/system_contract_validation.py': r'''
+          """Invariant checks for ``codex-system-contract/v1``."""
+
+          from __future__ import annotations
+
+          import math
+          import re
+          from collections.abc import Mapping
+          from typing import Any
+
+          from .system_contract import (
+              COLLECTIONS,
+              DOMAINS,
+              ID_PATTERN,
+              REF_FIELDS,
+              SCHEMA_ID,
+              ContractValidationError,
+              _defined_domains,
+              _digest_projection,
+              _normalise,
+              canonical_sha256,
+          )
+
+          _ID_RE = re.compile(ID_PATTERN)
+          _DIGEST_RE = re.compile(r"^[0-9a-f]{64}$")
+          _SENSITIVE_KEY_RE = re.compile(
+              r"(?:^|[_-])(?:api[_-]?key|access[_-]?token|refresh[_-]?token|"
+              r"authorization|cookie|password|passwd|private[_-]?key|"
+              r"client[_-]?secret|credential|secret)(?:$|[_-])",
+              re.IGNORECASE,
+          )
+          _SECRET_VALUE_PATTERNS = (
+              re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+              re.compile(r"\bsk-[A-Za-z0-9_-]{16,}\b"),
+              re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}\b"),
+              re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+              re.compile(r"\bBearer\s+[A-Za-z0-9._~+/-]{20,}\b", re.IGNORECASE),
+          )
+          _REDACTED = {"", "redacted", "[redacted]", "<redacted>", "***"}
+          _TOP_LEVEL_FIELDS = {
+              "schema",
+              "contract_id",
+              "source_revision",
+              "generator",
+              "canonical_sha256",
+              "coverage",
+              "fragments",
+              "entities",
+              "relations",
+              "rules",
+              "claims",
+              "evidence",
+              "compatibility_views",
+          }
+          _FIELDS = {
+              "fragments": {"fragment_id", "domain", *REF_FIELDS.values()},
+              "entities": {"id", "kind", "domain", "attributes", "evidence_refs"},
+              "relations": {
+                  "id",
+                  "kind",
+                  "domain",
+                  "source",
+                  "target",
+                  "attributes",
+                  "evidence_refs",
+              },
+              "rules": {"id", "kind", "domain", "statement", "subject_refs", "evidence_refs"},
+              "claims": {"id", "kind", "domain", "statement", "subject_refs", "evidence_refs"},
+              "evidence": {"id", "domain", "source", "subject_refs", "attributes"},
+          }
+
+
+          def _add(errors: list[str], condition: bool, message: str) -> None:
+              if not condition:
+                  errors.append(message)
+
+
+          def _json_value(value: Any, path: str, errors: list[str]) -> None:
+              if value is None or isinstance(value, (str, bool, int)):
+                  return
+              if isinstance(value, float):
+                  if not math.isfinite(value):
+                      errors.append(f"{path} contains a non-finite number")
+                  return
+              if isinstance(value, list):
+                  for index, child in enumerate(value):
+                      _json_value(child, f"{path}[{index}]", errors)
+                  return
+              if isinstance(value, dict):
+                  for key, child in value.items():
+                      if not isinstance(key, str):
+                          errors.append(f"{path} contains a non-string object key")
+                      else:
+                          _json_value(child, f"{path}.{key}", errors)
+                  return
+              errors.append(f"{path} contains non-JSON value {type(value).__name__}")
+
+
+          def _scan_secrets(value: Any, path: str, errors: list[str]) -> None:
+              if isinstance(value, Mapping):
+                  for key, child in value.items():
+                      child_path = f"{path}.{key}"
+                      if _SENSITIVE_KEY_RE.search(str(key)):
+                          if isinstance(child, str) and child.strip().lower() not in _REDACTED:
+                              errors.append(f"{child_path} is a secret-bearing field")
+                          elif isinstance(child, (Mapping, list)) and bool(child):
+                              errors.append(f"{child_path} is a secret-bearing container")
+                      _scan_secrets(child, child_path, errors)
+                  return
+              if isinstance(value, list):
+                  for index, child in enumerate(value):
+                      _scan_secrets(child, f"{path}[{index}]", errors)
+                  return
+              if isinstance(value, str) and any(pattern.search(value) for pattern in _SECRET_VALUE_PATTERNS):
+                  errors.append(f"{path} contains material matching a secret pattern")
+
+
+          def _identifier(value: Any, path: str, errors: list[str]) -> str | None:
+              if not isinstance(value, str):
+                  errors.append(f"{path} must be a string")
+                  return None
+              if not _ID_RE.fullmatch(value):
+                  errors.append(f"{path} is not a canonical identifier: {value!r}")
+                  return None
+              return value
+
+
+          def _domain(value: Any, path: str, errors: list[str]) -> str | None:
+              if not isinstance(value, str) or value not in DOMAINS:
+                  errors.append(f"{path} must be one of {', '.join(DOMAINS)}")
+                  return None
+              return value
+
+
+          def _references(value: Any, path: str, errors: list[str]) -> list[str]:
+              if not isinstance(value, list):
+                  errors.append(f"{path} must be an array")
+                  return []
+              refs = [
+                  identifier
+                  for index, item in enumerate(value)
+                  if (identifier := _identifier(item, f"{path}[{index}]", errors)) is not None
+              ]
+              if len(refs) != len(set(refs)):
+                  errors.append(f"{path} contains duplicate references")
+              return refs
+
+
+          def _header(document: Mapping[str, Any], errors: list[str]) -> None:
+              extras = sorted(set(document) - _TOP_LEVEL_FIELDS)
+              if extras:
+                  errors.append("unknown top-level fields: " + ", ".join(extras))
+              _add(errors, document.get("schema") == SCHEMA_ID, f"schema must equal {SCHEMA_ID}")
+              _identifier(document.get("contract_id"), "$.contract_id", errors)
+              _add(errors, isinstance(document.get("source_revision"), str), "source_revision must be a string")
+              _add(errors, isinstance(document.get("generator"), str), "generator must be a string")
+
+
+          def _index_records(
+              document: Mapping[str, Any],
+              errors: list[str],
+          ) -> tuple[dict[str, list[Mapping[str, Any]]], dict[str, set[str]]]:
+              records: dict[str, list[Mapping[str, Any]]] = {}
+              identifiers: dict[str, str] = {}
+              ids = {name: set() for name in (*COLLECTIONS, "fragments")}
+              for collection in (*COLLECTIONS, "fragments"):
+                  raw_records = document.get(collection)
+                  if not isinstance(raw_records, list):
+                      errors.append(f"$.{collection} must be an array")
+                      records[collection] = []
+                      continue
+                  records[collection] = []
+                  for index, raw in enumerate(raw_records):
+                      path = f"$.{collection}[{index}]"
+                      if not isinstance(raw, Mapping):
+                          errors.append(f"{path} must be an object")
+                          continue
+                      records[collection].append(raw)
+                      extras = sorted(set(raw) - _FIELDS[collection])
+                      if extras:
+                          errors.append(f"{path} has unknown fields: {', '.join(extras)}")
+                      key = "fragment_id" if collection == "fragments" else "id"
+                      identifier = _identifier(raw.get(key), f"{path}.{key}", errors)
+                      _domain(raw.get("domain"), f"{path}.domain", errors)
+                      if identifier is None:
+                          continue
+                      if identifier in identifiers:
+                          errors.append(f"{path} reuses identifier {identifier!r} owned by {identifiers[identifier]}")
+                      else:
+                          identifiers[identifier] = path
+                          ids[collection].add(identifier)
+              return records, ids
+
+
+          def _entities(
+              records: list[Mapping[str, Any]],
+              evidence_ids: set[str],
+              errors: list[str],
+          ) -> None:
+              for index, record in enumerate(records):
+                  path = f"$.entities[{index}]"
+                  _add(errors, isinstance(record.get("kind"), str), f"{path}.kind must be a string")
+                  _add(errors, isinstance(record.get("attributes"), Mapping), f"{path}.attributes must be an object")
+                  for ref in _references(record.get("evidence_refs"), f"{path}.evidence_refs", errors):
+                      if ref not in evidence_ids:
+                          errors.append(f"{path}.evidence_refs contains orphan {ref!r}")
+
+
+          def _relations(
+              records: list[Mapping[str, Any]],
+              entity_ids: set[str],
+              evidence_ids: set[str],
+              errors: list[str],
+          ) -> None:
+              for index, record in enumerate(records):
+                  path = f"$.relations[{index}]"
+                  _add(errors, isinstance(record.get("kind"), str), f"{path}.kind must be a string")
+                  for field in ("source", "target"):
+                      ref = _identifier(record.get(field), f"{path}.{field}", errors)
+                      if ref is not None and ref not in entity_ids:
+                          errors.append(f"{path}.{field} contains orphan {ref!r}")
+                  _add(errors, isinstance(record.get("attributes"), Mapping), f"{path}.attributes must be an object")
+                  for ref in _references(record.get("evidence_refs"), f"{path}.evidence_refs", errors):
+                      if ref not in evidence_ids:
+                          errors.append(f"{path}.evidence_refs contains orphan {ref!r}")
+
+
+          def _assertions(
+              collection: str,
+              records: list[Mapping[str, Any]],
+              subject_ids: set[str],
+              evidence_ids: set[str],
+              errors: list[str],
+          ) -> None:
+              for index, record in enumerate(records):
+                  path = f"$.{collection}[{index}]"
+                  _add(errors, isinstance(record.get("kind"), str), f"{path}.kind must be a string")
+                  _add(errors, isinstance(record.get("statement"), str), f"{path}.statement must be a string")
+                  for ref in _references(record.get("subject_refs"), f"{path}.subject_refs", errors):
+                      if ref not in subject_ids:
+                          errors.append(f"{path}.subject_refs contains orphan {ref!r}")
+                  for ref in _references(record.get("evidence_refs"), f"{path}.evidence_refs", errors):
+                      if ref not in evidence_ids:
+                          errors.append(f"{path}.evidence_refs contains orphan {ref!r}")
+
+
+          def _source(source: Any, path: str, errors: list[str]) -> None:
+              if not isinstance(source, Mapping):
+                  errors.append(f"{path} must be an object")
+                  return
+              extras = sorted(set(source) - {"source_id", "locator", "sha256"})
+              if extras:
+                  errors.append(f"{path} has unknown fields: {', '.join(extras)}")
+              _add(errors, isinstance(source.get("source_id"), str), f"{path}.source_id must be a string")
+              _add(errors, isinstance(source.get("locator"), str), f"{path}.locator must be a string")
+              digest = source.get("sha256")
+              if digest is not None and (not isinstance(digest, str) or not _DIGEST_RE.fullmatch(digest)):
+                  errors.append(f"{path}.sha256 must be a lowercase SHA-256 digest")
+
+
+          def _evidence(
+              records: list[Mapping[str, Any]],
+              subject_ids: set[str],
+              errors: list[str],
+          ) -> None:
+              for index, record in enumerate(records):
+                  path = f"$.evidence[{index}]"
+                  _source(record.get("source"), f"{path}.source", errors)
+                  for ref in _references(record.get("subject_refs"), f"{path}.subject_refs", errors):
+                      if ref not in subject_ids:
+                          errors.append(f"{path}.subject_refs contains orphan {ref!r}")
+                  _add(errors, isinstance(record.get("attributes"), Mapping), f"{path}.attributes must be an object")
+
+
+          def _fragments(
+              fragments: list[Mapping[str, Any]],
+              records: dict[str, list[Mapping[str, Any]]],
+              ids: dict[str, set[str]],
+              errors: list[str],
+          ) -> list[str]:
+              fragment_domains: list[str] = []
+              for index, fragment in enumerate(fragments):
+                  path = f"$.fragments[{index}]"
+                  domain = fragment.get("domain")
+                  if isinstance(domain, str):
+                      fragment_domains.append(domain)
+                  for collection, field in REF_FIELDS.items():
+                      refs = _references(fragment.get(field), f"{path}.{field}", errors)
+                      for ref in refs:
+                          if ref not in ids[collection]:
+                              errors.append(f"{path}.{field} contains orphan {ref!r}")
+                      expected = {
+                          record["id"]
+                          for record in records[collection]
+                          if record.get("domain") == domain and isinstance(record.get("id"), str)
+                      }
+                      if set(refs) != expected:
+                          errors.append(f"{path}.{field} does not exactly cover its domain records")
+              return fragment_domains
+
+
+          def _coverage(
+              document: Mapping[str, Any],
+              fragment_domains: list[str],
+              errors: list[str],
+          ) -> None:
+              coverage = document.get("coverage")
+              if not isinstance(coverage, Mapping):
+                  errors.append("$.coverage must be an object")
+                  return
+              extras = sorted(set(coverage) - {"required_domains", "present_domains"})
+              if extras:
+                  errors.append("$.coverage has unknown fields: " + ", ".join(extras))
+              _add(
+                  errors,
+                  coverage.get("required_domains") == list(DOMAINS),
+                  "coverage.required_domains must enumerate all canonical domains",
+              )
+              expected_present = [domain for domain in DOMAINS if domain in _defined_domains(document)]
+              _add(
+                  errors,
+                  coverage.get("present_domains") == expected_present,
+                  "coverage.present_domains is not derived from the contract",
+              )
+              counts = {domain: fragment_domains.count(domain) for domain in DOMAINS}
+              missing_or_duplicate = [domain for domain, count in counts.items() if count != 1]
+              if missing_or_duplicate:
+                  errors.append("canonical fragments must occur exactly once: " + ", ".join(missing_or_duplicate))
+
+
+          def _views(document: Mapping[str, Any], require_sealed: bool, errors: list[str]) -> None:
+              views = document.get("compatibility_views")
+              if not isinstance(views, list):
+                  errors.append("$.compatibility_views must be an array")
+                  return
+              digest = document.get("canonical_sha256")
+              if require_sealed:
+                  if not isinstance(digest, str) or not _DIGEST_RE.fullmatch(digest):
+                      errors.append("canonical_sha256 must be a lowercase SHA-256 digest")
+                  elif digest != canonical_sha256(_digest_projection(_normalise(document))):
+                      errors.append("canonical_sha256 does not match the canonical projection")
+              names: set[str] = set()
+              for index, view in enumerate(views):
+                  path = f"$.compatibility_views[{index}]"
+                  if not isinstance(view, Mapping):
+                      errors.append(f"{path} must be an object")
+                      continue
+                  required = {
+                      "name",
+                      "authoritative",
+                      "representation",
+                      "source_contract_sha256",
+                      "representation_sha256",
+                  }
+                  extras = sorted(set(view) - required)
+                  if extras:
+                      errors.append(f"{path} has unknown fields: {', '.join(extras)}")
+                  name = view.get("name")
+                  _add(errors, isinstance(name, str) and bool(name), f"{path}.name must be a non-empty string")
+                  if isinstance(name, str) and name in names:
+                      errors.append(f"duplicate compatibility view {name!r}")
+                  elif isinstance(name, str):
+                      names.add(name)
+                  _add(errors, view.get("authoritative") is False, f"{path}.authoritative must be false")
+                  if require_sealed and isinstance(digest, str):
+                      _add(errors, view.get("source_contract_sha256") == digest, f"{path}.source_contract_sha256 is stale")
+                      expected = canonical_sha256(view.get("representation"))
+                      _add(errors, view.get("representation_sha256") == expected, f"{path}.representation_sha256 is stale")
+
+
+          def validate_contract(document: Mapping[str, Any], *, require_sealed: bool = True) -> None:
+              """Validate the complete canonical contract in independent policy phases."""
+
+              if not isinstance(document, Mapping):
+                  raise ContractValidationError(("document must be an object",))
+              errors: list[str] = []
+              _json_value(document, "$", errors)
+              _scan_secrets(document, "$", errors)
+              _header(document, errors)
+              records, ids = _index_records(document, errors)
+              entity_ids = ids["entities"]
+              relation_ids = ids["relations"]
+              evidence_ids = ids["evidence"]
+              assertion_ids = ids["rules"] | ids["claims"]
+              _entities(records["entities"], evidence_ids, errors)
+              _relations(records["relations"], entity_ids, evidence_ids, errors)
+              _assertions("rules", records["rules"], entity_ids | relation_ids, evidence_ids, errors)
+              _assertions("claims", records["claims"], entity_ids | relation_ids, evidence_ids, errors)
+              _evidence(records["evidence"], entity_ids | relation_ids | assertion_ids, errors)
+              fragment_domains = _fragments(records["fragments"], records, ids, errors)
+              _coverage(document, fragment_domains, errors)
+              _views(document, require_sealed, errors)
+              if errors:
+                  raise ContractValidationError(errors)
+          ''',
+              'toolchain/codex_wire_audit/system_contract_schema.py': r'''
+          """Draft 2020-12 schema builder for the canonical system contract."""
+
+          from __future__ import annotations
+
+          from typing import Any
+
+          from .system_contract import DOMAINS, ID_PATTERN, SCHEMA_ID, SCHEMA_URI
+
+
+          def _identifier() -> dict[str, Any]:
+              return {"type": "string", "pattern": ID_PATTERN}
+
+
+          def _domain() -> dict[str, Any]:
+              return {"type": "string", "enum": list(DOMAINS)}
+
+
+          def _references() -> dict[str, Any]:
+              return {"type": "array", "items": _identifier(), "uniqueItems": True}
+
+
+          def _strict_object(required: list[str], properties: dict[str, Any]) -> dict[str, Any]:
+              return {
+                  "type": "object",
+                  "required": required,
+                  "properties": properties,
+                  "additionalProperties": False,
+              }
+
+
+          def _entity() -> dict[str, Any]:
+              properties = {
+                  "id": _identifier(),
+                  "kind": {"type": "string", "minLength": 1},
+                  "domain": _domain(),
+                  "attributes": {"type": "object"},
+                  "evidence_refs": _references(),
+              }
+              return _strict_object(list(properties), properties)
+
+
+          def _relation() -> dict[str, Any]:
+              properties = {
+                  "id": _identifier(),
+                  "kind": {"type": "string", "minLength": 1},
+                  "domain": _domain(),
+                  "source": _identifier(),
+                  "target": _identifier(),
+                  "attributes": {"type": "object"},
+                  "evidence_refs": _references(),
+              }
+              return _strict_object(list(properties), properties)
+
+
+          def _assertion() -> dict[str, Any]:
+              properties = {
+                  "id": _identifier(),
+                  "kind": {"type": "string", "minLength": 1},
+                  "domain": _domain(),
+                  "statement": {"type": "string", "minLength": 1},
+                  "subject_refs": _references(),
+                  "evidence_refs": _references(),
+              }
+              return _strict_object(list(properties), properties)
+
+
+          def _source() -> dict[str, Any]:
+              properties = {
+                  "source_id": {"type": "string", "minLength": 1},
+                  "locator": {"type": "string", "minLength": 1},
+                  "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              }
+              return _strict_object(["source_id", "locator"], properties)
+
+
+          def _evidence() -> dict[str, Any]:
+              properties = {
+                  "id": _identifier(),
+                  "domain": _domain(),
+                  "source": _source(),
+                  "subject_refs": _references(),
+                  "attributes": {"type": "object"},
+              }
+              return _strict_object(list(properties), properties)
+
+
+          def _fragment() -> dict[str, Any]:
+              properties = {
+                  "fragment_id": _identifier(),
+                  "domain": _domain(),
+                  "entity_refs": _references(),
+                  "relation_refs": _references(),
+                  "rule_refs": _references(),
+                  "claim_refs": _references(),
+                  "evidence_refs": _references(),
+              }
+              return _strict_object(list(properties), properties)
+
+
+          def _view() -> dict[str, Any]:
+              properties = {
+                  "name": {"type": "string", "minLength": 1},
+                  "authoritative": {"const": False},
+                  "representation": {},
+                  "source_contract_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$",
+                  },
+                  "representation_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$",
+                  },
+              }
+              return _strict_object(list(properties), properties)
+
+
+          def _coverage() -> dict[str, Any]:
+              properties = {
+                  "required_domains": {"const": list(DOMAINS)},
+                  "present_domains": {
+                      "type": "array",
+                      "items": _domain(),
+                      "uniqueItems": True,
+                  },
+              }
+              return _strict_object(list(properties), properties)
+
+
+          def _properties() -> dict[str, Any]:
+              return {
+                  "schema": {"const": SCHEMA_ID},
+                  "contract_id": _identifier(),
+                  "source_revision": {"type": "string"},
+                  "generator": {"type": "string", "minLength": 1},
+                  "canonical_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$",
+                  },
+                  "coverage": _coverage(),
+                  "fragments": {
+                      "type": "array",
+                      "items": _fragment(),
+                      "minItems": len(DOMAINS),
+                      "maxItems": len(DOMAINS),
+                  },
+                  "entities": {"type": "array", "items": _entity()},
+                  "relations": {"type": "array", "items": _relation()},
+                  "rules": {"type": "array", "items": _assertion()},
+                  "claims": {"type": "array", "items": _assertion()},
+                  "evidence": {"type": "array", "items": _evidence()},
+                  "compatibility_views": {"type": "array", "items": _view()},
+              }
+
+
+          def schema_document() -> dict[str, Any]:
+              """Build the checked-in machine-readable schema deterministically."""
+
+              properties = _properties()
+              return {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "$id": SCHEMA_URI,
+                  "title": "Canonical Codex connected-system contract",
+                  "description": (
+                      "Machine-readable semantic authority for Codex configuration, "
+                      "resolution, environment, lifecycle, turn, and local-storage evidence."
+                  ),
+                  "type": "object",
+                  "required": list(properties),
+                  "properties": properties,
+                  "additionalProperties": False,
+              }
+          ''',
+              'toolchain/codex_wire_audit/system_contract_examples.py': r'''
+          """Connected six-domain example for ``codex-system-contract/v1``."""
+
+          from __future__ import annotations
+
+          from typing import Any
+
+
+          def _fragment(domain: str, suffix: str, label: str, source_id: str) -> dict[str, Any]:
+              entity_id = f"entity.{domain}.{suffix}"
+              evidence_id = f"evidence.{domain}.source"
+              return {
+                  "fragment_id": f"fragment.{domain}",
+                  "domain": domain,
+                  "entities": [
+                      {
+                          "id": entity_id,
+                          "kind": suffix,
+                          "attributes": {"label": label},
+                          "evidence_refs": [evidence_id],
+                      }
+                  ],
+                  "relations": [],
+                  "rules": [
+                      {
+                          "id": f"rule.{domain}.evidence-required",
+                          "kind": "integrity",
+                          "statement": "Every semantic object is linked to source evidence.",
+                          "subject_refs": [entity_id],
+                          "evidence_refs": [evidence_id],
+                      }
+                  ],
+                  "claims": [
+                      {
+                          "id": f"claim.{domain}.captured",
+                          "kind": "coverage",
+                          "statement": f"The {label} domain is represented canonically.",
+                          "subject_refs": [entity_id],
+                          "evidence_refs": [evidence_id],
+                      }
+                  ],
+                  "evidence": [
+                      {
+                          "id": evidence_id,
+                          "source": {
+                              "source_id": source_id,
+                              "locator": f"example/{domain}",
+                          },
+                          "subject_refs": [entity_id],
+                          "attributes": {"example": True},
+                      }
+                  ],
+              }
+
+
+          def _connect(
+              fragments: dict[str, dict[str, Any]],
+              entities: dict[str, str],
+              *,
+              domain: str,
+              index: int,
+              kind: str,
+              source_domain: str,
+              target_domain: str,
+          ) -> None:
+              evidence_id = fragments[domain]["evidence"][0]["id"]
+              fragments[domain]["relations"].append(
+                  {
+                      "id": f"relation.{domain}.{index}",
+                      "kind": kind,
+                      "source": entities[source_domain],
+                      "target": entities[target_domain],
+                      "attributes": {},
+                      "evidence_refs": [evidence_id],
+                  }
+              )
+
+
+          def example_fragments() -> list[dict[str, Any]]:
+              """Build one fragment per domain and connect their semantic graph."""
+
+              specs = {
+                  "configuration": ("config_root", "configuration root", "source.config"),
+                  "resolution": (
+                      "effective_config",
+                      "effective configuration",
+                      "source.resolution",
+                  ),
+                  "environment": (
+                      "process_environment",
+                      "process environment",
+                      "source.environment",
+                  ),
+                  "lifecycle": ("thread", "thread lifecycle", "source.lifecycle"),
+                  "turn": ("turn", "turn metadata", "source.turn"),
+                  "local_storage": (
+                      "rollout",
+                      "rollout revision",
+                      "source.local-storage",
+                  ),
+              }
+              fragments = {
+                  domain: _fragment(domain, suffix, label, source_id)
+                  for domain, (suffix, label, source_id) in specs.items()
+              }
+              entities = {
+                  domain: fragment["entities"][0]["id"]
+                  for domain, fragment in fragments.items()
+              }
+              connections = (
+                  ("resolution", "resolves_to", "configuration", "resolution"),
+                  ("environment", "influences", "environment", "resolution"),
+                  ("lifecycle", "owns", "lifecycle", "turn"),
+                  ("turn", "persists_as", "turn", "local_storage"),
+              )
+              for index, (domain, kind, source, target) in enumerate(connections, 1):
+                  _connect(
+                      fragments,
+                      entities,
+                      domain=domain,
+                      index=index,
+                      kind=kind,
+                      source_domain=source,
+                      target_domain=target,
+                  )
+              return list(fragments.values())
+          ''',
+          }
+
+          for relative, raw in files.items():
+              path = root / relative
+              path.parent.mkdir(parents=True, exist_ok=True)
+              path.write_text(textwrap.dedent(raw).lstrip('\n'), encoding='utf-8')
+              ast.parse(path.read_text(encoding='utf-8'))
+              if len(path.read_text(encoding='utf-8').splitlines()) > 600:
+                  raise SystemExit(f'canonical module exceeds 600 lines: {path}')
+
+          subprocess.run(
+              [
+                  sys.executable,
+                  'toolchain/tools/check_system_contract.py',
+                  '--schema-output',
+                  'toolchain/schemas/codex-system-contract-v1.schema.json',
+                  '--example-output',
+                  'toolchain/schemas/codex-system-contract-v1.example.json',
+                  '--source-revision',
+                  os.environ['PINNED_CODEX_SHA'],
+              ],
+              check=True,
+          )
+          PY
+
+      - name: Install constrained package and test dependencies
+        working-directory: toolchain
+        run: python -m pip install --constraint ci/constraints.txt -e '.[test]'
+
+      - name: Format and regenerate deterministic assets
+        run: |
+          set -euo pipefail
+          python -m ruff format \
+            toolchain/codex_wire_audit/system_contract.py \
+            toolchain/codex_wire_audit/system_contract_validation.py \
+            toolchain/codex_wire_audit/system_contract_schema.py \
+            toolchain/codex_wire_audit/system_contract_examples.py \
+            toolchain/tools/check_system_contract.py \
+            toolchain/tests/test_system_contract_v1.py || true
+          python -m ruff check --fix \
+            toolchain/codex_wire_audit/system_contract.py \
+            toolchain/codex_wire_audit/system_contract_validation.py \
+            toolchain/codex_wire_audit/system_contract_schema.py \
+            toolchain/codex_wire_audit/system_contract_examples.py \
+            toolchain/tools/check_system_contract.py \
+            toolchain/tests/test_system_contract_v1.py || true
+          python toolchain/tools/check_system_contract.py \
+            --schema-output toolchain/schemas/codex-system-contract-v1.schema.json \
+            --example-output toolchain/schemas/codex-system-contract-v1.example.json \
+            --source-revision "$PINNED_CODEX_SHA"
+
+      - name: Validate complete source and canonical proof
+        run: |
+          set -euo pipefail
+          mkdir -p toolchain/ci-out/canonical-contract
+          if test -f toolchain/tools/check_architecture_docs.py; then
+            python toolchain/tools/check_architecture_docs.py \
+              | tee toolchain/ci-out/canonical-contract/architecture-docs.txt
+          fi
+          cd toolchain
+          make compile
+          python -m pytest -q | tee ci-out/canonical-contract/pytest.txt
+          make check-assets | tee ci-out/canonical-contract/check-assets.txt
+          python tools/maintainability_metrics.py --check \
+            | tee ci-out/canonical-contract/maintainability.txt
+          python tools/check_system_contract.py \
+            --check-schema \
+            --input schemas/codex-system-contract-v1.example.json \
+            --self-test \
+            --source-revision "$PINNED_CODEX_SHA" \
+            | tee ci-out/canonical-contract/system-contract.txt
+          python -m codex_wire_audit.release_contract \
+            --output ci-out/canonical-contract/source-capability-probe.json
+
+      - name: Validate pinned Codex configuration surface
+        run: |
+          set -euo pipefail
+          codex_root="$RUNNER_TEMP/codex-source"
+          git init -q "$codex_root"
+          git -C "$codex_root" remote add origin https://github.com/openai/codex.git
+          git -C "$codex_root" fetch --depth=1 origin "$PINNED_CODEX_SHA"
+          git -C "$codex_root" checkout -q --detach FETCH_HEAD
+          mkdir -p toolchain/ci-out/canonical-contract/pinned
+          python toolchain/tools/check_config_surface.py \
+            --codex-root "$codex_root" \
+            --output toolchain/ci-out/canonical-contract/pinned/config-integration.json \
+            --schema-output toolchain/ci-out/canonical-contract/pinned/config-schema.json \
+            --graph-output toolchain/ci-out/canonical-contract/pinned/config-surface-graph.json
+
+      - name: Upload final proof evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: canonical-machine-schema-publication-proof
+          path: toolchain/ci-out/canonical-contract
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Commit ordinary canonical representation
+        run: |
+          set -euo pipefail
+          rm -f \
+            .github/workflows/temporary-canonical-machine-schema.yml \
+            .github/workflows/temporary-canonical-machine-schema-fix.yml \
+            .github/workflows/temporary-canonical-machine-schema-fix-2.yml \
+            .github/workflows/temporary-canonical-machine-schema-final.yml
+          rm -rf toolchain/ci-out toolchain/.pytest_cache toolchain/.mypy_cache toolchain/.ruff_cache
+          rm -rf toolchain/codex_wire_audit.egg-info toolchain/build toolchain/dist
+          rm -f toolchain/.coverage toolchain/coverage.json
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          find . -type f \( -name '*.pyc' -o -name '*.pyo' \) -delete
+          git add -A
+          git diff --cached --check
+          test -n "$(git diff --cached --name-only)"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit \
+            -m 'feat: publish canonical machine-readable system contract' \
+            -m 'Adds codex-system-contract/v1 as the deterministic semantic authority, binds compatibility views by digest, enforces reference closure and secret safety, repairs the local-storage maintainability gate, and replaces the broken recovery path with a read-only permanent proof workflow.'
+          printf '{"parent":"%s","candidate":"%s"}\n' \
+            "$(git rev-parse HEAD^)" "$(git rev-parse HEAD)" \
+            > "$RUNNER_TEMP/canonical-publication.json"
+
+      - name: Guard and fast-forward main
+        run: |
+          set -euo pipefail
+          candidate="$(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_MAIN_SHA"
+          git fetch --no-tags origin main
+          test "$(git rev-parse origin/main)" = "$EXPECTED_MAIN_SHA"
+          git merge-base --is-ancestor origin/main HEAD
+          git push origin "HEAD:refs/heads/main"
+          git fetch --no-tags origin main
+          test "$(git rev-parse origin/main)" = "$candidate"
+
+      - name: Delete superseded temporary branches
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          repository = os.environ['GITHUB_REPOSITORY']
+          token = os.environ['GH_TOKEN']
+          branches = (
+              os.environ['BOOTSTRAP_BRANCH'],
+              'codex-bootstrap-canonical-direct-20260909',
+              'codex-bootstrap-canonical-final-20260909',
+              'codex-bootstrap-canonical-v1',
+              'codex-bootstrap-canonical-v1-20260909',
+              'codex-bootstrap-source-export-20260908',
+              'codex/local-storage-full-schema-20260908',
+          )
+          for branch in branches:
+              ref = urllib.parse.quote(f'heads/{branch}', safe='/')
+              request = urllib.request.Request(
+                  f'https://api.github.com/repos/{repository}/git/refs/{ref}',
+                  method='DELETE',
+                  headers={
+                      'Authorization': f'Bearer {token}',
+                      'Accept': 'application/vnd.github+json',
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      'User-Agent': 'canonical-machine-schema-publication',
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=60) as response:
+                      print(branch, response.status)
+              except urllib.error.HTTPError as error:
+                  if error.code not in {404, 422}:
+                      raise
+          PY
