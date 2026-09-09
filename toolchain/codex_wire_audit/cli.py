@@ -24,6 +24,8 @@ from .orchestrator import (
 from .schemas import write_schema_documents as write_v11_schema_documents
 from .proof_profiles import PROFILES
 from .validation import validate_evolution_contract
+from .system_contract_evidence import load_document
+from .system_contract_validation import validate_system_contract
 
 
 def _selected_output(report: Mapping[str, Any], sections: list[str], contract: Any) -> Any:
@@ -79,6 +81,11 @@ def _render_output(
             sort_keys=True,
             separators=(",", ":"),
         ) + "\n"
+        if report.get("system_contract"):
+            text += json.dumps(
+                {"record_type": "system_contract", "value": report["system_contract"]},
+                ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+            ) + "\n"
         if report.get("semantic_diff"):
             text += json.dumps(
                 {
@@ -162,6 +169,7 @@ def _write_v11_output_directory(
             json.dumps(config_data.get("surface_graph") or {}, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
+    (root / "system-contract.json").write_bytes(canonical_json_bytes(result.report["system_contract"]))
     write_v11_schema_documents(root / "schemas" / "maintainability")
     manifest = {
         "generator_version": GENERATOR_VERSION,
@@ -204,13 +212,21 @@ def _fail_semantic_diff(report: Mapping[str, Any], policy: str) -> None:
 
 def _validate_existing_report(path: str, legacy: Any) -> list[dict[str, Any]]:
     try:
-        report = json.loads(Path(path).read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as error:
+        report = load_document(path)
+    except (OSError, ValueError) as error:
         raise SourceLoadError(f"cannot read report {path}: {error}") from error
     if not isinstance(report, Mapping):
         raise SourceLoadError("report root must be an object")
     diagnostics = list(legacy.contract.validate_report(report))
     diagnostics.extend(validate_evolution_contract(report))
+    if "system_contract" in report:
+        try:
+            validate_system_contract(report["system_contract"], report=report)
+        except (ValueError, KeyError, TypeError) as error:
+            diagnostics.append({
+                "code": "SYSTEM_CONTRACT_INVALID", "severity": "error",
+                "message": str(error), "report_pointer": "/system_contract",
+            })
     unique: dict[tuple[str, str], dict[str, Any]] = {}
     for item in diagnostics:
         unique[(str(item.get("code")), str(item.get("report_pointer") or item.get("pointer")))] = item
@@ -269,6 +285,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--section", action="append", default=[])
     parser.add_argument("--emit-schema", metavar="DIRECTORY")
     parser.add_argument("--emit-ir", metavar="FILE", help="write the canonical evolution contract")
+    parser.add_argument("--emit-system-contract", metavar="FILE", help="write source-derived codex-system-contract/v1 (migrated semantics only)")
     parser.add_argument("--emit-config-schema", metavar="FILE", help="write the normalized generated config schema catalog")
     parser.add_argument("--emit-surface-graph", metavar="FILE", help="write the config-to-protocol surface graph")
     parser.add_argument("--write-source-registry", metavar="FILE")
@@ -390,6 +407,10 @@ def main(argv: list[str] | None = None) -> int:
             encoding="utf-8",
         )
     config_data = (report.get("evolution_contract") or {}).get("extractors", {}).get("extractor.config_effects", {}).get("data")
+    if args.emit_system_contract:
+        output = Path(args.emit_system_contract)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(canonical_json_bytes(report["system_contract"]))
     if args.emit_config_schema:
         if not isinstance(config_data, Mapping):
             raise SourceLoadError("config schema was not extracted for the selected source/profile")

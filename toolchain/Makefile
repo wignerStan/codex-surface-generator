@@ -48,21 +48,19 @@ history-assets:
 	$(PYTHON) -m codex_wire_audit.history_cli --verify-container $(HISTORY_CONTAINER) --output /dev/null
 
 check-history-assets:
-	@tmp=$$(mktemp -d); \
+	@set -eu; tmp=$$(mktemp -d); trap 'rm -rf "$$tmp"' EXIT; \
 	$(PYTHON) -m codex_wire_audit.history_cli --output-dir $$tmp/container --output $$tmp/build.json >/dev/null; \
 	$(PYTHON) -m codex_wire_audit.history_cli --verify-container $$tmp/container --output $$tmp/verify.json >/dev/null; \
-	diff -ru $(HISTORY_CONTAINER) $$tmp/container; \
-	rm -rf $$tmp
+	diff -ru $(HISTORY_CONTAINER) $$tmp/container
 
 legacy-assets:
 	$(PYTHON) tools/build_v11_assets.py
 
 check-legacy-assets:
-	@tmp=$$(mktemp -d); \
+	@set -eu; tmp=$$(mktemp -d); trap 'rm -rf "$$tmp"' EXIT; \
 	$(PYTHON) tools/build_v11_assets.py --output-root $$tmp >/dev/null; \
 	diff -ru codex_wire_audit_v11_schemas $$tmp/codex_wire_audit_v11_schemas; \
-	diff -ru codex_wire_audit_v11_examples $$tmp/codex_wire_audit_v11_examples; \
-	rm -rf $$tmp
+	diff -ru codex_wire_audit_v11_examples $$tmp/codex_wire_audit_v11_examples
 
 metrics:
 	$(PYTHON) tools/maintainability_metrics.py --write

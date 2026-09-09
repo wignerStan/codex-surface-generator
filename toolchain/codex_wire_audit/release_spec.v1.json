@@ -159,7 +159,32 @@
       "required_resources": [
         "extractors/local_storage.py",
         "proof_schema_templates/local-storage-semantics-v1.schema.json",
-        "coverage_profiles.v3.json"
+        "coverage_profiles.v3.json",
+        "extractors/local_storage_specs.py",
+        "extractors/local_storage_sources.py",
+        "extractors/local_storage_layout.py",
+        "extractors/local_storage_lifecycle.py"
+      ],
+      "status": "active_package"
+    },
+    {
+      "extractor_ids": [],
+      "id": "canonical_system_contract",
+      "profile_assertions": {
+        "hybrid_v19": {
+          "required_extractors_contains": [
+            "extractor.turn_metadata",
+            "extractor.context_management",
+            "extractor.config_effects"
+          ]
+        }
+      },
+      "required_resources": [
+        "system_contract.py",
+        "system_contract_validation.py",
+        "system_contract_evidence.py",
+        "compatibility_views.py",
+        "schema_templates/system-contract.schema.json"
       ],
       "status": "active_package"
     }

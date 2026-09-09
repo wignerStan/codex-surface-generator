@@ -585,6 +585,7 @@ class SchemaDocumentTests(unittest.TestCase):
                 "turn-metadata-semantics.schema.json",
                 "evolution-contract.schema.json",
                 "semantic-diff.schema.json",
+                "system-contract.schema.json",
             },
         )
         from jsonschema import Draft202012Validator

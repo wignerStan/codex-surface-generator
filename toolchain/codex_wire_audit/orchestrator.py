@@ -18,6 +18,7 @@ from .evolution import (
     apply_local_storage_overlay,
     build_evolution_contract,
     finalize_evolution_contract,
+    finalize_system_report,
 )
 from .legacy import LegacyModules
 from .models import SourceGroup, SourceSnapshot
@@ -477,6 +478,11 @@ def generate_report(
             },
         }
         parser["legacy_fallback_boundary"] = "all non-migrated v10 sections"
+
+    try:
+        finalize_system_report(report)
+    except ValueError as error:
+        raise SourceLoadError(f"canonical contract validation failed: {error}") from error
 
     _merge_structured_diagnostics(report, diagnostics)
     _update_report_status(report, evolution_contract)

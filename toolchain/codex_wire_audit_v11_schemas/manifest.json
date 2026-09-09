@@ -1,17 +1,17 @@
 {
-  "count": 8,
+  "count": 9,
   "files": {
     "diagnostic.schema.json": {
       "bytes": 1197,
       "sha256": "7e9376ba42687949476b7181d8a37d81605a31387bd349853c33a4bc86caeeed"
     },
     "evolution-contract.schema.json": {
-      "bytes": 7998,
-      "sha256": "645ecd19afbb1b16a94dbf72833cbf91b8046a842164702b67508c3205f0d043"
+      "bytes": 7928,
+      "sha256": "c24e72e0820c32b421f1b5a714560e1025c32f77b93fb7c86d2dc2160eb39155"
     },
     "index.json": {
-      "bytes": 358,
-      "sha256": "f10bdf823b7dfafbe816545fd4fd1657e9a736613e7c944afac4c496c64afd21"
+      "bytes": 393,
+      "sha256": "533407bfd144411fea2a54332aeb5d85e510d6ed4705559473b0f71d9da51c48"
     },
     "predicate.schema.json": {
       "bytes": 1072,
@@ -28,6 +28,10 @@
     "source-snapshot.schema.json": {
       "bytes": 3940,
       "sha256": "ad32a94926aba675fd083f3fc8dda1963762cc1daa5a1bcafef3ca381648a96e"
+    },
+    "system-contract.schema.json": {
+      "bytes": 1665,
+      "sha256": "6e2587063f201d1ee1d76dcb83582e37a6aa289be0d501d93c31daefbe37448e"
     },
     "turn-metadata-semantics.schema.json": {
       "bytes": 4527,

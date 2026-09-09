@@ -99,3 +99,13 @@ python toolchain/tools/release_pipeline.py verify --release-dir release_v19
 
 See [`toolchain/README_CODEX_WIRE_AUDIT_V19.md`](toolchain/README_CODEX_WIRE_AUDIT_V19.md)
 for the operational and proof boundaries.
+
+## Canonical migrated semantics
+
+The generated `codex-system-contract/v1` model owns migrated extractor facts;
+legacy configuration/storage views are deterministic projections. This is an
+explicitly **hybrid** contract, not a claim that all Codex subsystems or runtime
+behavior have been proved. See the [contract guide](contracts/codex-system-contract/v1/README.md)
+and [baseline review](CANONICAL_REVIEW.md). Source, schema, coverage, exact-byte
+pinned integration, and release closure are checked by the root-level read-only
+`canonical-proof` workflow.

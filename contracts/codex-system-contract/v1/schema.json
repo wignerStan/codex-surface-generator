@@ -1,0 +1,1118 @@
+{
+  "$defs": {
+    "diagnostic.schema.json": {
+      "$id": "https://schemas.codex-wire-audit.invalid/v11/diagnostic.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "code": {
+          "pattern": "^[A-Z][A-Z0-9_]+$",
+          "type": "string"
+        },
+        "details": {
+          "type": "object"
+        },
+        "entity_id": {
+          "type": "string"
+        },
+        "extractor_id": {
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^diag\\.",
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "recoverable": {
+          "type": "boolean"
+        },
+        "report_pointer": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "info"
+          ]
+        },
+        "source_refs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "strict_failure": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "code",
+        "severity",
+        "category",
+        "message",
+        "recoverable",
+        "strict_failure",
+        "details"
+      ],
+      "title": "Codex wire audit structured diagnostic",
+      "type": "object"
+    },
+    "evolution-contract.schema.json": {
+      "$id": "https://schemas.codex-wire-audit.invalid/v11/evolution-contract.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "coverage_profile": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "diagnostic_refs": {
+          "items": {
+            "pattern": "^diag\\.",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "diagnostic_summary": {
+          "additionalProperties": false,
+          "properties": {
+            "error": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "info": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "warning": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "error",
+            "warning",
+            "info"
+          ],
+          "type": "object"
+        },
+        "extractors": {
+          "additionalProperties": false,
+          "minProperties": 1,
+          "patternProperties": {
+            "^extractor\\.": {
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "type": "object"
+                },
+                "extractor_id": {
+                  "pattern": "^extractor\\.",
+                  "type": "string"
+                },
+                "schema_version": {
+                  "type": "string"
+                },
+                "semantic_complete": {
+                  "type": "boolean"
+                },
+                "source_spec_ids": {
+                  "items": {
+                    "pattern": "^source_spec\\.",
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "extractor_id",
+                "schema_version",
+                "source_spec_ids",
+                "semantic_complete",
+                "data"
+              ],
+              "type": "object"
+            }
+          },
+          "properties": {
+            "extractor.turn_metadata": {
+              "allOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "object"
+                    },
+                    "extractor_id": {
+                      "pattern": "^extractor\\.",
+                      "type": "string"
+                    },
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "semantic_complete": {
+                      "type": "boolean"
+                    },
+                    "source_spec_ids": {
+                      "items": {
+                        "pattern": "^source_spec\\.",
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    }
+                  },
+                  "required": [
+                    "extractor_id",
+                    "schema_version",
+                    "source_spec_ids",
+                    "semantic_complete",
+                    "data"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "data": {
+                      "$ref": "https://schemas.codex-wire-audit.invalid/v11/turn-metadata-semantics.schema.json"
+                    },
+                    "extractor_id": {
+                      "const": "extractor.turn_metadata"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "generator_version": {
+          "type": "string"
+        },
+        "integrity": {
+          "additionalProperties": false,
+          "properties": {
+            "algorithm": {
+              "const": "sha256"
+            },
+            "canonical_ir_sha256": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "canonicalization": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "algorithm",
+            "canonicalization",
+            "canonical_ir_sha256"
+          ],
+          "type": "object"
+        },
+        "migration": {
+          "additionalProperties": false,
+          "properties": {
+            "canonical_ir_extractors": {
+              "items": {
+                "pattern": "^extractor\\.",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "extension_contract": {
+              "type": "string"
+            },
+            "legacy_adapter": {
+              "type": "string"
+            },
+            "legacy_machine_reconstruction_remaining": {
+              "type": "boolean"
+            },
+            "stage": {
+              "const": "hybrid_canonical_ir"
+            }
+          },
+          "required": [
+            "stage",
+            "canonical_ir_extractors",
+            "legacy_adapter",
+            "legacy_machine_reconstruction_remaining",
+            "extension_contract"
+          ],
+          "type": "object"
+        },
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "source_registry": {
+          "$ref": "https://schemas.codex-wire-audit.invalid/v11/source-registry.schema.json"
+        },
+        "source_revision": {
+          "$ref": "https://schemas.codex-wire-audit.invalid/v11/source-snapshot.schema.json#/$defs/revision"
+        },
+        "source_snapshot": {
+          "$ref": "https://schemas.codex-wire-audit.invalid/v11/source-snapshot.schema.json"
+        },
+        "status": {
+          "additionalProperties": false,
+          "properties": {
+            "current_main_conformance": {
+              "enum": [
+                "complete",
+                "partial",
+                "failed",
+                "not_applicable",
+                "not_run",
+                "not_compared",
+                "pending_report_upgrade",
+                "unknown"
+              ]
+            },
+            "overall": {
+              "enum": [
+                "complete",
+                "partial",
+                "failed",
+                "not_applicable",
+                "not_run",
+                "not_compared",
+                "pending_report_upgrade",
+                "unknown"
+              ]
+            },
+            "runtime_observation": {
+              "enum": [
+                "complete",
+                "partial",
+                "failed",
+                "not_applicable",
+                "not_run",
+                "not_compared",
+                "pending_report_upgrade",
+                "unknown"
+              ]
+            },
+            "schema_resolution": {
+              "enum": [
+                "complete",
+                "partial",
+                "failed",
+                "not_applicable",
+                "not_run",
+                "not_compared",
+                "pending_report_upgrade",
+                "unknown"
+              ]
+            },
+            "semantic_classification": {
+              "enum": [
+                "complete",
+                "partial",
+                "failed",
+                "not_applicable",
+                "not_run",
+                "not_compared",
+                "pending_report_upgrade",
+                "unknown"
+              ]
+            },
+            "source_inventory": {
+              "enum": [
+                "complete",
+                "partial",
+                "failed",
+                "not_applicable",
+                "not_run",
+                "not_compared",
+                "pending_report_upgrade",
+                "unknown"
+              ]
+            },
+            "syntax_extraction": {
+              "enum": [
+                "complete",
+                "partial",
+                "failed",
+                "not_applicable",
+                "not_run",
+                "not_compared",
+                "pending_report_upgrade",
+                "unknown"
+              ]
+            }
+          },
+          "required": [
+            "source_inventory",
+            "syntax_extraction",
+            "semantic_classification",
+            "schema_resolution",
+            "runtime_observation",
+            "current_main_conformance",
+            "overall"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "$schema",
+        "schema_version",
+        "generator_version",
+        "coverage_profile",
+        "source_revision",
+        "source_registry",
+        "source_snapshot",
+        "extractors",
+        "migration",
+        "status",
+        "diagnostic_refs",
+        "diagnostic_summary",
+        "integrity"
+      ],
+      "title": "Codex wire audit evolution contract",
+      "type": "object"
+    },
+    "predicate.schema.json": {
+      "$id": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "arg": {
+          "$ref": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json"
+        },
+        "args": {
+          "items": {
+            "$ref": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json"
+          },
+          "type": "array"
+        },
+        "argument": {
+          "type": "string"
+        },
+        "expression": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "machine_evaluable": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "op": {
+          "enum": [
+            "all",
+            "any",
+            "not",
+            "exists",
+            "is_empty",
+            "const",
+            "call_predicate",
+            "var",
+            "rust_expression"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "value": {}
+      },
+      "required": [
+        "op"
+      ],
+      "title": "Source-derived semantic predicate",
+      "type": "object"
+    },
+    "semantic-diff.schema.json": {
+      "$id": "https://schemas.codex-wire-audit.invalid/v11/semantic-diff.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "after_source_revision_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "before_source_revision_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "changes": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "after": {},
+              "before": {},
+              "details": {
+                "type": "object"
+              },
+              "entity_id": {
+                "type": "string"
+              },
+              "id": {
+                "pattern": "^semantic_change\\.",
+                "type": "string"
+              },
+              "kind": {
+                "type": "string"
+              },
+              "severity": {
+                "enum": [
+                  "breaking",
+                  "attention",
+                  "info"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "entity_id",
+              "severity",
+              "before",
+              "after",
+              "details"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "summary": {
+          "additionalProperties": false,
+          "properties": {
+            "attention": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "breaking": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "has_breaking_changes": {
+              "type": "boolean"
+            },
+            "info": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "total": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "total",
+            "breaking",
+            "attention",
+            "info",
+            "has_breaking_changes"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "schema_version",
+        "before_source_revision_id",
+        "after_source_revision_id",
+        "changes",
+        "summary"
+      ],
+      "title": "Codex wire audit semantic diff",
+      "type": "object"
+    },
+    "source-registry.schema.json": {
+      "$id": "https://schemas.codex-wire-audit.invalid/v11/source-registry.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "counts": {
+          "additionalProperties": false,
+          "properties": {
+            "base": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "extra": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "optional": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "required": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "surface": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "total": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "total",
+            "required",
+            "optional",
+            "base",
+            "surface",
+            "extra"
+          ],
+          "type": "object"
+        },
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "sources": {
+          "additionalProperties": false,
+          "patternProperties": {
+            "^source_spec\\.": {
+              "additionalProperties": false,
+              "properties": {
+                "exclusion_reason": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "expected_symbols": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "extractor_ids": {
+                  "items": {
+                    "pattern": "^extractor\\.",
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "group": {
+                  "enum": [
+                    "base",
+                    "surface",
+                    "extra"
+                  ]
+                },
+                "id": {
+                  "pattern": "^source_spec\\.",
+                  "type": "string"
+                },
+                "legacy_key": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "path_candidates": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "roles": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "id",
+                "legacy_key",
+                "group",
+                "path_candidates",
+                "required",
+                "roles",
+                "expected_symbols",
+                "extractor_ids"
+              ],
+              "type": "object"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "schema_version",
+        "sources",
+        "counts"
+      ],
+      "title": "Codex wire audit source registry",
+      "type": "object"
+    },
+    "source-snapshot.schema.json": {
+      "$defs": {
+        "file": {
+          "additionalProperties": false,
+          "properties": {
+            "byte_identity": {
+              "const": "exact"
+            },
+            "byte_length": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "encoding": {
+              "const": "utf-8"
+            },
+            "git_blob_sha": {
+              "pattern": "^[0-9a-f]{40}$",
+              "type": "string"
+            },
+            "group": {
+              "enum": [
+                "base",
+                "surface",
+                "extra"
+              ]
+            },
+            "legacy_key": {
+              "type": "string"
+            },
+            "line_count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "path": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "path_candidate_index": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "repository_blob_sha": {
+              "pattern": "^[0-9a-f]{40}$",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sha256": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "spec_id": {
+              "pattern": "^source_spec\\.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "spec_id",
+            "legacy_key",
+            "group",
+            "path",
+            "byte_length",
+            "line_count",
+            "sha256",
+            "git_blob_sha",
+            "repository_blob_sha",
+            "path_candidate_index",
+            "byte_identity",
+            "encoding"
+          ],
+          "type": "object"
+        },
+        "revision": {
+          "additionalProperties": false,
+          "properties": {
+            "commit_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "commit_message": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dirty": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "repository": {
+              "type": "string"
+            },
+            "requested_ref": {
+              "type": "string"
+            },
+            "resolved_commit_sha": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source_mode": {
+              "type": "string"
+            },
+            "source_revision_id": {
+              "pattern": "^sha256:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "source_set_sha256": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "source_mode",
+            "repository",
+            "requested_ref",
+            "resolved_commit_sha",
+            "source_set_sha256",
+            "source_revision_id",
+            "dirty",
+            "commit_date",
+            "commit_message"
+          ],
+          "type": "object"
+        }
+      },
+      "$id": "https://schemas.codex-wire-audit.invalid/v11/source-snapshot.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "counts": {
+          "additionalProperties": false,
+          "properties": {
+            "available": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "unavailable": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "available",
+            "unavailable"
+          ],
+          "type": "object"
+        },
+        "files": {
+          "additionalProperties": false,
+          "patternProperties": {
+            "^source_spec\\.": {
+              "$ref": "#/$defs/file"
+            }
+          },
+          "type": "object"
+        },
+        "revision": {
+          "$ref": "#/$defs/revision"
+        },
+        "unavailable_specs": {
+          "additionalProperties": false,
+          "patternProperties": {
+            "^source_spec\\.": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "revision",
+        "files",
+        "unavailable_specs",
+        "counts"
+      ],
+      "title": "Exact-byte source snapshot manifest",
+      "type": "object"
+    },
+    "turn-metadata-semantics.schema.json": {
+      "$defs": {
+        "field": {
+          "additionalProperties": false,
+          "properties": {
+            "emission_fingerprint": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "field_name": {
+              "type": "string"
+            },
+            "gate_refs": {
+              "items": {
+                "pattern": "^turn_metadata\\.gate\\.",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "id": {
+              "pattern": "^turn_metadata\\.field\\.",
+              "type": "string"
+            },
+            "identity_domain": {
+              "enum": [
+                "request_identity",
+                "thread_identity",
+                "turn_identity",
+                "lineage",
+                "execution_context",
+                "tool_inventory",
+                "timing_and_history",
+                "compaction",
+                "flattened_extra",
+                "other"
+              ]
+            },
+            "kind": {
+              "enum": [
+                "conditional_option_passthrough",
+                "conditional_value",
+                "option_passthrough",
+                "value_passthrough",
+                "flattened_extra",
+                "non_empty_projection",
+                "derived_local",
+                "unclassified"
+              ]
+            },
+            "machine_evaluable": {
+              "type": "boolean"
+            },
+            "predicate": {
+              "$ref": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json"
+            },
+            "semantic_fingerprint": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "source_expression": {
+              "type": "string"
+            },
+            "source_ref": {
+              "type": "string"
+            },
+            "value_expression": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "field_name",
+            "kind",
+            "source_expression",
+            "value_expression",
+            "predicate",
+            "gate_refs",
+            "identity_domain",
+            "emission_fingerprint",
+            "semantic_fingerprint",
+            "source_ref",
+            "machine_evaluable"
+          ],
+          "type": "object"
+        },
+        "gate": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "pattern": "^turn_metadata\\.gate\\.",
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "predicate": {
+              "$ref": "https://schemas.codex-wire-audit.invalid/v11/predicate.schema.json"
+            },
+            "semantic_fingerprint": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "source_expression": {
+              "type": "string"
+            },
+            "source_ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "source_expression",
+            "predicate",
+            "semantic_fingerprint",
+            "source_ref"
+          ],
+          "type": "object"
+        }
+      },
+      "$id": "https://schemas.codex-wire-audit.invalid/v11/turn-metadata-semantics.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "construction_function": {
+          "const": "CodexResponsesMetadata::turn_metadata_payload"
+        },
+        "field_groups": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "type": "object"
+        },
+        "field_order": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fields": {
+          "additionalProperties": {
+            "$ref": "#/$defs/field"
+          },
+          "type": "object"
+        },
+        "gates": {
+          "additionalProperties": {
+            "$ref": "#/$defs/gate"
+          },
+          "type": "object"
+        },
+        "local_bindings": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "semantic_complete": {
+          "type": "boolean"
+        },
+        "semantic_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "source_path": {
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "construction_function",
+        "source_path",
+        "source_sha256",
+        "gates",
+        "fields",
+        "field_order",
+        "field_groups",
+        "local_bindings",
+        "semantic_complete",
+        "semantic_digest"
+      ],
+      "title": "Canonical turn metadata emission semantics",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.codex-wire-audit.invalid/system/v1/system-contract.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A source-derived, explicitly hybrid contract. Legacy fields outside the registered projections are not claimed canonical.",
+  "properties": {
+    "$schema": {
+      "const": "https://schemas.codex-wire-audit.invalid/system/v1/system-contract.schema.json"
+    },
+    "authority": {
+      "const": "migrated_semantic_extractors"
+    },
+    "compatibility_views": {
+      "additionalProperties": false,
+      "minProperties": 1,
+      "patternProperties": {
+        "^/": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "integrity": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "canonical_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "canonicalization": {
+          "const": "codex-wire-audit-canonical-json-v2"
+        }
+      },
+      "required": [
+        "algorithm",
+        "canonicalization",
+        "canonical_sha256"
+      ],
+      "type": "object"
+    },
+    "model": {
+      "$ref": "https://schemas.codex-wire-audit.invalid/v11/evolution-contract.schema.json"
+    },
+    "schema": {
+      "const": "codex-system-contract/v1"
+    }
+  },
+  "required": [
+    "$schema",
+    "schema",
+    "authority",
+    "model",
+    "compatibility_views",
+    "integrity"
+  ],
+  "title": "Canonical migrated Codex system semantics, v1",
+  "type": "object"
+}
