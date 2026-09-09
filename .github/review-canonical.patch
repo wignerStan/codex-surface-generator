@@ -1,0 +1,343 @@
+diff --git a/README.md b/README.md
+index b65a09d..a5fffc8 100644
+--- a/README.md
++++ b/README.md
+@@ -99,3 +99,13 @@ python toolchain/tools/release_pipeline.py verify --release-dir release_v19
+ 
+ See [`toolchain/README_CODEX_WIRE_AUDIT_V19.md`](toolchain/README_CODEX_WIRE_AUDIT_V19.md)
+ for the operational and proof boundaries.
++
++## Canonical migrated semantics
++
++The generated `codex-system-contract/v1` model owns migrated extractor facts;
++legacy configuration/storage views are deterministic projections. This is an
++explicitly **hybrid** contract, not a claim that all Codex subsystems or runtime
++behavior have been proved. See the [contract guide](contracts/codex-system-contract/v1/README.md)
++and [baseline review](CANONICAL_REVIEW.md). Source, schema, coverage, exact-byte
++pinned integration, and release closure are checked by the root-level read-only
++`canonical-proof` workflow.
+diff --git a/toolchain/Makefile b/toolchain/Makefile
+index 6abd59d..2f4d5c2 100644
+--- a/toolchain/Makefile
++++ b/toolchain/Makefile
+@@ -48,21 +48,19 @@ history-assets:
+ 	$(PYTHON) -m codex_wire_audit.history_cli --verify-container $(HISTORY_CONTAINER) --output /dev/null
+ 
+ check-history-assets:
+-	@tmp=$$(mktemp -d); \
++	@set -eu; tmp=$$(mktemp -d); trap 'rm -rf "$$tmp"' EXIT; \
+ 	$(PYTHON) -m codex_wire_audit.history_cli --output-dir $$tmp/container --output $$tmp/build.json >/dev/null; \
+ 	$(PYTHON) -m codex_wire_audit.history_cli --verify-container $$tmp/container --output $$tmp/verify.json >/dev/null; \
+-	diff -ru $(HISTORY_CONTAINER) $$tmp/container; \
+-	rm -rf $$tmp
++	diff -ru $(HISTORY_CONTAINER) $$tmp/container
+ 
+ legacy-assets:
+ 	$(PYTHON) tools/build_v11_assets.py
+ 
+ check-legacy-assets:
+-	@tmp=$$(mktemp -d); \
++	@set -eu; tmp=$$(mktemp -d); trap 'rm -rf "$$tmp"' EXIT; \
+ 	$(PYTHON) tools/build_v11_assets.py --output-root $$tmp >/dev/null; \
+ 	diff -ru codex_wire_audit_v11_schemas $$tmp/codex_wire_audit_v11_schemas; \
+-	diff -ru codex_wire_audit_v11_examples $$tmp/codex_wire_audit_v11_examples; \
+-	rm -rf $$tmp
++	diff -ru codex_wire_audit_v11_examples $$tmp/codex_wire_audit_v11_examples
+ 
+ metrics:
+ 	$(PYTHON) tools/maintainability_metrics.py --write
+diff --git a/toolchain/codex_wire_audit/canonical.py b/toolchain/codex_wire_audit/canonical.py
+index 26f3fbb..aaea43e 100644
+--- a/toolchain/codex_wire_audit/canonical.py
++++ b/toolchain/codex_wire_audit/canonical.py
+@@ -25,7 +25,11 @@ def normalize_json(value: Any, *, pointer: str = "") -> Any:
+         normalized: dict[str, Any] = {}
+         originals: dict[str, str] = {}
+         for key, child in value.items():
+-            original = str(key)
++            if not isinstance(key, str):
++                raise CanonicalizationError(
++                    f"non-string object key at {pointer or '/'}: {key!r}"
++                )
++            original = key
+             normalized_key = nfc(original)
+             if normalized_key in normalized and originals[normalized_key] != original:
+                 location = pointer or "/"
+@@ -42,6 +46,8 @@ def normalize_json(value: Any, *, pointer: str = "") -> Any:
+         return normalized
+     if isinstance(value, float) and (value != value or value in {float("inf"), float("-inf")}):
+         raise CanonicalizationError("non-finite numbers are not canonical JSON")
++    if value is not None and not isinstance(value, (bool, int, float)):
++        raise CanonicalizationError(f"unsupported JSON value type: {type(value).__name__}")
+     return value
+ 
+ 
+@@ -55,9 +61,9 @@ def canonical_json_bytes(value: Any) -> bytes:
+             separators=(",", ":"),
+             allow_nan=False,
+         )
+-    except (TypeError, ValueError) as error:
++        return (encoded + "\n").encode("utf-8")
++    except (TypeError, ValueError, UnicodeError) as error:
+         raise CanonicalizationError(f"value cannot be canonically serialized: {error}") from error
+-    return (encoded + "\n").encode("utf-8")
+ 
+ 
+ def canonical_report_payload(report: Mapping[str, Any]) -> dict[str, Any]:
+diff --git a/toolchain/codex_wire_audit/cli.py b/toolchain/codex_wire_audit/cli.py
+index 60c41a4..e35f5ab 100644
+--- a/toolchain/codex_wire_audit/cli.py
++++ b/toolchain/codex_wire_audit/cli.py
+@@ -24,6 +24,8 @@ from .orchestrator import (
+ from .schemas import write_schema_documents as write_v11_schema_documents
+ from .proof_profiles import PROFILES
+ from .validation import validate_evolution_contract
++from .system_contract_evidence import load_document
++from .system_contract_validation import validate_system_contract
+ 
+ 
+ def _selected_output(report: Mapping[str, Any], sections: list[str], contract: Any) -> Any:
+@@ -79,6 +81,11 @@ def _render_output(
+             sort_keys=True,
+             separators=(",", ":"),
+         ) + "\n"
++        if report.get("system_contract"):
++            text += json.dumps(
++                {"record_type": "system_contract", "value": report["system_contract"]},
++                ensure_ascii=False, sort_keys=True, separators=(",", ":"),
++            ) + "\n"
+         if report.get("semantic_diff"):
+             text += json.dumps(
+                 {
+@@ -162,6 +169,7 @@ def _write_v11_output_directory(
+             json.dumps(config_data.get("surface_graph") or {}, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+             encoding="utf-8",
+         )
++    (root / "system-contract.json").write_bytes(canonical_json_bytes(result.report["system_contract"]))
+     write_v11_schema_documents(root / "schemas" / "maintainability")
+     manifest = {
+         "generator_version": GENERATOR_VERSION,
+@@ -204,13 +212,21 @@ def _fail_semantic_diff(report: Mapping[str, Any], policy: str) -> None:
+ 
+ def _validate_existing_report(path: str, legacy: Any) -> list[dict[str, Any]]:
+     try:
+-        report = json.loads(Path(path).read_text(encoding="utf-8"))
+-    except (OSError, json.JSONDecodeError) as error:
++        report = load_document(path)
++    except (OSError, ValueError) as error:
+         raise SourceLoadError(f"cannot read report {path}: {error}") from error
+     if not isinstance(report, Mapping):
+         raise SourceLoadError("report root must be an object")
+     diagnostics = list(legacy.contract.validate_report(report))
+     diagnostics.extend(validate_evolution_contract(report))
++    if "system_contract" in report:
++        try:
++            validate_system_contract(report["system_contract"], report=report)
++        except (ValueError, KeyError, TypeError) as error:
++            diagnostics.append({
++                "code": "SYSTEM_CONTRACT_INVALID", "severity": "error",
++                "message": str(error), "report_pointer": "/system_contract",
++            })
+     unique: dict[tuple[str, str], dict[str, Any]] = {}
+     for item in diagnostics:
+         unique[(str(item.get("code")), str(item.get("report_pointer") or item.get("pointer")))] = item
+@@ -269,6 +285,7 @@ def build_parser() -> argparse.ArgumentParser:
+     parser.add_argument("--section", action="append", default=[])
+     parser.add_argument("--emit-schema", metavar="DIRECTORY")
+     parser.add_argument("--emit-ir", metavar="FILE", help="write the canonical evolution contract")
++    parser.add_argument("--emit-system-contract", metavar="FILE", help="write source-derived codex-system-contract/v1 (migrated semantics only)")
+     parser.add_argument("--emit-config-schema", metavar="FILE", help="write the normalized generated config schema catalog")
+     parser.add_argument("--emit-surface-graph", metavar="FILE", help="write the config-to-protocol surface graph")
+     parser.add_argument("--write-source-registry", metavar="FILE")
+@@ -390,6 +407,10 @@ def main(argv: list[str] | None = None) -> int:
+             encoding="utf-8",
+         )
+     config_data = (report.get("evolution_contract") or {}).get("extractors", {}).get("extractor.config_effects", {}).get("data")
++    if args.emit_system_contract:
++        output = Path(args.emit_system_contract)
++        output.parent.mkdir(parents=True, exist_ok=True)
++        output.write_bytes(canonical_json_bytes(report["system_contract"]))
+     if args.emit_config_schema:
+         if not isinstance(config_data, Mapping):
+             raise SourceLoadError("config schema was not extracted for the selected source/profile")
+diff --git a/toolchain/codex_wire_audit/evolution.py b/toolchain/codex_wire_audit/evolution.py
+index c9b8541..34e79e2 100644
+--- a/toolchain/codex_wire_audit/evolution.py
++++ b/toolchain/codex_wire_audit/evolution.py
+@@ -13,6 +13,9 @@ from .extractors import ExtractorResult, create_extractors
+ from .models import SourceSnapshot
+ from .source_registry import SourceRegistry
+ from .surface_graph import compose_surface_graph
++from .compatibility_views import apply_config_surface_overlay, apply_local_storage_overlay
++from .system_contract import attach_system_contract
++from .system_contract_validation import validate_system_contract
+ 
+ 
+ def _description_for_emission(field: Mapping[str, Any]) -> str:
+@@ -187,52 +190,6 @@ def apply_turn_metadata_overlay(
+ 
+ 
+ 
+-def apply_config_surface_overlay(
+-    report: MutableMapping[str, Any],
+-    config_result: ExtractorResult,
+-) -> None:
+-    """Attach canonical config shape and the config-to-surface graph to the report."""
+-    data = config_result.data
+-    if not data:
+-        return
+-    report["config_schema"] = {
+-        "authoritative": True,
+-        "extractor_id": config_result.extractor_id,
+-        "schema_version": config_result.schema_version,
+-        **copy.deepcopy(data.get("config_schema") or {}),
+-    }
+-    report["config_surface_graph"] = copy.deepcopy(data.get("surface_graph") or {})
+-    protocol = report.setdefault("config_protocol", {})
+-    if isinstance(protocol, MutableMapping):
+-        protocol["canonical_schema"] = {
+-            "extractor_id": config_result.extractor_id,
+-            "semantic_digest": (data.get("config_schema") or {}).get("semantic_digest"),
+-            "summary": copy.deepcopy((data.get("config_schema") or {}).get("summary") or {}),
+-        }
+-        protocol["canonical_feature_registry"] = copy.deepcopy(data.get("feature_crosswalk") or {})
+-        protocol["canonical_effect_links"] = copy.deepcopy(data.get("effect_links") or [])
+-        protocol["surface_graph"] = copy.deepcopy(data.get("surface_graph") or {})
+-        protocol["legacy_effect_catalog_role"] = (
+-            "compatibility evidence connected into the graph with proof_tier=legacy_compatibility"
+-        )
+-
+-
+-def apply_local_storage_overlay(
+-    report: MutableMapping[str, Any],
+-    local_storage_result: ExtractorResult,
+-) -> None:
+-    """Expose canonical local-storage semantics at the report root."""
+-    data = local_storage_result.data
+-    if not data:
+-        return
+-    report["local_storage_schema"] = {
+-        "authoritative": True,
+-        "extractor_id": local_storage_result.extractor_id,
+-        "schema_version": local_storage_result.schema_version,
+-        **copy.deepcopy(data),
+-    }
+-
+-
+ def _dimension_state(condition: bool, *, false_state: str = "partial") -> str:
+     return "complete" if condition else false_state
+ 
+@@ -290,8 +247,8 @@ def build_evolution_contract(
+ 
+     required_ids = {spec.id for spec in registry.specs if spec.required}
+     required_available = required_ids <= set(snapshot.files)
+-    syntax_complete = all(result.data for result in results.values())
+-    semantics_complete = all(result.semantic_complete for result in results.values())
++    syntax_complete = bool(results) and all(result.data for result in results.values())
++    semantics_complete = bool(results) and all(result.semantic_complete for result in results.values())
+     overall = required_available and syntax_complete and semantics_complete and not any(
+         item.severity == "error" for item in diagnostics.values()
+     )
+@@ -365,3 +322,9 @@ def finalize_evolution_contract(
+         "canonicalization": "codex-wire-audit-canonical-json-v2",
+         "canonical_ir_sha256": hashlib.sha256(canonical_json_bytes(digest_value)).hexdigest(),
+     }
++
++
++def finalize_system_report(report: MutableMapping[str, Any]) -> None:
++    """Seal the migrated semantic IR and enforce its legacy projection boundary."""
++    attach_system_contract(report)
++    validate_system_contract(report["system_contract"], report=report)
+diff --git a/toolchain/codex_wire_audit/orchestrator.py b/toolchain/codex_wire_audit/orchestrator.py
+index 118e401..836944e 100644
+--- a/toolchain/codex_wire_audit/orchestrator.py
++++ b/toolchain/codex_wire_audit/orchestrator.py
+@@ -18,6 +18,7 @@ from .evolution import (
+     apply_local_storage_overlay,
+     build_evolution_contract,
+     finalize_evolution_contract,
++    finalize_system_report,
+ )
+ from .legacy import LegacyModules
+ from .models import SourceGroup, SourceSnapshot
+@@ -478,6 +479,11 @@ def generate_report(
+         }
+         parser["legacy_fallback_boundary"] = "all non-migrated v10 sections"
+ 
++    try:
++        finalize_system_report(report)
++    except ValueError as error:
++        raise SourceLoadError(f"canonical contract validation failed: {error}") from error
++
+     _merge_structured_diagnostics(report, diagnostics)
+     _update_report_status(report, evolution_contract)
+     _attach_integrity(report)
+diff --git a/toolchain/codex_wire_audit/release_spec.v1.json b/toolchain/codex_wire_audit/release_spec.v1.json
+index fd82490..d3ed880 100644
+--- a/toolchain/codex_wire_audit/release_spec.v1.json
++++ b/toolchain/codex_wire_audit/release_spec.v1.json
+@@ -159,7 +159,32 @@
+       "required_resources": [
+         "extractors/local_storage.py",
+         "proof_schema_templates/local-storage-semantics-v1.schema.json",
+-        "coverage_profiles.v3.json"
++        "coverage_profiles.v3.json",
++        "extractors/local_storage_specs.py",
++        "extractors/local_storage_sources.py",
++        "extractors/local_storage_layout.py",
++        "extractors/local_storage_lifecycle.py"
++      ],
++      "status": "active_package"
++    },
++    {
++      "extractor_ids": [],
++      "id": "canonical_system_contract",
++      "profile_assertions": {
++        "hybrid_v19": {
++          "required_extractors_contains": [
++            "extractor.turn_metadata",
++            "extractor.context_management",
++            "extractor.config_effects"
++          ]
++        }
++      },
++      "required_resources": [
++        "system_contract.py",
++        "system_contract_validation.py",
++        "system_contract_evidence.py",
++        "compatibility_views.py",
++        "schema_templates/system-contract.schema.json"
+       ],
+       "status": "active_package"
+     }
+diff --git a/toolchain/codex_wire_audit/schema_templates/evolution-contract.schema.json b/toolchain/codex_wire_audit/schema_templates/evolution-contract.schema.json
+index 02d1e98..e269428 100644
+--- a/toolchain/codex_wire_audit/schema_templates/evolution-contract.schema.json
++++ b/toolchain/codex_wire_audit/schema_templates/evolution-contract.schema.json
+@@ -7,12 +7,8 @@
+       "type": "string"
+     },
+     "coverage_profile": {
+-      "enum": [
+-        "codex_wire_full",
+-        "responses_only",
+-        "mcp_only",
+-        "fixture"
+-      ]
++      "minLength": 1,
++      "type": "string"
+     },
+     "diagnostic_refs": {
+       "items": {
+diff --git a/toolchain/test_codex_wire_audit_v11.py b/toolchain/test_codex_wire_audit_v11.py
+index daad201..70b7e0f 100644
+--- a/toolchain/test_codex_wire_audit_v11.py
++++ b/toolchain/test_codex_wire_audit_v11.py
+@@ -585,6 +585,7 @@ class SchemaDocumentTests(unittest.TestCase):
+                 "turn-metadata-semantics.schema.json",
+                 "evolution-contract.schema.json",
+                 "semantic-diff.schema.json",
++                "system-contract.schema.json",
+             },
+         )
+         from jsonschema import Draft202012Validator
