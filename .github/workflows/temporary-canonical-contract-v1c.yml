@@ -1,0 +1,611 @@
+name: temporary-canonical-contract-fast-forward-v1c
+
+on:
+  push:
+    branches:
+      - codex-bootstrap-canonical-v1c-20260909
+
+permissions:
+  actions: write
+  checks: read
+  contents: write
+  statuses: read
+
+concurrency:
+  group: temporary-canonical-contract-fast-forward-v1c
+  cancel-in-progress: false
+
+jobs:
+  recover-validate-fast-forward:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      FEATURE_BRANCH: codex/canonical-system-contract-v1-20260909c
+      BOOTSTRAP_BRANCH: codex-bootstrap-canonical-v1c-20260909
+      PAYLOAD_BLOB_A: 203e1577574b8f38246baa79612206ef4d089907
+      PAYLOAD_BLOB_B: 09d8d691254c33032dbf5a2080d5f2e3769d8330
+      PINNED_CODEX_SHA: 6af345407d9c2a568da9d01b6c4b81a9e61495c0
+    steps:
+      - name: Wait for earlier canonical bootstraps
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import time
+          import urllib.parse
+          import urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GH_TOKEN"]
+          current = int(os.environ["GITHUB_RUN_ID"])
+          watched = {
+              "temporary-canonical-contract-push",
+              "temporary-canonical-contract-push-v1b",
+          }
+
+          def runs(status: str):
+              query = urllib.parse.urlencode({"status": status, "per_page": 100})
+              request = urllib.request.Request(
+                  f"https://api.github.com/repos/{repo}/actions/runs?{query}",
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                      "User-Agent": "canonical-contract-bootstrap",
+                  },
+              )
+              with urllib.request.urlopen(request, timeout=60) as response:
+                  return json.load(response).get("workflow_runs", [])
+
+          deadline = time.time() + 100 * 60
+          while True:
+              active = []
+              for status in ("queued", "in_progress"):
+                  active.extend(
+                      run
+                      for run in runs(status)
+                      if run["id"] != current and run.get("name") in watched
+                  )
+              if not active:
+                  print("No earlier canonical bootstrap is active.")
+                  break
+              print(
+                  "Waiting for earlier bootstraps: "
+                  + ", ".join(f"{run['id']}:{run['name']}:{run['status']}" for run in active)
+              )
+              if time.time() >= deadline:
+                  raise SystemExit("timed out waiting for earlier canonical bootstraps")
+              time.sleep(20)
+          PY
+
+      - name: Check out serialized bootstrap ref
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: toolchain/ci/constraints.txt
+
+      - name: Recover the exact path-safe payload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/canonical-payload" "$RUNNER_TEMP/canonical-evidence"
+          python - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import hashlib
+          import io
+          import json
+          import os
+          from pathlib import Path, PurePosixPath
+          import re
+          import stat
+          import tarfile
+          import urllib.request
+          import zipfile
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GH_TOKEN"]
+          shas = [os.environ["PAYLOAD_BLOB_A"], os.environ["PAYLOAD_BLOB_B"]]
+          out = Path(os.environ["RUNNER_TEMP"]) / "canonical-payload"
+          evidence = Path(os.environ["RUNNER_TEMP"]) / "canonical-evidence"
+
+          def fetch(sha: str) -> bytes:
+              request = urllib.request.Request(
+                  f"https://api.github.com/repos/{repo}/git/blobs/{sha}",
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                      "User-Agent": "canonical-contract-bootstrap",
+                  },
+              )
+              with urllib.request.urlopen(request, timeout=60) as response:
+                  return base64.b64decode(json.load(response)["content"])
+
+          blobs = {sha: fetch(sha) for sha in shas}
+          digest_hints = set()
+          for raw in blobs.values():
+              try:
+                  text = raw.decode()
+              except UnicodeDecodeError:
+                  continue
+              digest_hints.update(
+                  value.lower()
+                  for value in re.findall(
+                      r"(?i)(?<![0-9a-f])[0-9a-f]{64}(?![0-9a-f])", text
+                  )
+              )
+
+          def variants(label: str, raw: bytes):
+              seen = set()
+
+              def add(kind: str, value: bytes):
+                  digest = hashlib.sha256(value).hexdigest()
+                  if not value or digest in seen:
+                      return None
+                  seen.add(digest)
+                  return f"{label}:{kind}", value
+
+              item = add("raw", raw)
+              if item:
+                  yield item
+              try:
+                  text = raw.decode()
+              except UnicodeDecodeError:
+                  return
+              compact = re.sub(r"\s+", "", text)
+              if len(compact) >= 128 and len(compact) % 4 == 0:
+                  try:
+                      item = add("base64", base64.b64decode(compact, validate=True))
+                      if item:
+                          yield item
+                  except Exception:
+                      pass
+              try:
+                  parsed = json.loads(text)
+              except Exception:
+                  parsed = None
+
+              def walk(value, path="json"):
+                  if isinstance(value, dict):
+                      for key, child in value.items():
+                          yield from walk(child, f"{path}.{key}")
+                  elif isinstance(value, list):
+                      for index, child in enumerate(value):
+                          yield from walk(child, f"{path}[{index}]")
+                  elif isinstance(value, str):
+                      yield path, value
+
+              if parsed is not None:
+                  for path, value in walk(parsed):
+                      compact = re.sub(r"\s+", "", value)
+                      if len(compact) < 128 or len(compact) % 4:
+                          continue
+                      try:
+                          item = add(path, base64.b64decode(compact, validate=True))
+                          if item:
+                              yield item
+                      except Exception:
+                          pass
+
+          def normalized(name: str):
+              value = name.replace("\\", "/")
+              while value.startswith("./"):
+                  value = value[2:]
+              if not value:
+                  return None
+              if value.startswith("/"):
+                  raise RuntimeError(f"absolute path rejected: {name}")
+              path = PurePosixPath(value)
+              if ".." in path.parts or path.parts[0] == ".git":
+                  raise RuntimeError(f"unsafe path rejected: {name}")
+              return path
+
+          def inspect(data: bytes):
+              stream = io.BytesIO(data)
+              if zipfile.is_zipfile(stream):
+                  with zipfile.ZipFile(stream) as archive:
+                      files = []
+                      for info in archive.infolist():
+                          path = normalized(info.filename)
+                          if path is None or info.is_dir():
+                              continue
+                          kind = (info.external_attr >> 16) & 0o170000
+                          if kind == stat.S_IFLNK:
+                              raise RuntimeError(f"symlink rejected: {info.filename}")
+                          files.append((str(path), (info.external_attr >> 16) & 0o777))
+                      return "zip", files
+              try:
+                  stream.seek(0)
+                  with tarfile.open(fileobj=stream, mode="r:*") as archive:
+                      files = []
+                      for member in archive.getmembers():
+                          path = normalized(member.name)
+                          if path is None or member.isdir():
+                              continue
+                          if not member.isfile():
+                              raise RuntimeError(f"non-regular member rejected: {member.name}")
+                          files.append((str(path), member.mode & 0o777))
+                      return "tar", files
+              except tarfile.TarError:
+                  return None
+
+          candidates = []
+          for sha, raw in blobs.items():
+              for label, data in variants(sha, raw):
+                  result = inspect(data)
+                  if result is None:
+                      continue
+                  kind, files = result
+                  if not files or len(files) > 250:
+                      continue
+                  digest = hashlib.sha256(data).hexdigest()
+                  names = [name for name, _mode in files]
+                  score = (
+                      (10000 if digest.lower() in digest_hints else 0)
+                      + (2000 if len(files) == 55 else 0)
+                      + (500 if 40 <= len(files) <= 80 else 0)
+                      + (250 if any("toolchain" in PurePosixPath(name).parts for name in names) else 0)
+                  )
+                  candidates.append((score, label, kind, data, files, digest))
+
+          if not candidates:
+              raise SystemExit("no safe archive found in staged blobs")
+          candidates.sort(key=lambda row: (row[0], len(row[4]), len(row[3])), reverse=True)
+          _score, label, kind, data, files, digest = candidates[0]
+          if len(files) != 55:
+              raise SystemExit(f"payload has {len(files)} regular files, expected 55")
+          if not any("toolchain" in PurePosixPath(name).parts for name, _mode in files):
+              raise SystemExit("payload lacks toolchain paths")
+
+          paths = [PurePosixPath(name) for name, _mode in files]
+          roots = {path.parts[0] for path in paths}
+          prefix = None
+          if len(roots) == 1 and all(len(path.parts) > 1 for path in paths):
+              candidate = next(iter(roots))
+              if candidate not in {".github", "toolchain", "release"}:
+                  prefix = candidate
+
+          def destination(name: str):
+              path = PurePosixPath(name)
+              if prefix and path.parts[0] == prefix:
+                  path = PurePosixPath(*path.parts[1:])
+              if not path.parts or path.parts[0] == ".git":
+                  raise RuntimeError(f"unsafe destination: {name}")
+              return out.joinpath(*path.parts)
+
+          written = []
+          if kind == "zip":
+              with zipfile.ZipFile(io.BytesIO(data)) as archive:
+                  for info in archive.infolist():
+                      path = normalized(info.filename)
+                      if path is None or info.is_dir():
+                          continue
+                      target = destination(str(path))
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      target.write_bytes(archive.read(info))
+                      mode = (info.external_attr >> 16) & 0o777
+                      target.chmod(0o755 if mode & 0o111 else 0o644)
+                      written.append(str(target.relative_to(out)))
+          else:
+              with tarfile.open(fileobj=io.BytesIO(data), mode="r:*") as archive:
+                  for member in archive.getmembers():
+                      if not member.isfile():
+                          continue
+                      path = normalized(member.name)
+                      if path is None:
+                          continue
+                      source = archive.extractfile(member)
+                      if source is None:
+                          raise RuntimeError(f"cannot extract {member.name}")
+                      target = destination(str(path))
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      target.write_bytes(source.read())
+                      target.chmod(0o755 if member.mode & 0o111 else 0o644)
+                      written.append(str(target.relative_to(out)))
+
+          metadata = {
+              "source": label,
+              "kind": kind,
+              "sha256": digest,
+              "digest_hint_matched": digest.lower() in digest_hints,
+              "files": len(written),
+              "prefix": prefix,
+              "paths": sorted(written),
+          }
+          (evidence / "payload-recovery.json").write_text(
+              json.dumps(metadata, indent=2, sort_keys=True) + "\n"
+          )
+          print(json.dumps({key: value for key, value in metadata.items() if key != "paths"}, indent=2))
+          PY
+
+      - name: Apply canonical representation on latest main
+        id: apply
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          git checkout -B "$FEATURE_BRANCH" origin/main
+          echo "BASE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          rsync -a "$RUNNER_TEMP/canonical-payload/" ./
+          rm -f .github/workflows/temporary-canonical-contract.yml
+          rm -f .github/workflows/temporary-canonical-contract-v1b.yml
+          rm -f .github/workflows/temporary-canonical-contract-v1c.yml
+          rm -f .github/workflows/temporary-source-export.yml
+
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import filecmp
+          import json
+          import os
+
+          for manifest in [Path(".canonical-payload.json"), Path("canonical-payload.json")]:
+              if not manifest.is_file():
+                  continue
+              payload = json.loads(manifest.read_text())
+              deletions = payload.get("delete", payload.get("deletions", []))
+              if not isinstance(deletions, list):
+                  raise SystemExit(f"invalid deletions in {manifest}")
+              for raw in deletions:
+                  path = PurePosixPath(str(raw))
+                  if path.is_absolute() or ".." in path.parts or not path.parts or path.parts[0] == ".git":
+                      raise SystemExit(f"unsafe deletion path: {raw}")
+                  target = Path(*path.parts)
+                  if target.is_dir():
+                      raise SystemExit(f"refusing directory deletion: {raw}")
+                  target.unlink(missing_ok=True)
+              manifest.unlink()
+
+          payload_root = Path(os.environ["RUNNER_TEMP"]) / "canonical-payload"
+          for correct in payload_root.iterdir():
+              if not correct.name.startswith(".") or correct.name in {".", ".."}:
+                  continue
+              residue = Path(correct.name[1:])
+              if correct.is_file() and residue.is_file() and correct.read_bytes() == residue.read_bytes():
+                  residue.unlink()
+              elif correct.is_dir() and residue.is_dir():
+                  for source in sorted(correct.rglob("*"), reverse=True):
+                      relative = source.relative_to(correct)
+                      bad = residue / relative
+                      if source.is_file() and bad.is_file() and source.read_bytes() == bad.read_bytes():
+                          bad.unlink()
+                  for directory in sorted((path for path in residue.rglob("*") if path.is_dir()), reverse=True):
+                      try:
+                          directory.rmdir()
+                      except OSError:
+                          pass
+                  try:
+                      residue.rmdir()
+                  except OSError:
+                      pass
+          PY
+
+          git add -A
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "FEATURE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "feat: add canonical connected-system contract" \
+              -m "Unifies configuration, environment, resolution, lifecycle, and local-storage evidence under codex-system-contract/v1 while preserving compatibility views and enforcing reference, coverage, digest, and secret-safety invariants."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "FEATURE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          fi
+          git status --short
+
+      - name: Prove source, assets, maintainability, release closure, and pinned integration
+        run: |
+          set -euo pipefail
+          evidence="$RUNNER_TEMP/canonical-evidence"
+          release_dir="$RUNNER_TEMP/canonical-release"
+          mkdir -p "$evidence" "$release_dir"
+
+          cd toolchain
+          python -m pip install --constraint ci/constraints.txt -e '.[test]' | tee "$evidence/pip-install.txt"
+          make compile | tee "$evidence/compile.txt"
+          python -m pytest -q | tee "$evidence/pytest.txt"
+          make check-assets | tee "$evidence/check-assets.txt"
+          python tools/maintainability_metrics.py --check | tee "$evidence/maintainability.txt"
+          python -m codex_wire_audit.release_contract --output "$evidence/source-capability-probe.json"
+          python tools/release_pipeline.py release --output-dir "$release_dir" | tee "$evidence/release-summary.json"
+          python tools/release_pipeline.py verify --release-dir "$release_dir" | tee "$evidence/release-verification.json"
+          cd ..
+
+          if test -f toolchain/tools/check_architecture_docs.py; then
+            python toolchain/tools/check_architecture_docs.py | tee "$evidence/architecture-docs.txt"
+          fi
+
+          codex_root="$RUNNER_TEMP/codex-source"
+          git init -q "$codex_root"
+          git -C "$codex_root" remote add origin https://github.com/openai/codex.git
+          git -C "$codex_root" fetch --depth=1 origin "$PINNED_CODEX_SHA"
+          git -C "$codex_root" checkout -q --detach FETCH_HEAD
+          mkdir -p "$evidence/pinned-config-surface"
+          python toolchain/tools/check_config_surface.py \
+            --codex-root "$codex_root" \
+            --output "$evidence/pinned-config-surface/integration.json" \
+            --schema-output "$evidence/pinned-config-surface/config-schema.json" \
+            --graph-output "$evidence/pinned-config-surface/config-surface-graph.json"
+
+          git diff --exit-code
+          git status --short
+
+      - name: Dispatch repository CI and fast-forward main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHANGED: ${{ steps.apply.outputs.changed }}
+        run: |
+          set -euo pipefail
+          if test "$CHANGED" = true; then
+            git push origin "HEAD:refs/heads/$FEATURE_BRANCH"
+            dispatch_ref="$FEATURE_BRANCH"
+          else
+            dispatch_ref=main
+          fi
+          export DISPATCH_REF="$dispatch_ref"
+
+          python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GH_TOKEN"]
+          ref = os.environ["DISPATCH_REF"]
+          head_sha = os.environ["FEATURE_SHA"]
+          changed = os.environ["CHANGED"] == "true"
+          api_root = f"https://api.github.com/repos/{repo}"
+
+          def api(method: str, path: str, body=None, allow_404=False):
+              data = None if body is None else json.dumps(body).encode()
+              request = urllib.request.Request(
+                  api_root + path,
+                  data=data,
+                  method=method,
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                      "Content-Type": "application/json",
+                      "User-Agent": "canonical-contract-bootstrap",
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=60) as response:
+                      raw = response.read()
+                      return response.status, json.loads(raw) if raw else None
+              except urllib.error.HTTPError as error:
+                  raw = error.read().decode(errors="replace")
+                  if allow_404 and error.code == 404:
+                      return error.code, None
+                  raise RuntimeError(f"{method} {path}: HTTP {error.code}: {raw}") from error
+
+          encoded_ref = urllib.parse.quote(ref, safe="")
+          _status, before = api(
+              "GET",
+              f"/actions/workflows/config-surface.yml/runs?branch={encoded_ref}&event=workflow_dispatch&per_page=20",
+          )
+          previous = {run["id"] for run in before.get("workflow_runs", [])}
+          api("POST", "/actions/workflows/config-surface.yml/dispatches", {"ref": ref})
+
+          run = None
+          deadline = time.time() + 40 * 60
+          while time.time() < deadline:
+              _status, payload = api(
+                  "GET",
+                  f"/actions/workflows/config-surface.yml/runs?branch={encoded_ref}&event=workflow_dispatch&per_page=20",
+              )
+              matches = [
+                  item for item in payload.get("workflow_runs", [])
+                  if item["id"] not in previous and item.get("head_sha") == head_sha
+              ]
+              if matches:
+                  run = max(matches, key=lambda item: item["id"])
+                  print(f"repository CI {run['id']}: {run['status']} / {run.get('conclusion')}")
+                  if run["status"] == "completed":
+                      break
+              time.sleep(15)
+          if run is None or run["status"] != "completed":
+              raise SystemExit("timed out waiting for repository CI")
+          if run.get("conclusion") != "success":
+              _status, jobs = api("GET", f"/actions/runs/{run['id']}/jobs?per_page=100")
+              failed = [
+                  {"name": job["name"], "conclusion": job.get("conclusion"), "url": job.get("html_url")}
+                  for job in jobs.get("jobs", [])
+                  if job.get("conclusion") not in {"success", "skipped", "neutral"}
+              ]
+              print(json.dumps({"run": run.get("html_url"), "failed": failed}, indent=2))
+              raise SystemExit("repository CI failed")
+
+          evidence = {
+              "head_sha": head_sha,
+              "changed": changed,
+              "dispatch_ref": ref,
+              "repository_ci_run_id": run["id"],
+              "repository_ci_url": run["html_url"],
+              "repository_ci_conclusion": run["conclusion"],
+          }
+          path = os.path.join(os.environ["RUNNER_TEMP"], "canonical-evidence", "repository-ci.json")
+          with open(path, "w", encoding="utf-8") as handle:
+              json.dump(evidence, handle, indent=2, sort_keys=True)
+              handle.write("\n")
+          print(json.dumps(evidence, indent=2))
+          PY
+
+          if test "$CHANGED" = true; then
+            git fetch --no-tags origin main
+            test "$(git rev-parse origin/main)" = "$BASE_SHA"
+            git merge-base --is-ancestor origin/main HEAD
+            git push origin "HEAD:refs/heads/main"
+            git fetch --no-tags origin main
+            test "$(git rev-parse origin/main)" = "$FEATURE_SHA"
+          fi
+
+      - name: Clean all temporary refs
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GH_TOKEN"]
+          branches = [
+              "codex/canonical-system-contract-v1-20260909",
+              "codex/canonical-system-contract-v1-20260909b",
+              os.environ["FEATURE_BRANCH"],
+              "codex-bootstrap-source-export-20260908",
+              "codex-bootstrap-canonical-v1-20260909",
+              "codex-bootstrap-canonical-v1b-20260909",
+              os.environ["BOOTSTRAP_BRANCH"],
+          ]
+          for branch in branches:
+              ref = urllib.parse.quote(f"heads/{branch}", safe="/")
+              request = urllib.request.Request(
+                  f"https://api.github.com/repos/{repo}/git/refs/{ref}",
+                  method="DELETE",
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                      "User-Agent": "canonical-contract-bootstrap",
+                  },
+              )
+              try:
+                  urllib.request.urlopen(request, timeout=60).read()
+                  print(f"deleted {branch}")
+              except urllib.error.HTTPError as error:
+                  if error.code != 404:
+                      raise
+          PY
+
+      - name: Upload canonical bootstrap evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: canonical-contract-bootstrap-evidence-v1c
+          path: ${{ runner.temp }}/canonical-evidence
+          if-no-files-found: warn
+          retention-days: 14
