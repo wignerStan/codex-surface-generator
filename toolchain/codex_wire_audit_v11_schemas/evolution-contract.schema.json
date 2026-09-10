@@ -7,12 +7,8 @@
       "type": "string"
     },
     "coverage_profile": {
-      "enum": [
-        "codex_wire_full",
-        "responses_only",
-        "mcp_only",
-        "fixture"
-      ]
+      "minLength": 1,
+      "type": "string"
     },
     "diagnostic_refs": {
       "items": {

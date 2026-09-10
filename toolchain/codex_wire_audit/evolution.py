@@ -13,6 +13,9 @@ from .extractors import ExtractorResult, create_extractors
 from .models import SourceSnapshot
 from .source_registry import SourceRegistry
 from .surface_graph import compose_surface_graph
+from .compatibility_views import apply_config_surface_overlay, apply_local_storage_overlay
+from .system_contract import attach_system_contract
+from .system_contract_validation import validate_system_contract
 
 
 def _description_for_emission(field: Mapping[str, Any]) -> str:
@@ -187,52 +190,6 @@ def apply_turn_metadata_overlay(
 
 
 
-def apply_config_surface_overlay(
-    report: MutableMapping[str, Any],
-    config_result: ExtractorResult,
-) -> None:
-    """Attach canonical config shape and the config-to-surface graph to the report."""
-    data = config_result.data
-    if not data:
-        return
-    report["config_schema"] = {
-        "authoritative": True,
-        "extractor_id": config_result.extractor_id,
-        "schema_version": config_result.schema_version,
-        **copy.deepcopy(data.get("config_schema") or {}),
-    }
-    report["config_surface_graph"] = copy.deepcopy(data.get("surface_graph") or {})
-    protocol = report.setdefault("config_protocol", {})
-    if isinstance(protocol, MutableMapping):
-        protocol["canonical_schema"] = {
-            "extractor_id": config_result.extractor_id,
-            "semantic_digest": (data.get("config_schema") or {}).get("semantic_digest"),
-            "summary": copy.deepcopy((data.get("config_schema") or {}).get("summary") or {}),
-        }
-        protocol["canonical_feature_registry"] = copy.deepcopy(data.get("feature_crosswalk") or {})
-        protocol["canonical_effect_links"] = copy.deepcopy(data.get("effect_links") or [])
-        protocol["surface_graph"] = copy.deepcopy(data.get("surface_graph") or {})
-        protocol["legacy_effect_catalog_role"] = (
-            "compatibility evidence connected into the graph with proof_tier=legacy_compatibility"
-        )
-
-
-def apply_local_storage_overlay(
-    report: MutableMapping[str, Any],
-    local_storage_result: ExtractorResult,
-) -> None:
-    """Expose canonical local-storage semantics at the report root."""
-    data = local_storage_result.data
-    if not data:
-        return
-    report["local_storage_schema"] = {
-        "authoritative": True,
-        "extractor_id": local_storage_result.extractor_id,
-        "schema_version": local_storage_result.schema_version,
-        **copy.deepcopy(data),
-    }
-
-
 def _dimension_state(condition: bool, *, false_state: str = "partial") -> str:
     return "complete" if condition else false_state
 
@@ -290,8 +247,8 @@ def build_evolution_contract(
 
     required_ids = {spec.id for spec in registry.specs if spec.required}
     required_available = required_ids <= set(snapshot.files)
-    syntax_complete = all(result.data for result in results.values())
-    semantics_complete = all(result.semantic_complete for result in results.values())
+    syntax_complete = bool(results) and all(result.data for result in results.values())
+    semantics_complete = bool(results) and all(result.semantic_complete for result in results.values())
     overall = required_available and syntax_complete and semantics_complete and not any(
         item.severity == "error" for item in diagnostics.values()
     )
@@ -365,3 +322,9 @@ def finalize_evolution_contract(
         "canonicalization": "codex-wire-audit-canonical-json-v2",
         "canonical_ir_sha256": hashlib.sha256(canonical_json_bytes(digest_value)).hexdigest(),
     }
+
+
+def finalize_system_report(report: MutableMapping[str, Any]) -> None:
+    """Seal the migrated semantic IR and enforce its legacy projection boundary."""
+    attach_system_contract(report)
+    validate_system_contract(report["system_contract"], report=report)

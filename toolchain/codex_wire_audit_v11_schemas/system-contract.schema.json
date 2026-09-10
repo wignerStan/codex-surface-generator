@@ -1,0 +1,62 @@
+{
+  "$id": "https://schemas.codex-wire-audit.invalid/system/v1/system-contract.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A source-derived, explicitly hybrid contract. Legacy fields outside the registered projections are not claimed canonical.",
+  "properties": {
+    "$schema": {
+      "const": "https://schemas.codex-wire-audit.invalid/system/v1/system-contract.schema.json"
+    },
+    "authority": {
+      "const": "migrated_semantic_extractors"
+    },
+    "compatibility_views": {
+      "additionalProperties": false,
+      "minProperties": 1,
+      "patternProperties": {
+        "^/": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "integrity": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "canonical_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "canonicalization": {
+          "const": "codex-wire-audit-canonical-json-v2"
+        }
+      },
+      "required": [
+        "algorithm",
+        "canonicalization",
+        "canonical_sha256"
+      ],
+      "type": "object"
+    },
+    "model": {
+      "$ref": "https://schemas.codex-wire-audit.invalid/v11/evolution-contract.schema.json"
+    },
+    "schema": {
+      "const": "codex-system-contract/v1"
+    }
+  },
+  "required": [
+    "$schema",
+    "schema",
+    "authority",
+    "model",
+    "compatibility_views",
+    "integrity"
+  ],
+  "title": "Canonical migrated Codex system semantics, v1",
+  "type": "object"
+}

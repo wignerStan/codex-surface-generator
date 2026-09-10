@@ -25,7 +25,11 @@ def normalize_json(value: Any, *, pointer: str = "") -> Any:
         normalized: dict[str, Any] = {}
         originals: dict[str, str] = {}
         for key, child in value.items():
-            original = str(key)
+            if not isinstance(key, str):
+                raise CanonicalizationError(
+                    f"non-string object key at {pointer or '/'}: {key!r}"
+                )
+            original = key
             normalized_key = nfc(original)
             if normalized_key in normalized and originals[normalized_key] != original:
                 location = pointer or "/"
@@ -42,6 +46,8 @@ def normalize_json(value: Any, *, pointer: str = "") -> Any:
         return normalized
     if isinstance(value, float) and (value != value or value in {float("inf"), float("-inf")}):
         raise CanonicalizationError("non-finite numbers are not canonical JSON")
+    if value is not None and not isinstance(value, (bool, int, float)):
+        raise CanonicalizationError(f"unsupported JSON value type: {type(value).__name__}")
     return value
 
 
@@ -55,9 +61,9 @@ def canonical_json_bytes(value: Any) -> bytes:
             separators=(",", ":"),
             allow_nan=False,
         )
-    except (TypeError, ValueError) as error:
+        return (encoded + "\n").encode("utf-8")
+    except (TypeError, ValueError, UnicodeError) as error:
         raise CanonicalizationError(f"value cannot be canonically serialized: {error}") from error
-    return (encoded + "\n").encode("utf-8")
 
 
 def canonical_report_payload(report: Mapping[str, Any]) -> dict[str, Any]:
