@@ -1,0 +1,36 @@
+name: temporary-pr4-source-export
+
+on:
+  push:
+    branches:
+      - audit/pr4-source-export-20260910
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact audit commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - name: Export source and identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD > "$RUNNER_TEMP/HEAD.sha"
+          git archive --format=tar.gz --output "$RUNNER_TEMP/repository-source.tar.gz" HEAD
+          sha256sum "$RUNNER_TEMP/repository-source.tar.gz" > "$RUNNER_TEMP/repository-source.tar.gz.sha256"
+      - name: Upload audit source
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: pr4-source-audit
+          path: |
+            ${{ runner.temp }}/HEAD.sha
+            ${{ runner.temp }}/repository-source.tar.gz
+            ${{ runner.temp }}/repository-source.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 2
