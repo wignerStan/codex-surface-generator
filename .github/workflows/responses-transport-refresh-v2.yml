@@ -51,7 +51,7 @@ jobs:
           )'''
           script, count = re.subn(
               r'(?m)^\s*text = replace_once\(text, .*?request body version.*$',
-              replacement,
+              lambda _match: replacement,
               script,
               count=1,
           )
