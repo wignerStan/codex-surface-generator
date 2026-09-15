@@ -26,7 +26,20 @@ jobs:
           git checkout -B contract/storage/fix/restart-projection-semantics origin/contract/storage/fix/restart-projection-semantics
           git config user.name "codex-contract-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git merge --no-ff --no-edit origin/main
+          set +e
+          git merge --no-ff --no-commit origin/main
+          merge_status=$?
+          set -e
+          if [ "$merge_status" -ne 0 ]; then
+            conflicts="$(git diff --name-only --diff-filter=U | sort)"
+            expected="$(printf '%s\n' toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md toolchain/codex_wire_audit_v19_maintainability_metrics.json | sort)"
+            if [ "$conflicts" != "$expected" ]; then
+              printf 'unexpected merge conflicts:\n%s\n' "$conflicts" >&2
+              exit 1
+            fi
+            git checkout --theirs -- toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md toolchain/codex_wire_audit_v19_maintainability_metrics.json
+            git add toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md toolchain/codex_wire_audit_v19_maintainability_metrics.json
+          fi
       - name: Validate synced topic
         working-directory: toolchain
         run: |
@@ -38,12 +51,10 @@ jobs:
           python tools/maintainability_metrics.py --write
           make check-assets
           python tools/check_canonical_contract.py
-      - name: Commit regenerated assets and push
+      - name: Commit sync merge and push
         run: |
           set -euo pipefail
           git diff --check
           git add -A
-          if ! git diff --cached --quiet; then
-            git commit -m "chore(storage): refresh generated assets after main sync"
-          fi
+          git commit -m "Merge main into contract/storage/fix/restart-projection-semantics"
           git push origin HEAD:contract/storage/fix/restart-projection-semantics
