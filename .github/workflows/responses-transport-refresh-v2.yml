@@ -1,0 +1,83 @@
+name: responses-transport-refresh-v2
+
+on:
+  push:
+    branches: [ci/responses-transport-refresh-v2]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      - name: Recover and apply reviewed transport transformation
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "7169dfdf5a1cc9428f5dd7010e693ee238fb515c"
+          git fetch origin a52d996aae6b5f6b921aa22c1fa42dbffc3cfb9c
+          git checkout -b contract/responses/feat/transport-lifecycle
+          python - <<'PY'
+          import base64
+          import pathlib
+          import re
+          import subprocess
+          import zlib
+
+          workflow = subprocess.check_output(
+              ["git", "show", "a52d996aae6b5f6b921aa22c1fa42dbffc3cfb9c:.github/workflows/responses-transport-refresh.yml"],
+              text=True,
+          )
+          chunks = []
+          for index in range(1, 6):
+              match = re.search(rf'^\s+P{index}: "([^"]+)"$', workflow, re.MULTILINE)
+              if not match:
+                  raise SystemExit(f"missing reviewed payload chunk P{index}")
+              chunks.append(match.group(1))
+          script = zlib.decompress(base64.b64decode("".join(chunks))).decode()
+          old = "text = replace_once(text, '            \\\"schema_version\\\": SCHEMA_VERSION,', '            \\\"schema_version\\\": REQUEST_SCHEMA_VERSION,', \\\"request body version\\\")"
+          new = "text = replace_once(text, '            \\\"$schema\\\": REQUEST_SCHEMA,\\\\n            \\\"schema_version\\\": SCHEMA_VERSION,', '            \\\"$schema\\\": REQUEST_SCHEMA,\\\\n            \\\"schema_version\\\": REQUEST_SCHEMA_VERSION,', \\\"request body version\\\")"
+          if old not in script:
+              raise SystemExit("reviewed payload no longer contains expected schema-version edit")
+          script = script.replace(old, new, 1)
+          compile(script, "/tmp/responses_refresh.py", "exec")
+          pathlib.Path("/tmp/responses_refresh.py").write_text(script)
+          PY
+          python /tmp/responses_refresh.py
+          git diff --check
+      - name: Validate source and pinned Codex contract
+        working-directory: toolchain
+        run: |
+          set -euo pipefail
+          python -m pip install --constraint ci/constraints.txt -e '.[test]'
+          python -m pytest -q tests/test_responses_protocol_extractor.py
+          python -m pytest -q
+          make legacy-assets
+          python tools/maintainability_metrics.py --write
+          make check-assets
+          python tools/check_canonical_contract.py
+          python -m codex_wire_audit.release_contract --output "$RUNNER_TEMP/source-capabilities.json"
+          codex="$RUNNER_TEMP/codex-source"
+          git init -q "$codex"
+          git -C "$codex" remote add origin https://github.com/openai/codex.git
+          git -C "$codex" fetch --depth=1 origin 6af345407d9c2a568da9d01b6c4b81a9e61495c0
+          git -C "$codex" checkout -q --detach FETCH_HEAD
+          codex-wire-audit --json --repo-root "$codex" --coverage-profile responses_only --output "$RUNNER_TEMP/responses-report.json"
+      - name: Commit and push topic
+        run: |
+          set -euo pipefail
+          git diff --check
+          git add -A
+          git diff --cached --check
+          git config user.name "Jacob"
+          git config user.email "240170694+wignerStan@users.noreply.github.com"
+          git commit -m "feat(responses): model WebSocket HTTP fallback lifecycle"
+          git push origin HEAD:refs/heads/contract/responses/feat/transport-lifecycle
