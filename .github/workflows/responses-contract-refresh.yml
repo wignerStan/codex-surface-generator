@@ -26,6 +26,16 @@ jobs:
           git fetch origin main
           git checkout -B contract/responses/fix/websocket-http-fallback origin/main
           python /tmp/responses_refresh.py
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('toolchain/tests/test_responses_protocol_extractor.py')
+          text = path.read_text()
+          old = 'fn run_websocket_response_stream() { previous_response_not_found; websocket_connection_limit_reached; ResponsesStreamEvent; }\n'
+          new = old + 'fn terminal_socket_teardown() { let failed_stream = guard.take(); self.pump_task.abort(); }\n'
+          if text.count(old) != 1:
+              raise SystemExit('websocket fixture teardown anchor drift')
+          path.write_text(text.replace(old, new, 1))
+          PY
       - name: Validate full source tree
         working-directory: toolchain
         run: |
