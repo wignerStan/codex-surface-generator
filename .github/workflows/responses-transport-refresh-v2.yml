@@ -61,6 +61,16 @@ jobs:
           pathlib.Path("/tmp/responses_refresh.py").write_text(script)
           PY
           python /tmp/responses_refresh.py
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("toolchain/tests/test_responses_protocol_extractor.py")
+          text = path.read_text()
+          old = 'files[core.spec_id] = SourceFile.create(spec=core.spec, selected_path=core.selected_path, raw_bytes=broken.encode())'
+          new = 'files[core.spec_id] = _file(core.spec_id, "core", core.selected_path, broken)'
+          if text.count(old) != 1:
+              raise SystemExit(f"expected one drift fixture constructor, found {text.count(old)}")
+          path.write_text(text.replace(old, new, 1))
+          PY
           git diff --check
       - name: Validate source and pinned Codex contract
         working-directory: toolchain
