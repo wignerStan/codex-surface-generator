@@ -41,6 +41,16 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install --constraint ci/constraints.txt -e '.[test]'
+          python - <<'PY'
+          from tests.test_responses_protocol_extractor import _snapshot
+          from codex_wire_audit.diagnostics import DiagnosticCollector
+          from codex_wire_audit.extractors.responses_protocol import ResponsesRequestExtractor
+          diagnostics = DiagnosticCollector()
+          result = ResponsesRequestExtractor().extract(_snapshot(), diagnostics)
+          print('fixture semantic_complete =', result.semantic_complete)
+          for item in diagnostics.values():
+              print(item.code, item.message, item.details)
+          PY
           python -m pytest -q tests/test_responses_protocol_extractor.py
           python -m pytest -q
           make legacy-assets
