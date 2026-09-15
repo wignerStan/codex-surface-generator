@@ -60,7 +60,7 @@ rel=Path('toolchain/codex_wire_audit/release_spec.v1.json'); rs=rel.read_text();
 if rs.count('proof_schema_templates/local-storage-semantics-v1.schema.json') != 1: raise SystemExit('release resource drift')
 rel.write_text(rs.replace('proof_schema_templates/local-storage-semantics-v1.schema.json','proof_schema_templates/local-storage-semantics-v2.schema.json',1))
 
-d=Path('LOCAL_STORAGE_AND_ROLLOUT_LAYOUT.md'); ds=d.read_text(); marker='The authoritative `session_id` is therefore read from rollout session metadata, not inferred from SQLite.\n'
+d=Path('LOCAL_STORAGE_AND_ROLLOUT_LAYOUT.md'); ds=d.read_text(); marker='rollout session metadata, not inferred from SQLite.\n'
 if marker not in ds: raise SystemExit('doc anchor drift')
 ds=ds.replace(marker,marker+'''\n### Replay versus projection authority\n\n`thread_history_1.sqlite` is a persistent acceleration projection, not canonical history. Codex writes durable rollout JSONL first, then projects only the new suffix after its stored byte/ordinal checkpoint. The projection persists across process restart and is not rebuilt from the full JSONL on every startup.\n\nCold paginated model-context resume instead resolves the selected rollout and reverse-scans its immutable JSONL lineage. Paginated `list_turns` / `list_items` queries read the persisted SQLite projection. For paginated threads, `state_5.sqlite.threads.rollout_path` selects the current immutable rollout revision.\n\nThe projector assumes already-projected JSONL bytes are immutable. External truncation behind the checkpoint fails with `durable rollout shrank before projection`; normal restart does not automatically reset/rebuild the projection.\n''',1)
 d.write_text(ds)
