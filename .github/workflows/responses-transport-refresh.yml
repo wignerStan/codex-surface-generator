@@ -1,0 +1,414 @@
+name: responses-transport-refresh
+
+on:
+  push:
+    branches: [ci/storage-contract-refresh]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      - name: Apply reviewed Responses transport contract
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "7169dfdf5a1cc9428f5dd7010e693ee238fb515c"
+          git checkout -b contract/responses/feat/transport-lifecycle
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          def replace_once(text: str, old: str, new: str, label: str) -> str:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one occurrence, found {count}")
+              return text.replace(old, new, 1)
+
+          p = Path("toolchain/codex_wire_audit/extractors/responses_protocol.py")
+          text = p.read_text()
+          text = replace_once(
+              text,
+              'SCHEMA_VERSION = "1.0.0"\nREQUEST_SCHEMA = "https://schemas.codex-system-contract.invalid/responses/responses-request-semantics-v1.schema.json"',
+              'SCHEMA_VERSION = "1.0.0"\nREQUEST_SCHEMA_VERSION = "2.0.0"\nREQUEST_SCHEMA = "https://schemas.codex-system-contract.invalid/responses/responses-request-semantics-v2.schema.json"',
+              "request schema version",
+          )
+          text = replace_once(
+              text,
+              'WS = "source_spec.base.ws"\n',
+              'WS = "source_spec.base.ws"\nSTARTUP = "source_spec.extra.responses_transport_startup"\nSESSION = "source_spec.extra.responses_transport_session"\nRETRY = "source_spec.extra.responses_transport_retry"\nPROVIDER = "source_spec.extra.responses_transport_provider"\n',
+              "transport source ids",
+          )
+          text = replace_once(
+              text,
+              '    complete: bool,\n) -> ExtractorResult:',
+              '    complete: bool,\n    schema_version: str = SCHEMA_VERSION,\n) -> ExtractorResult:',
+              "result signature",
+          )
+          text = replace_once(text, '        schema_version=SCHEMA_VERSION,', '        schema_version=schema_version,', "result schema version")
+          text = replace_once(
+              text,
+              '    source_spec_ids = (COMMON, CORE, HTTP, WS)',
+              '    source_spec_ids = (COMMON, CORE, HTTP, WS, STARTUP, SESSION, RETRY, PROVIDER)',
+              "request source ids",
+          )
+          text = replace_once(
+              text,
+              '            return ExtractorResult(REQUEST_ID, SCHEMA_VERSION, {}, False, self.source_spec_ids)',
+              '            return ExtractorResult(REQUEST_ID, REQUEST_SCHEMA_VERSION, {}, False, self.source_spec_ids)',
+              "request missing result",
+          )
+          text = replace_once(
+              text,
+              '        ws = sources[WS]\n        assert common and core and http and ws',
+              '        ws = sources[WS]\n        startup = sources[STARTUP]\n        session = sources[SESSION]\n        retry = sources[RETRY]\n        provider = sources[PROVIDER]\n        assert common and core and http and ws and startup and session and retry and provider',
+              "request source bindings",
+          )
+          text = replace_once(
+              text,
+              '                ("RESPONSES_WS_METADATA_MISSING", "build_ws_client_metadata"),\n',
+              '                ("RESPONSES_WS_METADATA_MISSING", "build_ws_client_metadata"),\n                ("RESPONSES_INCREMENTAL_ITEMS_MISSING", "fn get_incremental_items"),\n                ("RESPONSES_PREWARM_GENERATE_FALSE_MISSING", "generate: if warmup { Some(false) } else { None }"),\n                ("RESPONSES_PREWARM_COMPLETION_MISSING", "Ok(ResponseEvent::Completed { .. }) => break"),\n                ("RESPONSES_WS_ENABLE_GATE_MISSING", "responses_websocket_enabled"),\n                ("RESPONSES_WS_SESSION_FALLBACK_STATE_MISSING", "disable_websockets"),\n                ("RESPONSES_WS_426_FALLBACK_MISSING", "StatusCode::UPGRADE_REQUIRED"),\n                ("RESPONSES_WS_FALLBACK_OUTCOME_MISSING", "WebsocketStreamOutcome::FallbackToHttp"),\n                ("RESPONSES_WS_SWITCH_FALLBACK_MISSING", "try_switch_fallback_transport"),\n',
+              "core lifecycle markers",
+          )
+          text = replace_once(
+              text,
+              '                ("RESPONSES_WS_STREAM_MISSING", "pub async fn stream_request"),\n',
+              '                ("RESPONSES_WS_STREAM_MISSING", "pub async fn stream_request"),\n                ("RESPONSES_WS_TERMINAL_TAKE_MISSING", "let failed_stream = guard.take();"),\n                ("RESPONSES_WS_DROP_ABORT_MISSING", "self.pump_task.abort();"),\n                ("RESPONSES_WS_CONNECTION_LIMIT_MISSING", "websocket_connection_limit_reached"),\n                ("RESPONSES_WS_PREVIOUS_NOT_FOUND_MISSING", "previous_response_not_found"),\n',
+              "websocket lifecycle markers",
+          )
+          checks = '''        complete &= _require(
+            diagnostics,
+            extractor_id=REQUEST_ID,
+            category="responses_request",
+            source=startup,
+            entity="responses_request.transport.startup",
+            tokens=(
+                ("RESPONSES_STARTUP_PREWARM_SCHEDULE_MISSING", "schedule_startup_prewarm"),
+                ("RESPONSES_STARTUP_PREWARM_KIND_MISSING", "CodexResponsesRequestKind::Prewarm"),
+                ("RESPONSES_STARTUP_PREWARM_CALL_MISSING", ".prewarm_websocket("),
+                ("RESPONSES_STARTUP_EMPTY_INPUT_MISSING", "let startup_prompt = build_prompt(\\n        Vec::new(),"),
+            ),
+        )
+        complete &= _require(
+            diagnostics,
+            extractor_id=REQUEST_ID,
+            category="responses_request",
+            source=session,
+            entity="responses_request.transport.session",
+            tokens=(
+                ("RESPONSES_SESSION_PREWARM_MISSING", ".schedule_startup_prewarm("),
+                ("RESPONSES_SESSION_HISTORY_RESTORE_MISSING", "record_initial_history(initial_history)"),
+            ),
+        )
+        complete &= _require(
+            diagnostics,
+            extractor_id=REQUEST_ID,
+            category="responses_request",
+            source=retry,
+            entity="responses_request.transport.retry",
+            tokens=(
+                ("RESPONSES_RETRY_HANDLER_MISSING", "handle_retryable_response_stream_error"),
+                ("RESPONSES_RETRY_SWITCH_MISSING", "try_switch_fallback_transport"),
+                ("RESPONSES_RETRY_HTTPS_WARNING_MISSING", "Falling back from WebSockets to HTTPS transport."),
+                ("RESPONSES_UNBOUNDED_CONNECTION_RETRIES_MISSING", "Feature::UnboundedConnectionRetries"),
+            ),
+        )
+        complete &= _require(
+            diagnostics,
+            extractor_id=REQUEST_ID,
+            category="responses_request",
+            source=provider,
+            entity="responses_request.transport.provider",
+            tokens=(
+                ("RESPONSES_PROVIDER_WS_URL_MISSING", "websocket_url_for_path"),
+                ("RESPONSES_PROVIDER_HTTP_WS_MAPPING_MISSING", '"http" => "ws"'),
+                ("RESPONSES_PROVIDER_HTTPS_WSS_MAPPING_MISSING", '"https" => "wss"'),
+            ),
+        )
+        schedule_index = session.text.find(".schedule_startup_prewarm(")
+        history_index = session.text.find("record_initial_history(initial_history)")
+        prewarm_before_history_restore = 0 <= schedule_index < history_index
+        if not prewarm_before_history_restore:
+            complete = False
+            _missing(
+                diagnostics,
+                extractor_id=REQUEST_ID,
+                category="responses_request",
+                code="RESPONSES_PREWARM_HISTORY_ORDER_DRIFT",
+                token="schedule_startup_prewarm before record_initial_history",
+                source=session,
+                entity="responses_request.transport.startup",
+            )
+
+'''
+          text = replace_once(text, '        http_fields = _struct_fields(common.text, "ResponsesApiRequest")\n', checks + '        http_fields = _struct_fields(common.text, "ResponsesApiRequest")\n', "transport checks")
+          text = replace_once(text, '            "schema_version": SCHEMA_VERSION,', '            "schema_version": REQUEST_SCHEMA_VERSION,', "request body version")
+          text = replace_once(
+              text,
+              '                    "HTTP/WS request transport semantics and continuation shape",\n',
+              '                    "HTTP/WS request transport semantics and continuation shape",\n                    "WebSocket startup, socket-failure, retry, and session-scoped HTTP fallback lifecycle",\n',
+              "request ownership",
+          )
+          old_ws = '''            "websocket_transport": {
+                "message_type": "response.create",
+                "body": "ResponseCreateWsRequest serialized as one WebSocket request frame",
+                "connection": "provider websocket URL uses the same selected ResponsesEndpoint path",
+                "continuation_fields": ["previous_response_id", "generate", "client_metadata"],
+            },
+'''
+          new_ws = '''            "websocket_transport": {
+                "message_type": "response.create",
+                "body": "ResponseCreateWsRequest serialized as one WebSocket request frame",
+                "connection": "provider WebSocket URL uses the same /responses path and maps http->ws, https->wss",
+                "continuation_fields": ["previous_response_id", "generate", "client_metadata"],
+            },
+            "transport_lifecycle": {
+                "selection": {
+                    "websocket_preferred_when": "provider supports_websockets and session fallback is not active",
+                    "http_fallback": "Responses HTTP transport; user warning names HTTPS, while the concrete scheme follows provider.base_url",
+                    "path": "/responses",
+                    "scheme_pairing": {
+                        "http_base": {"websocket": "ws", "fallback_http": "http"},
+                        "https_base": {"websocket": "wss", "fallback_http": "https"},
+                        "ws_base": {"websocket": "ws"},
+                        "wss_base": {"websocket": "wss"},
+                    },
+                },
+                "startup_prewarm": {
+                    "scheduled_during_session_initialization": True,
+                    "occurs_before_initial_history_restore": prewarm_before_history_restore,
+                    "logical_conversation_input": "empty",
+                    "uses_normal_base_instructions_and_tool_snapshot": True,
+                    "wire_type": "response.create",
+                    "generate": False,
+                    "waits_for": "response.completed",
+                    "continuation_baseline": "completed response id",
+                },
+                "continuation": {
+                    "eligibility": "non-input request properties match and current input extends the previous request plus server-returned response items",
+                    "eligible_wire": "send previous_response_id and only the incremental input suffix while serializing the other response.create fields",
+                    "ineligible_wire": "omit previous_response_id and send the full current input",
+                },
+                "state_scope": {
+                    "turn_state": "x-codex-turn-state is scoped to one ModelClientSession/turn",
+                    "websocket_connection": "a healthy connection may be cached by the session-scoped ModelClient for reuse",
+                    "fallback_state": "session-scoped disable_websockets state",
+                    "fallback_sticky_across_turns": True,
+                },
+                "fallback": {
+                    "upgrade_required_426": "switch immediately from WebSocket to Responses HTTP without ordinary WebSocket stream retries",
+                    "retryable_failure_before_budget": "discard failed socket, back off, and retry using a new/reopened WebSocket",
+                    "retry_budget_exhausted": "activate session HTTP fallback, reset the retry counter, and replay the Responses request over HTTP",
+                    "warning_prefix": "Falling back from WebSockets to HTTPS transport.",
+                    "unbounded_connection_retry_exception": "when UnboundedConnectionRetries applies to an eligible sampling connection failure, connection retries occur before the normal retry-budget fallback branch",
+                },
+                "terminal_socket": {
+                    "on_stream_error": "remove the current WsStream from connection state and drop it",
+                    "graceful_close_handshake": False,
+                    "drop_behavior": "WsStream::drop aborts the pump task",
+                    "special_retryable_codes": ["websocket_connection_limit_reached", "previous_response_not_found"],
+                },
+            },
+'''
+          text = replace_once(text, old_ws, new_ws, "transport lifecycle body")
+          text = replace_once(
+              text,
+              '                "websocket": _evidence(ws, "ResponsesWebsocketConnection::stream_request"),\n',
+              '                "websocket": _evidence(ws, "ResponsesWebsocketConnection::stream_request/WsStream::drop"),\n                "startup": _evidence(startup, "schedule_startup_prewarm/prewarm_websocket"),\n                "session": _evidence(session, "schedule_startup_prewarm/record_initial_history"),\n                "retry": _evidence(retry, "handle_retryable_response_stream_error"),\n                "provider": _evidence(provider, "websocket_url_for_path"),\n',
+              "request evidence",
+          )
+          text = replace_once(
+              text,
+              '        return _result(REQUEST_ID, self.source_spec_ids, body, complete)\n',
+              '        return _result(REQUEST_ID, self.source_spec_ids, body, complete, REQUEST_SCHEMA_VERSION)\n',
+              "request result version",
+          )
+          p.write_text(text)
+
+          registry = Path("toolchain/codex_wire_audit/source_registry.py")
+          text = registry.read_text()
+          anchor = '    ("source_spec.base.ws", "ws", "codex-rs/codex-api/src/endpoint/responses_websocket.rs", ("ResponsesWebsocketConnection", "ResponsesWebsocketClient", "stream_request")),\n)\n\n_RESPONSES_LITE_SPECS'
+          extra = '''    ("source_spec.base.ws", "ws", "codex-rs/codex-api/src/endpoint/responses_websocket.rs", ("ResponsesWebsocketConnection", "ResponsesWebsocketClient", "stream_request")),
+    ("source_spec.extra.responses_transport_startup", "responses_transport_startup", "codex-rs/core/src/session_startup_prewarm.rs", ("schedule_startup_prewarm", "CodexResponsesRequestKind::Prewarm", "prewarm_websocket")),
+    ("source_spec.extra.responses_transport_session", "responses_transport_session", "codex-rs/core/src/session/session.rs", ("schedule_startup_prewarm", "record_initial_history")),
+    ("source_spec.extra.responses_transport_retry", "responses_transport_retry", "codex-rs/core/src/responses_retry.rs", ("handle_retryable_response_stream_error", "try_switch_fallback_transport", "Falling back from WebSockets to HTTPS transport")),
+    ("source_spec.extra.responses_transport_provider", "responses_transport_provider", "codex-rs/codex-api/src/provider.rs", ("websocket_url_for_path", "http", "https", "ws", "wss")),
+)
+
+_RESPONSES_LITE_SPECS'''
+          text = replace_once(text, anchor, extra, "responses registry")
+          registry.write_text(text)
+
+          v1 = Path("toolchain/codex_wire_audit/proof_schema_templates/responses-request-semantics-v1.schema.json")
+          schema = json.loads(v1.read_text())
+          schema_id = "https://schemas.codex-system-contract.invalid/responses/responses-request-semantics-v2.schema.json"
+          schema["$id"] = schema_id
+          schema["title"] = "Codex Responses request and transport lifecycle semantics"
+          schema["required"].append("transport_lifecycle")
+          schema["properties"]["$schema"] = {"const": schema_id}
+          schema["properties"]["schema_version"] = {"const": "2.0.0"}
+          schema["properties"]["evidence"]["minProperties"] = 8
+          schema["properties"]["transport_lifecycle"] = {
+              "type": "object",
+              "additionalProperties": False,
+              "required": ["selection", "startup_prewarm", "continuation", "state_scope", "fallback", "terminal_socket"],
+              "properties": {
+                  "selection": {"type": "object", "additionalProperties": False, "required": ["websocket_preferred_when", "http_fallback", "path", "scheme_pairing"], "properties": {
+                      "websocket_preferred_when": {"type": "string", "minLength": 1},
+                      "http_fallback": {"type": "string", "minLength": 1},
+                      "path": {"const": "/responses"},
+                      "scheme_pairing": {"type": "object", "additionalProperties": True, "minProperties": 4},
+                  }},
+                  "startup_prewarm": {"type": "object", "additionalProperties": False, "required": ["scheduled_during_session_initialization", "occurs_before_initial_history_restore", "logical_conversation_input", "uses_normal_base_instructions_and_tool_snapshot", "wire_type", "generate", "waits_for", "continuation_baseline"], "properties": {
+                      "scheduled_during_session_initialization": {"const": True},
+                      "occurs_before_initial_history_restore": {"const": True},
+                      "logical_conversation_input": {"const": "empty"},
+                      "uses_normal_base_instructions_and_tool_snapshot": {"const": True},
+                      "wire_type": {"const": "response.create"},
+                      "generate": {"const": False},
+                      "waits_for": {"const": "response.completed"},
+                      "continuation_baseline": {"const": "completed response id"},
+                  }},
+                  "continuation": {"type": "object", "additionalProperties": False, "required": ["eligibility", "eligible_wire", "ineligible_wire"], "properties": {k: {"type": "string", "minLength": 1} for k in ("eligibility", "eligible_wire", "ineligible_wire")}},
+                  "state_scope": {"type": "object", "additionalProperties": False, "required": ["turn_state", "websocket_connection", "fallback_state", "fallback_sticky_across_turns"], "properties": {
+                      "turn_state": {"type": "string", "minLength": 1},
+                      "websocket_connection": {"type": "string", "minLength": 1},
+                      "fallback_state": {"type": "string", "minLength": 1},
+                      "fallback_sticky_across_turns": {"const": True},
+                  }},
+                  "fallback": {"type": "object", "additionalProperties": False, "required": ["upgrade_required_426", "retryable_failure_before_budget", "retry_budget_exhausted", "warning_prefix", "unbounded_connection_retry_exception"], "properties": {k: {"type": "string", "minLength": 1} for k in ("upgrade_required_426", "retryable_failure_before_budget", "retry_budget_exhausted", "warning_prefix", "unbounded_connection_retry_exception")}},
+                  "terminal_socket": {"type": "object", "additionalProperties": False, "required": ["on_stream_error", "graceful_close_handshake", "drop_behavior", "special_retryable_codes"], "properties": {
+                      "on_stream_error": {"type": "string", "minLength": 1},
+                      "graceful_close_handshake": {"const": False},
+                      "drop_behavior": {"type": "string", "minLength": 1},
+                      "special_retryable_codes": {"const": ["websocket_connection_limit_reached", "previous_response_not_found"]},
+                  }},
+              },
+          }
+          Path("toolchain/codex_wire_audit/proof_schema_templates/responses-request-semantics-v2.schema.json").write_text(json.dumps(schema, indent=2) + "\n")
+
+          release = Path("toolchain/codex_wire_audit/release_spec.v1.json")
+          text = release.read_text()
+          text = replace_once(text, 'proof_schema_templates/responses-request-semantics-v1.schema.json', 'proof_schema_templates/responses-request-semantics-v2.schema.json', "release resource")
+          release.write_text(text)
+
+          tests = Path("toolchain/tests/test_responses_protocol_extractor.py")
+          text = tests.read_text()
+          text = replace_once(text, 'from __future__ import annotations\n\n', 'from __future__ import annotations\n\nimport json\nfrom pathlib import Path\n\nfrom jsonschema import Draft202012Validator\n', "test imports")
+          text = replace_once(
+              text,
+              "    http = '''\n",
+              '''    core += """\nfn get_incremental_items() {}\nfn responses_websocket_enabled() { disable_websockets; }\nfn try_switch_fallback_transport() {}\nfn websocket_lifecycle() {\n    generate: if warmup { Some(false) } else { None };\n    Ok(ResponseEvent::Completed { .. }) => break;\n    StatusCode::UPGRADE_REQUIRED;\n    WebsocketStreamOutcome::FallbackToHttp;\n}\n"""\n    http = '''\n''',
+              "core fixture lifecycle",
+          )
+          text = replace_once(
+              text,
+              "fn run_websocket_response_stream() { previous_response_not_found; websocket_connection_limit_reached; ResponsesStreamEvent; }\n'''",
+              "fn run_websocket_response_stream() { previous_response_not_found; websocket_connection_limit_reached; ResponsesStreamEvent; let failed_stream = guard.take(); }\nimpl Drop for WsStream { fn drop(&mut self) { self.pump_task.abort(); } }\n'''",
+              "ws fixture lifecycle",
+          )
+          rows_anchor = '    rows = {\n'
+          fixtures = '''    startup = """\nfn schedule_startup_prewarm() {}\nCodexResponsesRequestKind::Prewarm;\nclient.prewarm_websocket();\nlet startup_prompt = build_prompt(\n        Vec::new(),\n        step_context,\n        base_instructions,\n);\n"""\n    session = """\nsess.schedule_startup_prewarm(base).await;\nrecord_initial_history(initial_history);\n"""\n    retry = """\nfn handle_retryable_response_stream_error() {\n    Feature::UnboundedConnectionRetries;\n    client_session.try_switch_fallback_transport();\n    \"Falling back from WebSockets to HTTPS transport.\";\n}\n"""\n    provider = """\nfn websocket_url_for_path() { match scheme { \"http\" => \"ws\", \"https\" => \"wss\", \"ws\" | \"wss\" => return; } }\n"""\n'''
+          text = replace_once(text, rows_anchor, fixtures + rows_anchor, "transport fixture insertion")
+          text = replace_once(
+              text,
+              '        "ws": _file("source_spec.base.ws", "ws", "codex-rs/codex-api/src/endpoint/responses_websocket.rs", ws),\n',
+              '        "ws": _file("source_spec.base.ws", "ws", "codex-rs/codex-api/src/endpoint/responses_websocket.rs", ws),\n        "startup": _file("source_spec.extra.responses_transport_startup", "responses_transport_startup", "codex-rs/core/src/session_startup_prewarm.rs", startup),\n        "session": _file("source_spec.extra.responses_transport_session", "responses_transport_session", "codex-rs/core/src/session/session.rs", session),\n        "retry": _file("source_spec.extra.responses_transport_retry", "responses_transport_retry", "codex-rs/core/src/responses_retry.rs", retry),\n        "provider": _file("source_spec.extra.responses_transport_provider", "responses_transport_provider", "codex-rs/codex-api/src/provider.rs", provider),\n',
+              "transport fixture rows",
+          )
+          text = replace_once(
+              text,
+              '    assert by_extractor["extractor.responses_request"] == {\n        "source_spec.base.common", "source_spec.base.core", "source_spec.base.http", "source_spec.base.ws"\n    }',
+              '    assert by_extractor["extractor.responses_request"] == {\n        "source_spec.base.common", "source_spec.base.core", "source_spec.base.http", "source_spec.base.ws",\n        "source_spec.extra.responses_transport_startup", "source_spec.extra.responses_transport_session",\n        "source_spec.extra.responses_transport_retry", "source_spec.extra.responses_transport_provider",\n    }',
+              "registry expectation",
+          )
+          text = replace_once(
+              text,
+              '    assert result.data["request_shape"]["websocket_envelope_type"] == "response.create"\n',
+              '    assert result.data["request_shape"]["websocket_envelope_type"] == "response.create"\n    assert result.schema_version == "2.0.0"\n    lifecycle = result.data["transport_lifecycle"]\n    assert lifecycle["startup_prewarm"]["generate"] is False\n    assert lifecycle["startup_prewarm"]["occurs_before_initial_history_restore"] is True\n    assert lifecycle["state_scope"]["fallback_sticky_across_turns"] is True\n    assert lifecycle["fallback"]["warning_prefix"] == "Falling back from WebSockets to HTTPS transport."\n    assert lifecycle["selection"]["scheme_pairing"]["https_base"] == {"websocket": "wss", "fallback_http": "https"}\n',
+              "request lifecycle assertions",
+          )
+          text += '''\n\ndef test_request_v2_schema_validates_transport_lifecycle() -> None:\n    result = ResponsesRequestExtractor().extract(_snapshot(), DiagnosticCollector())\n    schema_path = Path(__file__).parents[1] / "codex_wire_audit" / "proof_schema_templates" / "responses-request-semantics-v2.schema.json"\n    schema = json.loads(schema_path.read_text(encoding="utf-8"))\n    Draft202012Validator.check_schema(schema)\n    errors = list(Draft202012Validator(schema).iter_errors(result.data))\n    assert errors == []\n\n\ndef test_websocket_fallback_marker_drift_fails_closed() -> None:\n    snapshot = _snapshot()\n    core = snapshot.files["source_spec.base.core"]\n    broken = core.text.replace("StatusCode::UPGRADE_REQUIRED", "StatusCode::BAD_GATEWAY")\n    files = dict(snapshot.files)\n    files[core.spec_id] = SourceFile.create(spec=core.spec, selected_path=core.selected_path, raw_bytes=broken.encode())\n    drifted = SourceSnapshot(snapshot.revision, files)\n    diagnostics = DiagnosticCollector()\n    result = ResponsesRequestExtractor().extract(drifted, diagnostics)\n    assert result.semantic_complete is False\n    assert "RESPONSES_WS_426_FALLBACK_MISSING" in {item.code for item in diagnostics.values()}\n\n\ndef test_transport_source_identity_is_exact() -> None:\n    registry = build_registry(load_legacy_modules())\n    assert registry.get("source_spec.extra.responses_transport_startup").primary_path == "codex-rs/core/src/session_startup_prewarm.rs"\n    assert registry.get("source_spec.extra.responses_transport_session").primary_path == "codex-rs/core/src/session/session.rs"\n    assert registry.get("source_spec.extra.responses_transport_retry").primary_path == "codex-rs/core/src/responses_retry.rs"\n    assert registry.get("source_spec.extra.responses_transport_provider").primary_path == "codex-rs/codex-api/src/provider.rs"\n'''
+          tests.write_text(text)
+
+          docs = Path("PROMPT_ASSEMBLY_AND_CONFIG.md")
+          text = docs.read_text()
+          marker = "\n---\n\n## 7. World-state deltas"
+          section = r'''
+
+### Responses WebSocket prewarm, continuation, and HTTP fallback
+
+Responses WebSocket startup is a transport optimization, not a second prompt authority. During
+session initialization Codex builds a normal prompt snapshot with the ordinary base instructions
+and model-visible tools but an empty logical conversation input, then sends `response.create` with
+`generate: false` and waits for `response.completed`. The resulting response id can seed
+`previous_response_id` continuation. For resumed sessions this prewarm is scheduled before initial
+history is restored, so the first real delta may include restored history plus the new user item.
+Responses Lite still applies its normal tool/base-instruction input-prefix transformation to this
+prewarm; it does not add a real user item.
+
+A later WebSocket request reuses `previous_response_id` only when non-input request properties still
+match and the current input extends the previous request plus server-returned response items. The
+wire input is then only the incremental suffix. Otherwise Codex sends the full current input and no
+`previous_response_id`.
+
+The WebSocket and HTTP paths share `/responses`. Provider URL conversion is exact: an `http` base
+uses `ws`, an `https` base uses `wss`, and an existing `ws`/`wss` scheme is preserved. HTTP fallback
+uses the provider's ordinary Responses HTTP endpoint (`POST`, SSE); the user-facing warning calls it
+"HTTPS", but a custom `http://` provider remains HTTP.
+
+Fallback state is session-scoped. A WebSocket handshake HTTP 426 (`Upgrade Required`) switches
+immediately to the Responses HTTP path without ordinary WebSocket stream retries. Other retryable
+WebSocket failures first consume the configured stream retry budget; after it is exhausted Codex
+activates session HTTP fallback, resets the retry counter, and replays the request over HTTP. The
+fallback is sticky across later turns in that session. Eligible sampling connection failures under
+`UnboundedConnectionRetries` take the unbounded connection-retry branch before this normal
+retry-budget fallback.
+
+Terminal WebSocket stream errors poison the current socket: Codex removes the `WsStream` from
+connection state and drops it rather than waiting for a graceful close handshake; `WsStream::drop`
+aborts its pump task. Retryable wrapped codes such as `websocket_connection_limit_reached` and
+`previous_response_not_found` therefore retry on a new/reopened WebSocket, not on the failed one.
+'''
+          if "### Responses WebSocket prewarm, continuation, and HTTP fallback" not in text:
+              text = replace_once(text, marker, section + marker, "prompt transport documentation")
+          docs.write_text(text)
+          PY
+          git diff --check
+      - name: Validate source and pinned Codex contract
+        working-directory: toolchain
+        run: |
+          set -euo pipefail
+          python -m pip install --constraint ci/constraints.txt -e '.[test]'
+          python -m pytest -q tests/test_responses_protocol_extractor.py
+          python -m pytest -q
+          make legacy-assets
+          python tools/maintainability_metrics.py --write
+          make check-assets
+          python tools/check_canonical_contract.py
+          python -m codex_wire_audit.release_contract --output "$RUNNER_TEMP/source-capabilities.json"
+          codex="$RUNNER_TEMP/codex-source"
+          git init -q "$codex"
+          git -C "$codex" remote add origin https://github.com/openai/codex.git
+          git -C "$codex" fetch --depth=1 origin 6af345407d9c2a568da9d01b6c4b81a9e61495c0
+          git -C "$codex" checkout -q --detach FETCH_HEAD
+          codex-wire-audit --json --repo-root "$codex" --coverage-profile responses_only --output "$RUNNER_TEMP/responses-report.json"
+      - name: Commit and push topic
+        run: |
+          set -euo pipefail
+          git diff --check
+          git add -A
+          git diff --cached --check
+          git config user.name "Jacob"
+          git config user.email "240170694+wignerStan@users.noreply.github.com"
+          git commit -m "feat(responses): model WebSocket HTTP fallback lifecycle"
+          git push origin HEAD:refs/heads/contract/responses/feat/transport-lifecycle
