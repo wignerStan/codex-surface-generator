@@ -10,10 +10,10 @@ permissions:
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     env:
       TARGET_BRANCH: canonical-proof/fix/cli-entrypoint
-      EXPECTED_TARGET_SHA: 14d4326d02f58b6026e9274064013e824df04abc
+      EXPECTED_TARGET_SHA: 6119e45a10ee257ad0fa0e0ad6795ef686cb5366
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -21,29 +21,120 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.13"
-      - name: Regenerate and publish exact maintainability assets
+      - name: Project canonical diagnostic source refs and refresh assets
         shell: bash
         run: |
           set -euo pipefail
           git fetch --no-tags origin "refs/heads/$TARGET_BRANCH"
           test "$(git rev-parse FETCH_HEAD)" = "$EXPECTED_TARGET_SHA"
           git checkout --detach "$EXPECTED_TARGET_SHA"
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("toolchain/codex_wire_audit/orchestrator.py")
+          text = path.read_text(encoding="utf-8")
+          marker = "def _merge_structured_diagnostics(report: MutableMapping[str, Any], diagnostics: DiagnosticCollector) -> None:\n"
+          assert marker in text
+          helper = '''def _legacy_diagnostic_source_ref(report: Mapping[str, Any], source_ref: str) -> str:\n    \"\"\"Project a canonical source ref into the frozen v10 manifest namespace.\"\"\"\n    manifest = report.get('source_manifest')\n    if not isinstance(manifest, Mapping):\n        return source_ref\n    files = manifest.get('files') if isinstance(manifest.get('files'), Mapping) else {}\n    locations = manifest.get('locations') if isinstance(manifest.get('locations'), Mapping) else {}\n    path_index = manifest.get('path_index') if isinstance(manifest.get('path_index'), Mapping) else {}\n    if source_ref in files or source_ref in locations:\n        return source_ref\n\n    def resolve_path(path_ref: str) -> str | None:\n        source_id = path_index.get(path_ref)\n        if isinstance(source_id, str) and source_id in files:\n            return source_id\n        path, separator, line_text = path_ref.rpartition(':')\n        if not separator or not line_text.isdigit():\n            return None\n        source_id = path_index.get(path)\n        if not isinstance(source_id, str) or source_id not in files:\n            return None\n        line = int(line_text)\n        for location_id, location in locations.items():\n            if not isinstance(location, Mapping) or location.get('source_ref') != source_id:\n                continue\n            start = location.get('start_line', location.get('line'))\n            end = location.get('end_line', start)\n            if start == line and end == line:\n                return str(location_id)\n        return source_id\n\n    resolved = resolve_path(source_ref)\n    if resolved:\n        return resolved\n    exact_snapshot = manifest.get('exact_snapshot')\n    snapshot_files = exact_snapshot.get('files') if isinstance(exact_snapshot, Mapping) and isinstance(exact_snapshot.get('files'), Mapping) else {}\n    for spec_id, record in snapshot_files.items():\n        prefix = f'{spec_id}:'\n        if not source_ref.startswith(prefix):\n            continue\n        if not isinstance(record, Mapping):\n            return source_ref\n        path_ref = source_ref[len(prefix):]\n        selected_path = record.get('path')\n        line_suffix = path_ref[len(selected_path) + 1:] if isinstance(selected_path, str) and path_ref.startswith(selected_path + ':') else ''\n        if path_ref != selected_path and not line_suffix.isdigit():\n            return source_ref\n        return resolve_path(path_ref) or source_ref\n    return source_ref\n\n\ndef _project_diagnostic_source_refs(report: Mapping[str, Any], item: Mapping[str, Any]) -> dict[str, Any]:\n    value = copy.deepcopy(dict(item))\n    refs = value.get('source_refs')\n    if not isinstance(refs, list):\n        return value\n    projected: list[str] = []\n    for source_ref in refs:\n        mapped = _legacy_diagnostic_source_ref(report, str(source_ref))\n        if mapped not in projected:\n            projected.append(mapped)\n    if projected != refs:\n        details = value.get('details')\n        details = dict(details) if isinstance(details, Mapping) else {}\n        details.setdefault('canonical_source_refs', list(refs))\n        value['details'] = details\n        value['source_refs'] = projected\n    return value\n\n\n'''
+          text = text.replace(marker, helper + marker, 1)
+          old = "    for item in diagnostics.to_list():\n        merged[item['id']] = item\n"
+          new = "    for item in diagnostics.to_list():\n        item = _project_diagnostic_source_refs(report, item)\n        merged[item['id']] = item\n"
+          assert old in text
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
+          cat > toolchain/tests/test_diagnostic_source_projection.py <<'PY'
+          from __future__ import annotations
+
+          from codex_wire_audit.diagnostics import DiagnosticCollector
+          from codex_wire_audit.orchestrator import _merge_structured_diagnostics
+
+
+          def test_structured_diagnostic_source_refs_project_to_legacy_manifest_ids() -> None:
+              rollout_path = "codex-rs/rollout/src/rollout_file_name.rs"
+              endpoint_path = "codex-rs/codex-api/src/endpoint/mod.rs"
+              report = {
+                  "source_manifest": {
+                      "files": {
+                          "source.rollout": {"id": "source.rollout"},
+                          "source.endpoint": {"id": "source.endpoint"},
+                      },
+                      "path_index": {
+                          rollout_path: "source.rollout",
+                          endpoint_path: "source.endpoint",
+                      },
+                      "locations": {
+                          "location.endpoint.9": {
+                              "source_ref": "source.endpoint",
+                              "start_line": 9,
+                              "end_line": 9,
+                          }
+                      },
+                      "exact_snapshot": {
+                          "files": {
+                              "source_spec.extra.local_storage_rollout_filename": {
+                                  "path": rollout_path
+                              }
+                          }
+                      },
+                  },
+                  "diagnostics": [],
+              }
+              diagnostics = DiagnosticCollector()
+              canonical_refs = (
+                  f"source_spec.extra.local_storage_rollout_filename:{rollout_path}",
+                  endpoint_path,
+                  f"{endpoint_path}:9",
+              )
+              diagnostic = diagnostics.emit(
+                  code="SOURCE_PROJECTION_FIXTURE",
+                  severity="warning",
+                  category="test",
+                  message="fixture",
+                  source_refs=canonical_refs,
+              )
+
+              _merge_structured_diagnostics(report, diagnostics)
+
+              [projected] = report["diagnostics"]
+              assert projected["id"] == diagnostic.id
+              assert projected["source_refs"] == [
+                  "source.rollout",
+                  "source.endpoint",
+                  "location.endpoint.9",
+              ]
+              assert projected["details"]["canonical_source_refs"] == list(canonical_refs)
+
+
+          def test_unmapped_structured_diagnostic_source_ref_remains_fail_visible() -> None:
+              report = {
+                  "source_manifest": {"files": {}, "path_index": {}, "locations": {}},
+                  "diagnostics": [],
+              }
+              diagnostics = DiagnosticCollector()
+              diagnostics.emit(
+                  code="SOURCE_PROJECTION_MISSING_FIXTURE",
+                  severity="warning",
+                  category="test",
+                  message="fixture",
+                  source_refs=("codex-rs/missing.rs",),
+              )
+
+              _merge_structured_diagnostics(report, diagnostics)
+
+              assert report["diagnostics"][0]["source_refs"] == ["codex-rs/missing.rs"]
+          PY
+          python -m py_compile toolchain/codex_wire_audit/orchestrator.py toolchain/tests/test_diagnostic_source_projection.py
           cd toolchain
           python tools/maintainability_metrics.py --write
           cd ..
-          test "$(git diff --name-only | sort)" = $'toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md\ntoolchain/codex_wire_audit_v19_maintainability_metrics.json'
-          git add toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md toolchain/codex_wire_audit_v19_maintainability_metrics.json
+          expected=$'toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md\ntoolchain/codex_wire_audit/orchestrator.py\ntoolchain/codex_wire_audit_v19_maintainability_metrics.json\ntoolchain/tests/test_diagnostic_source_projection.py'
+          test "$(git diff --name-only | sort)" = "$expected"
+          git add toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md \
+            toolchain/codex_wire_audit/orchestrator.py \
+            toolchain/codex_wire_audit_v19_maintainability_metrics.json \
+            toolchain/tests/test_diagnostic_source_projection.py
           git diff --cached --check
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'chore(metrics): refresh canonical proof metrics'
+          git commit -m 'fix(report): project canonical diagnostic source refs'
           git push origin "HEAD:refs/heads/$TARGET_BRANCH"
-      - name: Upload generated assets
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: pr7-maintainability-assets-published
-          path: |
-            toolchain/codex_wire_audit_v19_maintainability_metrics.json
-            toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md
-          if-no-files-found: error
-          retention-days: 1
