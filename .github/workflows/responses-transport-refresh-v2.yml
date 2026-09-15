@@ -43,7 +43,7 @@ jobs:
                   raise SystemExit(f"missing reviewed payload chunk P{index}")
               chunks.append(match.group(1))
           script = zlib.decompress(base64.b64decode("".join(chunks))).decode()
-          replacement = '''          text = replace_once(
+          replacement = '''text = replace_once(
               text,
               '            "$schema": REQUEST_SCHEMA,\\n            "schema_version": SCHEMA_VERSION,',
               '            "$schema": REQUEST_SCHEMA,\\n            "schema_version": REQUEST_SCHEMA_VERSION,',
