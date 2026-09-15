@@ -43,11 +43,20 @@ jobs:
                   raise SystemExit(f"missing reviewed payload chunk P{index}")
               chunks.append(match.group(1))
           script = zlib.decompress(base64.b64decode("".join(chunks))).decode()
-          old = "text = replace_once(text, '            \\\"schema_version\\\": SCHEMA_VERSION,', '            \\\"schema_version\\\": REQUEST_SCHEMA_VERSION,', \\\"request body version\\\")"
-          new = "text = replace_once(text, '            \\\"$schema\\\": REQUEST_SCHEMA,\\\\n            \\\"schema_version\\\": SCHEMA_VERSION,', '            \\\"$schema\\\": REQUEST_SCHEMA,\\\\n            \\\"schema_version\\\": REQUEST_SCHEMA_VERSION,', \\\"request body version\\\")"
-          if old not in script:
-              raise SystemExit("reviewed payload no longer contains expected schema-version edit")
-          script = script.replace(old, new, 1)
+          replacement = '''          text = replace_once(
+              text,
+              '            "$schema": REQUEST_SCHEMA,\\n            "schema_version": SCHEMA_VERSION,',
+              '            "$schema": REQUEST_SCHEMA,\\n            "schema_version": REQUEST_SCHEMA_VERSION,',
+              "request body version",
+          )'''
+          script, count = re.subn(
+              r'(?m)^\s*text = replace_once\(text, .*?request body version.*$',
+              replacement,
+              script,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit(f"request body version repair matched {count} lines")
           compile(script, "/tmp/responses_refresh.py", "exec")
           pathlib.Path("/tmp/responses_refresh.py").write_text(script)
           PY
