@@ -128,7 +128,8 @@ jobs:
           python tools/maintainability_metrics.py --write
           cd ..
           expected=$'toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md\ntoolchain/codex_wire_audit/orchestrator.py\ntoolchain/codex_wire_audit_v19_maintainability_metrics.json\ntoolchain/tests/test_diagnostic_source_projection.py'
-          test "$(git diff --name-only | sort)" = "$expected"
+          actual="$({ git diff --name-only; git ls-files --others --exclude-standard; } | sort)"
+          test "$actual" = "$expected"
           git add toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md \
             toolchain/codex_wire_audit/orchestrator.py \
             toolchain/codex_wire_audit_v19_maintainability_metrics.json \
