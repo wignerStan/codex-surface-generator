@@ -34,6 +34,7 @@ jobs:
           python -m pytest -q tests/test_local_storage_v19.py
           python -m pytest -q
           python tools/maintainability_metrics.py --write
+          make legacy-assets
           make check-assets
           python tools/check_canonical_contract.py
       - name: Commit exact topic
