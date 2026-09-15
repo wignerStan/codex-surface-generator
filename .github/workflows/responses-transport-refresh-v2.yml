@@ -59,6 +59,17 @@ jobs:
           PY
           python /tmp/responses_refresh.py
           python /tmp/responses_transport_refactor.py
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("toolchain/codex_wire_audit/extractors/responses_transport.py")
+          text = path.read_text(encoding="utf-8")
+          old = 'build_prompt(\n        Vec::new(),")'
+          new = 'build_prompt(\\n        Vec::new(),")'
+          if text.count(old) != 1:
+              raise SystemExit(f"startup marker escape count: {text.count(old)}")
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
+          python -m py_compile toolchain/codex_wire_audit/extractors/responses_transport.py
           git diff --check
       - name: Validate source and pinned Codex contract
         working-directory: toolchain
