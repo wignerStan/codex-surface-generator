@@ -45,8 +45,9 @@ jobs:
               raise SystemExit(f"expected one ambiguous callsite edit, found {text.count(old_call)}")
           text = text.replace(old_call, new_call, 1)
 
-          old_fixture = '''text = replace_once(text, '    tui_session = """\\n', thread_manager_fixture + '    tui_session = """\\n', "test thread manager fixture")'''
-          new_fixture = '''text = replace_once(text, "    tui_session = '''\\n", thread_manager_fixture + "    tui_session = '''\\n", "test thread manager fixture")'''
+          old_fixture = 'text = replace_once(text, \'    tui_session = """\\\\n\', thread_manager_fixture + \'    tui_session = """\\\\n\', "test thread manager fixture")'
+          q3 = "'" * 3
+          new_fixture = f'text = replace_once(text, "    tui_session = {q3}\\\\n", thread_manager_fixture + "    tui_session = {q3}\\\\n", "test thread manager fixture")'
           if text.count(old_fixture) != 1:
               raise SystemExit(f"expected one fixture quoting edit, found {text.count(old_fixture)}")
           path.write_text(text.replace(old_fixture, new_fixture, 1))
