@@ -45,15 +45,37 @@ jobs:
               raise SystemExit(f"expected one ambiguous callsite edit, found {text.count(old_call)}")
           text = text.replace(old_call, new_call, 1)
 
-          old_fixture = 'text = replace_once(text, \'    tui_session = """\\\\n\', thread_manager_fixture + \'    tui_session = """\\\\n\', "test thread manager fixture")'
-          q3 = "'" * 3
-          new_fixture = f'text = replace_once(text, "    tui_session = {q3}\\\\n", thread_manager_fixture + "    tui_session = {q3}\\\\n", "test thread manager fixture")'
-          if text.count(old_fixture) != 1:
-              raise SystemExit(f"expected one fixture quoting edit, found {text.count(old_fixture)}")
-          path.write_text(text.replace(old_fixture, new_fixture, 1))
+          lines = text.splitlines()
+          matches = [i for i, line in enumerate(lines) if "test thread manager fixture" in line and "replace_once" in line]
+          if len(matches) != 1:
+              raise SystemExit(f"expected one fixture insertion line, found {len(matches)}")
+          lines[matches[0]] = "# thread_manager fixture inserted by workflow after hardening"
+          path.write_text("\n".join(lines) + "\n")
           PY
           git checkout -B contract/app-server/feat/history-mutation origin/contract/app-server/feat/history-mutation
           python "$RUNNER_TEMP/harden_history_mutation.py"
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("toolchain/tests/test_app_server_rpc_extractor.py")
+          text = path.read_text()
+          anchor = "    tui_session = '''\n"
+          fixture = '''    thread_manager = """
+/// Fork an existing thread by snapshotting rollout history. The new thread will have
+/// a fresh id.
+pub async fn fork_prepared_thread() {
+    let history = InitialHistory::Resumed(ResumedHistory {
+        conversation_id: prepared.source_thread_id,
+    });
+}
+async fn fork_thread_with_initial_history() {
+    request.forked_from_thread_id = source_thread_id;
+}
+"""
+'''
+          if text.count(anchor) != 1:
+              raise SystemExit(f"expected one tui fixture anchor, found {text.count(anchor)}")
+          path.write_text(text.replace(anchor, fixture + anchor, 1))
+          PY
           git diff --check
       - name: Validate exact pinned-source contract
         working-directory: toolchain
