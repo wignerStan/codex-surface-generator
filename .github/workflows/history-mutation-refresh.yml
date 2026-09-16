@@ -45,8 +45,8 @@ jobs:
           python -m pip install --constraint ci/constraints.txt -e '.[test]'
           python -m pytest -q tests/test_app_server_rpc_extractor.py
           python -m pytest -q
-          python tools/maintainability_metrics.py --write
           make legacy-assets
+          python tools/maintainability_metrics.py --write
           make check-assets
           python tools/check_canonical_contract.py
           python -m codex_wire_audit.release_contract --output "$RUNNER_TEMP/source-capabilities.json"
