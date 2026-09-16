@@ -11,7 +11,7 @@ def replace_once(text: str, old: str, new: str, label: str) -> str:
     return text.replace(old, new, 1)
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path.cwd()
 TOOLCHAIN = ROOT / "toolchain"
 PKG = TOOLCHAIN / "codex_wire_audit"
 
