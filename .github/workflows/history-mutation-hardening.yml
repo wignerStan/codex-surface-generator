@@ -28,21 +28,28 @@ jobs:
           from pathlib import Path
           path = Path(os.environ["RUNNER_TEMP"]) / "harden_history_mutation.py"
           text = path.read_text()
-          old = '''text = replace_once(
+
+          old_call = '''text = replace_once(
               text,
               '            processor=processor,\\n            tui_session=tui_session,\\n',
               '            processor=processor,\\n            thread_manager=thread_manager,\\n            tui_session=tui_session,\\n',
               "validator thread manager call",
           )'''
-          new = '''text = replace_once(
+          new_call = '''text = replace_once(
               text,
               '        complete &= validate_history_mutation_sources(\\n            diagnostics=diagnostics,\\n            extractor_id=EXTRACTOR_ID,\\n            processor=processor,\\n            tui_session=tui_session,\\n',
               '        complete &= validate_history_mutation_sources(\\n            diagnostics=diagnostics,\\n            extractor_id=EXTRACTOR_ID,\\n            processor=processor,\\n            thread_manager=thread_manager,\\n            tui_session=tui_session,\\n',
               "validator thread manager call",
           )'''
-          if text.count(old) != 1:
-              raise SystemExit(f"expected one ambiguous callsite edit, found {text.count(old)}")
-          path.write_text(text.replace(old, new, 1))
+          if text.count(old_call) != 1:
+              raise SystemExit(f"expected one ambiguous callsite edit, found {text.count(old_call)}")
+          text = text.replace(old_call, new_call, 1)
+
+          old_fixture = '''text = replace_once(text, '    tui_session = """\\n', thread_manager_fixture + '    tui_session = """\\n', "test thread manager fixture")'''
+          new_fixture = '''text = replace_once(text, "    tui_session = '''\\n", thread_manager_fixture + "    tui_session = '''\\n", "test thread manager fixture")'''
+          if text.count(old_fixture) != 1:
+              raise SystemExit(f"expected one fixture quoting edit, found {text.count(old_fixture)}")
+          path.write_text(text.replace(old_fixture, new_fixture, 1))
           PY
           git checkout -B contract/app-server/feat/history-mutation origin/contract/app-server/feat/history-mutation
           python "$RUNNER_TEMP/harden_history_mutation.py"
