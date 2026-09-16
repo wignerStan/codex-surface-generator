@@ -26,6 +26,17 @@ jobs:
           git reset --hard 153a32f12f38466ff77b552858aace0ae2809746
           git checkout -b contract/app-server/feat/history-mutation
           python "$RUNNER_TEMP/build_history_mutation.py"
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("toolchain/codex_wire_audit/extractors/app_server_history_mutation.py")
+          text = path.read_text()
+          broken = '("APP_SERVER_REVERT_STABLE_THREAD_ID_MISSING", "RolloutRecorderParams::new(\n        source_meta.id,"),'
+          replacement = '''("APP_SERVER_REVERT_STABLE_THREAD_RECORDER_MISSING", "RolloutRecorderParams::new("),
+                      ("APP_SERVER_REVERT_STABLE_THREAD_ID_MISSING", "source_meta.id,"),'''
+          if broken not in text:
+              raise SystemExit("expected generated stable-thread marker was not found")
+          path.write_text(text.replace(broken, replacement, 1))
+          PY
           git diff --check
       - name: Validate and regenerate deterministic assets
         working-directory: toolchain
