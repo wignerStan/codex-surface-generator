@@ -292,6 +292,10 @@ _RESPONSE_EVENT_SPECS = (
     ("source_spec.base.ws", "ws", "codex-rs/codex-api/src/endpoint/responses_websocket.rs", ("process_responses_event", "run_websocket_response_stream")),
 )
 
+_RESPONSES_SERVER_RESPONSE_SPECS = (
+    ("source_spec.extra.models_manager", "models_manager", "codex-rs/models-manager/src/manager.rs", ("refresh_if_new_etag", "fetch_and_update_models", "RefreshStrategy::Online", "ModelsCacheEntry")),
+)
+
 _RUNTIME_BEHAVIOR_SPECS = (
     ("source_spec.extra.response_api_bridge", "response_api_bridge", "codex-rs/codex-api/src/api_bridge.rs", ("map_api_error", "server_is_overloaded", "slow_down", "StatusCode::TOO_MANY_REQUESTS")),
     ("source_spec.extra.response_protocol_error", "response_protocol_error", "codex-rs/protocol/src/error.rs", ("pub enum CodexErrorDetails", "pub fn is_retryable", "ServerOverloaded", "RateLimitExceeded")),
@@ -305,6 +309,7 @@ def _merge_protocol_domain_specs(specs: list[SourceSpec]) -> None:
         (_RESPONSES_REQUEST_SPECS, "responses_request", "extractor.responses_request"),
         (_RESPONSES_LITE_SPECS, "responses_lite", "extractor.responses_lite"),
         (_RESPONSE_EVENT_SPECS, "response_events", "extractor.response_events"),
+        (_RESPONSES_SERVER_RESPONSE_SPECS, "responses_server_response", "extractor.responses_server_response"),
         (_RUNTIME_BEHAVIOR_SPECS, "runtime_behavior", "extractor.runtime_behavior"),
     ):
         _merge_optional_specs(specs, rows, role=role, extractor_id=extractor_id)
