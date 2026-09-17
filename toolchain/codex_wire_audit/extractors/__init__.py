@@ -17,6 +17,7 @@ _BUILTIN_MODULES = (
     "redirect_headers",
     "mcp_projection",
     "responses_protocol",
+    "responses_server_response",
     "app_server_rpc",
     "runtime_behavior",
 )
