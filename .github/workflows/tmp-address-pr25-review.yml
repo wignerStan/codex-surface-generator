@@ -1,0 +1,119 @@
+name: tmp-address-pr25-review
+
+on:
+  push:
+    branches:
+      - contract/responses/feat/server-response-surface
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: contract/responses/feat/server-response-surface
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: toolchain/ci/constraints.txt
+      - name: Patch review findings
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          root = Path('.')
+          extractor_id = 'extractor.responses_server_response'
+
+          # 1) Make the server-response contract proof-critical in every Responses/repo-wide profile.
+          coverage_path = root / 'toolchain/codex_wire_audit/coverage_profiles.v3.json'
+          coverage = json.loads(coverage_path.read_text(encoding='utf-8'))
+          target_profiles = {'hybrid_v19', 'responses_only', 'codex_wire_full'}
+          for profile in coverage['profiles']:
+              if profile['id'] not in target_profiles:
+                  continue
+              required = profile['required_extractors']
+              if extractor_id not in required:
+                  if 'extractor.response_events' in required:
+                      required.insert(required.index('extractor.response_events') + 1, extractor_id)
+                  else:
+                      required.append(extractor_id)
+          coverage_path.write_text(json.dumps(coverage, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+
+          # 2) Claim the capability in the release spec and require it in matching profile assertions.
+          release_path = root / 'toolchain/codex_wire_audit/release_spec.v1.json'
+          release = json.loads(release_path.read_text(encoding='utf-8'))
+          claims = {claim['id']: claim for claim in release['capability_claims']}
+          responses = claims['responses_protocol']
+          if extractor_id not in responses['extractor_ids']:
+              responses['extractor_ids'].append(extractor_id)
+          for profile_id in ('hybrid_v19', 'responses_only', 'codex_wire_full'):
+              required = responses['profile_assertions'][profile_id]['required_extractors_contains']
+              if extractor_id not in required:
+                  required.append(extractor_id)
+          for resource in (
+              'extractors/responses_server_response.py',
+              'proof_schema_templates/responses-server-response-semantics-v1.schema.json',
+          ):
+              if resource not in responses['required_resources']:
+                  responses['required_resources'].append(resource)
+
+          canonical = claims['canonical_system_contract']['profile_assertions']['hybrid_v19']['required_extractors_contains']
+          if extractor_id not in canonical:
+              canonical.append(extractor_id)
+          release_path.write_text(json.dumps(release, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+
+          # 3) Close the two fail-closed gaps called out in review.
+          extractor_path = root / 'toolchain/codex_wire_audit/extractors/responses_server_response.py'
+          text = extractor_path.read_text(encoding='utf-8')
+          old_alias = '''            ("RESPONSES_EVENT_OPENAI_MODEL_ALIAS_MISSING", 'eq_ignore_ascii_case("x-openai-model")'),'''
+          new_alias = '''            ("RESPONSES_EVENT_OPENAI_MODEL_HEADER_ALIAS_MISSING", 'eq_ignore_ascii_case("openai-model")'),\n            ("RESPONSES_EVENT_X_OPENAI_MODEL_ALIAS_MISSING", 'eq_ignore_ascii_case("x-openai-model")'),'''
+          if old_alias not in text:
+              raise SystemExit('expected effective-model alias requirement not found')
+          text = text.replace(old_alias, new_alias, 1)
+
+          old_turn_state = '''            ("RESPONSES_WS_TURN_STATE_MISSING", "event.turn_state()"),'''
+          new_turn_state = '''            ("RESPONSES_WS_UPGRADE_TURN_STATE_HEADER_MISSING", ".get(X_CODEX_TURN_STATE_HEADER)"),\n            ("RESPONSES_WS_TURN_STATE_MISSING", "event.turn_state()"),'''
+          if old_turn_state not in text:
+              raise SystemExit('expected websocket turn-state requirement not found')
+          text = text.replace(old_turn_state, new_turn_state, 1)
+          extractor_path.write_text(text, encoding='utf-8')
+          PY
+      - name: Install constrained test dependencies
+        working-directory: toolchain
+        run: python -m pip install --constraint ci/constraints.txt -e '.[test]'
+      - name: Verify package and release closure
+        working-directory: toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pytest -q tests/test_responses_server_response_extractor.py
+          python -m pytest -q
+          python tools/maintainability_metrics.py
+          python tools/maintainability_metrics.py --check
+          make check-assets
+          python tools/check_canonical_contract.py
+          python -m codex_wire_audit.release_contract --output /tmp/release-capabilities.json
+      - name: Commit fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add toolchain/codex_wire_audit/coverage_profiles.v3.json \
+                  toolchain/codex_wire_audit/release_spec.v1.json \
+                  toolchain/codex_wire_audit/extractors/responses_server_response.py \
+                  toolchain/codex_wire_audit_v19_maintainability_metrics.json \
+                  toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix(responses): close server response proof gaps'
+          git push origin HEAD:contract/responses/feat/server-response-surface
