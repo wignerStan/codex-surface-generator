@@ -1,11 +1,11 @@
 {
   "counts": {
     "base": 16,
-    "extra": 113,
-    "optional": 139,
+    "extra": 118,
+    "optional": 144,
     "required": 16,
     "surface": 26,
-    "total": 155
+    "total": 160
   },
   "schema_version": "1.0.0",
   "sources": {
@@ -1664,6 +1664,27 @@
         "context_management_support"
       ]
     },
+    "source_spec.extra.models_manager": {
+      "expected_symbols": [
+        "refresh_if_new_etag",
+        "fetch_and_update_models",
+        "RefreshStrategy::Online",
+        "ModelsCacheEntry"
+      ],
+      "extractor_ids": [
+        "extractor.responses_server_response"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.models_manager",
+      "legacy_key": "models_manager",
+      "path_candidates": [
+        "codex-rs/models-manager/src/manager.rs"
+      ],
+      "required": false,
+      "roles": [
+        "responses_server_response"
+      ]
+    },
     "source_spec.extra.new_context_window": {
       "expected_symbols": [
         "NEW_CONTEXT_WINDOW_MESSAGE",
@@ -2156,6 +2177,48 @@
         "config_surface_support"
       ]
     },
+    "source_spec.extra.response_api_bridge": {
+      "expected_symbols": [
+        "map_api_error",
+        "server_is_overloaded",
+        "slow_down",
+        "StatusCode::TOO_MANY_REQUESTS"
+      ],
+      "extractor_ids": [
+        "extractor.runtime_behavior"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.response_api_bridge",
+      "legacy_key": "response_api_bridge",
+      "path_candidates": [
+        "codex-rs/codex-api/src/api_bridge.rs"
+      ],
+      "required": false,
+      "roles": [
+        "runtime_behavior"
+      ]
+    },
+    "source_spec.extra.response_protocol_error": {
+      "expected_symbols": [
+        "pub enum CodexErrorDetails",
+        "pub fn is_retryable",
+        "ServerOverloaded",
+        "RateLimitExceeded"
+      ],
+      "extractor_ids": [
+        "extractor.runtime_behavior"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.response_protocol_error",
+      "legacy_key": "response_protocol_error",
+      "path_candidates": [
+        "codex-rs/protocol/src/error.rs"
+      ],
+      "required": false,
+      "roles": [
+        "runtime_behavior"
+      ]
+    },
     "source_spec.extra.response_usage": {
       "expected_symbols": [],
       "extractor_ids": [],
@@ -2434,6 +2497,45 @@
       "required": false,
       "roles": [
         "legacy_extra"
+      ]
+    },
+    "source_spec.extra.tui_side": {
+      "expected_symbols": [
+        "fork_config.ephemeral = true",
+        "fork_side_thread"
+      ],
+      "extractor_ids": [
+        "extractor.runtime_behavior"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.tui_side",
+      "legacy_key": "tui_side",
+      "path_candidates": [
+        "codex-rs/tui/src/app/side.rs"
+      ],
+      "required": false,
+      "roles": [
+        "runtime_behavior"
+      ]
+    },
+    "source_spec.extra.tui_slash_command": {
+      "expected_symbols": [
+        "SlashCommand::Side",
+        "SlashCommand::Btw",
+        "ephemeral fork"
+      ],
+      "extractor_ids": [
+        "extractor.runtime_behavior"
+      ],
+      "group": "extra",
+      "id": "source_spec.extra.tui_slash_command",
+      "legacy_key": "tui_slash_command",
+      "path_candidates": [
+        "codex-rs/tui/src/slash_command.rs"
+      ],
+      "required": false,
+      "roles": [
+        "runtime_behavior"
       ]
     },
     "source_spec.extra.turn_metadata": {
