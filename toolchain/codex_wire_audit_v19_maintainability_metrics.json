@@ -679,9 +679,9 @@
     "metadata_history_transitions": 9,
     "metadata_history_versions": 10,
     "proof_schema_templates": 24,
-    "registered_optional_sources": 139,
+    "registered_optional_sources": 144,
     "registered_required_sources": 16,
-    "registered_source_specs": 155,
+    "registered_source_specs": 160,
     "regression_test_methods": 309,
     "standalone_release_schemas": 1,
     "strict_schema_templates": 33
