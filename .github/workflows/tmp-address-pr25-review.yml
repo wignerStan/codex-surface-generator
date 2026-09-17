@@ -34,7 +34,6 @@ jobs:
           root = Path('.')
           extractor_id = 'extractor.responses_server_response'
 
-          # 1) Make the server-response contract proof-critical in every Responses/repo-wide profile.
           coverage_path = root / 'toolchain/codex_wire_audit/coverage_profiles.v3.json'
           coverage = json.loads(coverage_path.read_text(encoding='utf-8'))
           target_profiles = {'hybrid_v19', 'responses_only', 'codex_wire_full'}
@@ -49,7 +48,6 @@ jobs:
                       required.append(extractor_id)
           coverage_path.write_text(json.dumps(coverage, indent=2, sort_keys=True) + '\n', encoding='utf-8')
 
-          # 2) Claim the capability in the release spec and require it in matching profile assertions.
           release_path = root / 'toolchain/codex_wire_audit/release_spec.v1.json'
           release = json.loads(release_path.read_text(encoding='utf-8'))
           claims = {claim['id']: claim for claim in release['capability_claims']}
@@ -66,13 +64,11 @@ jobs:
           ):
               if resource not in responses['required_resources']:
                   responses['required_resources'].append(resource)
-
           canonical = claims['canonical_system_contract']['profile_assertions']['hybrid_v19']['required_extractors_contains']
           if extractor_id not in canonical:
               canonical.append(extractor_id)
           release_path.write_text(json.dumps(release, indent=2, sort_keys=True) + '\n', encoding='utf-8')
 
-          # 3) Close the two fail-closed gaps called out in review.
           extractor_path = root / 'toolchain/codex_wire_audit/extractors/responses_server_response.py'
           text = extractor_path.read_text(encoding='utf-8')
           old_alias = '''            ("RESPONSES_EVENT_OPENAI_MODEL_ALIAS_MISSING", 'eq_ignore_ascii_case("x-openai-model")'),'''
@@ -80,13 +76,21 @@ jobs:
           if old_alias not in text:
               raise SystemExit('expected effective-model alias requirement not found')
           text = text.replace(old_alias, new_alias, 1)
-
           old_turn_state = '''            ("RESPONSES_WS_TURN_STATE_MISSING", "event.turn_state()"),'''
           new_turn_state = '''            ("RESPONSES_WS_UPGRADE_TURN_STATE_HEADER_MISSING", ".get(X_CODEX_TURN_STATE_HEADER)"),\n            ("RESPONSES_WS_TURN_STATE_MISSING", "event.turn_state()"),'''
           if old_turn_state not in text:
               raise SystemExit('expected websocket turn-state requirement not found')
           text = text.replace(old_turn_state, new_turn_state, 1)
           extractor_path.write_text(text, encoding='utf-8')
+
+          test_path = root / 'toolchain/tests/test_responses_server_response_extractor.py'
+          test_text = test_path.read_text(encoding='utf-8')
+          fixture_old = '''    {ws_header_read}\n}}\nasync fn run_websocket_response_stream() {{'''
+          fixture_new = '''    {ws_header_read}\n    let turn_state = response.headers().get(X_CODEX_TURN_STATE_HEADER);\n}}\nasync fn run_websocket_response_stream() {{'''
+          if fixture_old not in test_text:
+              raise SystemExit('expected websocket fixture block not found')
+          test_text = test_text.replace(fixture_old, fixture_new, 1)
+          test_path.write_text(test_text, encoding='utf-8')
           PY
       - name: Install constrained test dependencies
         working-directory: toolchain
@@ -112,6 +116,7 @@ jobs:
           git add toolchain/codex_wire_audit/coverage_profiles.v3.json \
                   toolchain/codex_wire_audit/release_spec.v1.json \
                   toolchain/codex_wire_audit/extractors/responses_server_response.py \
+                  toolchain/tests/test_responses_server_response_extractor.py \
                   toolchain/codex_wire_audit_v19_maintainability_metrics.json \
                   toolchain/CODEX_WIRE_AUDIT_V19_METRICS.md
           git diff --cached --quiet && exit 0
