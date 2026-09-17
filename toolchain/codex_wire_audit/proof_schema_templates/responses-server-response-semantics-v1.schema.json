@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.codex-system-contract.invalid/responses/responses-server-response-semantics-v1.schema.json",
+  "title": "Codex Responses server response semantics",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schema_version", "ownership", "direction", "effective_model", "models_catalog_invalidation", "server_response_channels", "request_response_boundary", "evidence", "semantic_complete", "semantic_digest"],
+  "properties": {
+    "$schema": {"const": "https://schemas.codex-system-contract.invalid/responses/responses-server-response-semantics-v1.schema.json"},
+    "schema_version": {"const": "1.1.0"},
+    "ownership": {"$ref": "#/$defs/ownership"},
+    "direction": {"const": "server_to_client"},
+    "effective_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["meaning", "wire_header", "event_json_header_aliases", "normalized_event", "http_sse", "websocket", "response_model_payload_field_consulted", "not_client_metadata", "not_turn_metadata"],
+      "properties": {
+        "meaning": {"type": "string", "minLength": 1},
+        "wire_header": {"const": "openai-model"},
+        "event_json_header_aliases": {"type": "array", "const": ["openai-model", "x-openai-model"]},
+        "normalized_event": {"const": "ResponseEvent::ServerModel(String)"},
+        "http_sse": {"$ref": "#/$defs/effectiveModelTransport"},
+        "websocket": {"$ref": "#/$defs/effectiveModelTransport"},
+        "response_model_payload_field_consulted": {"type": "boolean"},
+        "not_client_metadata": {"const": true},
+        "not_turn_metadata": {"const": true}
+      }
+    },
+    "models_catalog_invalidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signal", "dispatch", "comparison", "catalog_fetch", "catalog_update", "wire_version_relation"],
+      "properties": {
+        "signal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["meaning", "normalized_event", "http_sse", "websocket", "catalog_body_embedded"],
+          "properties": {
+            "meaning": {"type": "string", "minLength": 1},
+            "normalized_event": {"const": "ResponseEvent::ModelsEtag(String)"},
+            "http_sse": {"type": "object", "additionalProperties": false, "required": ["location", "header"], "properties": {"location": {"const": "outer HTTP response header"}, "header": {"const": "X-Models-Etag"}}},
+            "websocket": {"type": "object", "additionalProperties": false, "required": ["location", "header"], "properties": {"location": {"const": "codex.response.metadata top-level headers"}, "header": {"const": "x-models-etag"}}},
+            "catalog_body_embedded": {"const": false}
+          }
+        },
+        "dispatch": {"type": "string", "minLength": 1},
+        "comparison": {"type": "object", "additionalProperties": false, "required": ["state", "match_condition", "on_match", "on_mismatch_or_identity_change"], "properties": {"state": {"type": "string"}, "match_condition": {"type": "string"}, "on_match": {"type": "string"}, "on_mismatch_or_identity_change": {"type": "string"}}},
+        "catalog_fetch": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["separate_request", "method", "path", "query", "provider_bridge", "response_body", "response_version_header", "returns_to_manager"],
+          "properties": {
+            "separate_request": {"const": true},
+            "method": {"const": "GET"},
+            "path": {"const": "/models"},
+            "query": {"type": "string", "pattern": "client_version"},
+            "provider_bridge": {"type": "string", "minLength": 1},
+            "response_body": {"type": "string", "pattern": "ModelsResponse"},
+            "response_version_header": {"const": "ETag"},
+            "returns_to_manager": {"type": "string", "pattern": "ModelsEndpointResponse"}
+          }
+        },
+        "catalog_update": {"type": "object", "additionalProperties": false, "required": ["cache_entry", "persistent_cache", "in_memory_catalog"], "properties": {"cache_entry": {"type": "string", "pattern": "ModelsCacheEntry"}, "persistent_cache": {"type": "string"}, "in_memory_catalog": {"type": "string"}}},
+        "wire_version_relation": {"type": "object", "additionalProperties": false, "required": ["responses_signal", "models_response_version", "relationship"], "properties": {"responses_signal": {"type": "string", "pattern": "Models-Etag|models-etag"}, "models_response_version": {"const": "ETag"}, "relationship": {"type": "string", "minLength": 1}}}
+      }
+    },
+    "server_response_channels": {"type": "object", "required": ["http_sse", "websocket"], "additionalProperties": false, "properties": {"http_sse": {"type": "object", "minProperties": 3, "additionalProperties": true}, "websocket": {"type": "object", "minProperties": 3, "additionalProperties": true}}},
+    "request_response_boundary": {"type": "object", "required": ["requested_model", "effective_model", "client_metadata_direction", "turn_metadata_direction"], "additionalProperties": {"type": "string"}},
+    "evidence": {"type": "object", "required": ["common", "sse", "websocket", "turn_dispatch", "models_manager", "models_endpoint", "model_provider_models"], "additionalProperties": {"$ref": "#/$defs/evidence"}},
+    "semantic_complete": {"type": "boolean"},
+    "semantic_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "ownership": {"type": "object", "additionalProperties": false, "required": ["owns", "does_not_own"], "properties": {"owns": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true}, "does_not_own": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true}}},
+    "evidence": {"type": "object", "additionalProperties": false, "required": ["source_spec_id", "path", "sha256", "git_blob_sha", "symbol"], "properties": {"source_spec_id": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "git_blob_sha": {"type": ["string", "null"]}, "symbol": {"type": "string", "minLength": 1}}},
+    "effectiveModelTransport": {"type": "object", "minProperties": 4, "additionalProperties": {"type": ["string", "array"]}}
+  }
+}
