@@ -99,6 +99,7 @@ pub struct ResponsesWebsocketConnection {{ server_model: Option<String> }}
 fn connect_websocket() {{
     let reasoning_included = response.headers().contains_key(X_REASONING_INCLUDED_HEADER);
     {ws_header_read}
+    let turn_state = response.headers().get(X_CODEX_TURN_STATE_HEADER);
 }}
 async fn run_websocket_response_stream() {{
     if event.kind() == "codex.response.metadata" {{

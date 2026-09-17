@@ -213,8 +213,8 @@
       "qualified_name": "verify_git_source",
       "start_line": 75
     },
-    "physical_line_count": 21043,
-    "source_sha256": "00ec4f5569b9eba01be2ec3cc8cb84c3d408035842163760f7b287660b0c4a76"
+    "physical_line_count": 21045,
+    "source_sha256": "53bc1595353815c25cbe5c63f240ff377036d6d75240164edf1bed8a334f0e3b"
   },
   "active_package": {
     "function_count": 574,
@@ -416,7 +416,7 @@
       },
       {
         "file": "codex_wire_audit/extractors/responses_server_response.py",
-        "line_count": 455
+        "line_count": 457
       }
     ],
     "maximum_module_fan_out": 10,
@@ -430,8 +430,8 @@
       "qualified_name": "verify_git_source",
       "start_line": 75
     },
-    "physical_line_count": 17696,
-    "source_sha256": "f1c11ab4d1b28ce6874ab4c6d33336b7474c99ec47fa3246b3f4ef6b0154e88b"
+    "physical_line_count": 17698,
+    "source_sha256": "54d39846627ebe2d8ff18a19a4a6227acb2f3010d3f8f19df200aa03ac4597ef"
   },
   "active_release_tools": {
     "function_count": 135,

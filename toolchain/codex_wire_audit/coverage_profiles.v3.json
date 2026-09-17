@@ -122,6 +122,7 @@
         "extractor.responses_request",
         "extractor.responses_lite",
         "extractor.response_events",
+        "extractor.responses_server_response",
         "extractor.redirect_headers",
         "extractor.app_server_rpc",
         "extractor.runtime_behavior"
@@ -176,7 +177,8 @@
         "extractor.responses_request",
         "extractor.responses_lite",
         "extractor.turn_metadata",
-        "extractor.response_events"
+        "extractor.response_events",
+        "extractor.responses_server_response"
       ],
       "required_history_keys": [
         "key.turn_metadata.code_mode_tool_names",
@@ -233,6 +235,7 @@
         "extractor.turn_metadata",
         "extractor.mcp_projection",
         "extractor.response_events",
+        "extractor.responses_server_response",
         "extractor.redirect_headers",
         "extractor.config_effects",
         "extractor.local_storage",

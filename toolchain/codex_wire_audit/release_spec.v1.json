@@ -351,7 +351,8 @@
       "extractor_ids": [
         "extractor.responses_request",
         "extractor.responses_lite",
-        "extractor.response_events"
+        "extractor.response_events",
+        "extractor.responses_server_response"
       ],
       "id": "responses_protocol",
       "profile_assertions": {
@@ -359,21 +360,24 @@
           "required_extractors_contains": [
             "extractor.responses_request",
             "extractor.responses_lite",
-            "extractor.response_events"
+            "extractor.response_events",
+            "extractor.responses_server_response"
           ]
         },
         "hybrid_v19": {
           "required_extractors_contains": [
             "extractor.responses_request",
             "extractor.responses_lite",
-            "extractor.response_events"
+            "extractor.response_events",
+            "extractor.responses_server_response"
           ]
         },
         "responses_only": {
           "required_extractors_contains": [
             "extractor.responses_request",
             "extractor.responses_lite",
-            "extractor.response_events"
+            "extractor.response_events",
+            "extractor.responses_server_response"
           ]
         }
       },
@@ -383,7 +387,9 @@
         "proof_schema_templates/responses-request-semantics-v2.schema.json",
         "proof_schema_templates/responses-lite-semantics-v1.schema.json",
         "proof_schema_templates/response-events-semantics-v1.schema.json",
-        "coverage_profiles.v3.json"
+        "coverage_profiles.v3.json",
+        "extractors/responses_server_response.py",
+        "proof_schema_templates/responses-server-response-semantics-v1.schema.json"
       ],
       "status": "active_package"
     },
@@ -481,7 +487,8 @@
             "extractor.responses_lite",
             "extractor.response_events",
             "extractor.redirect_headers",
-            "extractor.app_server_rpc"
+            "extractor.app_server_rpc",
+            "extractor.responses_server_response"
           ]
         }
       },
