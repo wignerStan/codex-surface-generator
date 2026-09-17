@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.11'
-      - name: Wire source registry
+      - name: Wire models-manager source
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -27,13 +27,7 @@ jobs:
           text = path.read_text(encoding="utf-8")
           if "_RESPONSES_SERVER_RESPONSE_SPECS = (" not in text:
               block = '''_RESPONSES_SERVER_RESPONSE_SPECS = (
-              ("source_spec.base.common", "common", "codex-rs/codex-api/src/common.rs", ("ResponseEvent", "ServerModel", "ModelsEtag")),
-              ("source_spec.base.response_sse", "response_sse", "codex-rs/codex-api/src/sse/responses.rs", ("spawn_response_stream", "ResponsesStreamEvent", "ResponseEvent::ModelsEtag")),
-              ("source_spec.base.ws", "ws", "codex-rs/codex-api/src/endpoint/responses_websocket.rs", ("run_websocket_response_stream", "X_MODELS_ETAG_HEADER", "ResponseEvent::ModelsEtag")),
-              ("source_spec.extra.prompt_turn", "prompt_turn", "codex-rs/core/src/session/turn.rs", ("ResponseEvent::ModelsEtag", "refresh_if_new_etag")),
               ("source_spec.extra.models_manager", "models_manager", "codex-rs/models-manager/src/manager.rs", ("refresh_if_new_etag", "fetch_and_update_models", "RefreshStrategy::Online", "ModelsCacheEntry")),
-              ("source_spec.surface.models_endpoint", "models_endpoint", "codex-rs/codex-api/src/endpoint/models.rs", ("ModelsClient", "request_url", "list_models", "ETAG", "ModelsResponse")),
-              ("source_spec.surface.model_provider_models", "model_provider_models", "codex-rs/model-provider/src/models_endpoint.rs", ("OpenAiModelsEndpoint", "ModelsClient", "ModelsEndpointResponse")),
           )
 
           '''
@@ -74,5 +68,5 @@ jobs:
           if git diff --cached --quiet; then
             exit 0
           fi
-          git commit -m "feat(responses): wire models etag catalog refresh sources"
+          git commit -m "feat(responses): wire models etag catalog refresh source"
           git push origin HEAD:contract/responses/feat/server-response-surface
